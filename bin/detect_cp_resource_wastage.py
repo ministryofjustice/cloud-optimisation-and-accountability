@@ -2,6 +2,7 @@ import base64
 import re
 import os
 import logging
+from typing import Dict, Optional
 from services.github_service import GithubService
 from config.constants import ENTERPRISE, MINISTRY_OF_JUSTICE
 import concurrent.futures
@@ -23,7 +24,7 @@ def _get_environment_variables() -> str:
     return github_token
 
 
-def _process_namespace(ns: str, github_service: GithubService):
+def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]] :
 
     result = {'db_waste': None, 'pod_waste': None}
 
@@ -68,4 +69,8 @@ def detect_cp_resource_wastage():
                 resource_wastage['pod_waste'].append(result['pod_waste'])
                 logger.info("Pod wastage detected: %s", result['pod_waste'])
 
-    return resource_wastage
+    #Code to sent results to Slack channel"
+
+    if __name__ == "__main__":
+        detect_cp_resource_wastage()
+
