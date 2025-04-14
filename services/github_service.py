@@ -13,7 +13,6 @@ from gql.transport.exceptions import TransportServerError
 from retrying import retry
 
 
-
 class GithubService:
     def __init__(
         self,
@@ -37,6 +36,7 @@ class GithubService:
             }
         )
 
+    @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_cloud_platform_environments_content(self, path: str) -> dict:
 
         logging.info("Retrieving namespaces list from cloud-platform-environments repository")
@@ -48,4 +48,4 @@ class GithubService:
             logging.info("Namespaces list retrieved successfully from cloud-platform-environments.")
             return json.loads(response.content.decode("utf-8"))
         raise ValueError(
-            f"Failed to get namespaces list from cloud-platform-environments")
+            "Failed to get namespaces list from cloud-platform-environments")
