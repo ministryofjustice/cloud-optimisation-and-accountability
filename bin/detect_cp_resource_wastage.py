@@ -4,6 +4,7 @@ import os
 import logging
 from typing import Dict, Optional
 from services.github_service import GithubService
+from services.slack_service import SlackService
 from config.constants import ENTERPRISE, MINISTRY_OF_JUSTICE
 import concurrent.futures
 
@@ -38,10 +39,8 @@ def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Opti
             f"namespaces/live.cloud-platform.service.justice.gov.uk/{ns}/resources/rds.tf")
         rds_decod_content = base64.b64decode(rds_file["content"]).decode("utf-8")
         if not re.search(r'enable_rds_auto_start_stop\s*=\s*true', rds_decod_content):
-            print("db_wastage")
             result['db_waste'] = ns
         if re.search(r'enable_rds_auto_start_stop\s*=\s*true', rds_decod_content) and "scheduled-downtime.tf" not in resources:
-            print("pod wastage")
             result['pod_waste'] = ns
 
     return result
@@ -69,8 +68,11 @@ def detect_cp_resource_wastage():
                 resource_wastage['pod_waste'].append(result['pod_waste'])
                 logger.info("Pod wastage detected: %s", result['pod_waste'])
 
-    #Code to sent results to Slack channel"
+    SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
+        db_wastage_ns=resource_wastage['db_waste'],
+        pod_wastage_ns=resource_wastage['pod_waste']
+    )
 
-    if __name__ == "__main__":
-        detect_cp_resource_wastage()
 
+if __name__ == "__main__":
+    detect_cp_resource_wastage()
