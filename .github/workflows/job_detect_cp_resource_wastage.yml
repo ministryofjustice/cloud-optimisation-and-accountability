@@ -1,11 +1,10 @@
 name: ♻️ Detect CP Resource Wastage
 
 on:
-  pull_request:
   workflow_dispatch:
 
 jobs:
-  low-quota-threshold:
+  detect-cp-nonprod-resource-wastage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -27,6 +26,6 @@ jobs:
         with:
           status: ${{ job.status }}
           notify_when: "failure"
-          notification_title: "Failed to fetch github actions quota"
+          notification_title: "Failed to run CP resource wastage job"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
