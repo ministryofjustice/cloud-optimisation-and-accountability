@@ -43,8 +43,8 @@ class SlackService:
         formatted_pod_wastage_ns = "\n".join(f"- `{ns}`" for ns in pod_wastage_ns)
         formatted_db_wastage_ns = "\n".join(f"- `{ns}`" for ns in db_wastage_ns)
         message_header = "*⚠️ Resource wastage detected in CP nonprod environments*"
-        db_section = f"📌 *DB wastage detected in the following namespaces:*\n{formatted_db_wastage_ns}"
-        pod_section = f"📌 *POD wastage detected in the following namespaces:*\n{formatted_pod_wastage_ns}"
+        db_section = f"📌 *DB not configured to shut down outside of work hours in the following namespaces.:*\n{formatted_db_wastage_ns}"
+        pod_section = f"📌 * PODs without scheduled downtime when the database is turned off at night.:*\n{formatted_pod_wastage_ns}"
 
         blocks = []
         blocks += self._create_block_with_message(message=message_header)
