@@ -20,7 +20,7 @@ jobs:
       - run: pipenv run python3 -m bin.detect_cp_resource_wastage
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
-          ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SEND_TO_SLACK }}
+          ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
       - name: Report failure to Slack
         if: always()
         uses: ravsamhq/notify-slack-action@472601e839b758e36c455b5d3e5e1a217d4807bd # 2.5.0
