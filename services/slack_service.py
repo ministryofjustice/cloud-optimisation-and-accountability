@@ -45,7 +45,7 @@ class SlackService:
         message = (
             f"*Resource wastage detected in CP nonprod environments*\n\n"
             f"📌 DB wastage detected in following namespaces.\n\n"
-            f"{formatted_db_wastage_ns}" 
+            f"{formatted_db_wastage_ns}\n\n"
             f"📌 POD wastage detected in following namespaces.\n\n"  
             f"{formatted_pod_wastage_ns}"
         )
