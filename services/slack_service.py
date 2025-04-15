@@ -38,13 +38,16 @@ class SlackService:
             }
         ]
 
-    def send_nonprod_resource_wastage_alerts(self, db_wastage_ns):
+    def send_nonprod_resource_wastage_alerts(self, db_wastage_ns, pod_wastage_ns):
         
+        formatted_pod_wastage_ns = "\n".join(f"- `{ns}`" for ns in pod_wastage_ns)
         formatted_db_wastage_ns = "\n".join(f"- `{ns}`" for ns in db_wastage_ns)
         message = (
             f"*Resource wastage detected in CP nonprod environments*\n\n"
-            f"DB wastage detected in following namespaces.\n\n"
-            f"{formatted_db_wastage_ns}"    
+            f"📌 DB wastage detected in following namespaces.\n\n"
+            f"{formatted_db_wastage_ns}" 
+            f"📌 POD wastage detected in following namespaces.\n\n"  
+            f"{formatted_pod_wastage_ns}"
         )
         blocks = self._create_block_with_message(message)
         self._send_alert_to_operations_engineering(blocks)

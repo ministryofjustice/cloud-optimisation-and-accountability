@@ -1,4 +1,4 @@
-name: 🤖 Detect CP Resource Wastage
+name: ♻️ Detect CP Resource Wastage
 
 on:
   pull_request:

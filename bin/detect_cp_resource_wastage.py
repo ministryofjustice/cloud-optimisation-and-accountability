@@ -69,8 +69,10 @@ def detect_cp_resource_wastage():
                 logger.info("Pod wastage detected: %s", result['pod_waste'])
 
     SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
-        db_wastage_ns=resource_wastage['db_waste']
+        db_wastage_ns=resource_wastage['db_waste'],
+        pod_wastage_ns=resource_wastage['pod_waste']
     )
+
 
 if __name__ == "__main__":
     detect_cp_resource_wastage()
