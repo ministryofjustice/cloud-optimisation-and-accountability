@@ -35,7 +35,7 @@ class GithubService:
                 "Authorization": f"Bearer {org_token}",
             }
         )
-
+    
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_cloud_platform_environments_content(self, path: str) -> dict:
 
