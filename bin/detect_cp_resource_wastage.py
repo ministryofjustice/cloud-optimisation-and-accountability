@@ -72,5 +72,5 @@ def detect_cp_resource_wastage():
         db_wastage_ns=resource_wastage['db_waste']
     )
 
-    if __name__ == "__main__":
-        detect_cp_resource_wastage()
+if __name__ == "__main__":
+    detect_cp_resource_wastage()
