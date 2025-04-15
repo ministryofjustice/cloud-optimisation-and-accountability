@@ -26,6 +26,7 @@ class SlackService:
             )
         except SlackApiError as e:
             logging.error("Slack API error: {%s}", e.response['error'])
+
     def _create_block_with_message(self, message, block_type="section"):
         return [
             {
@@ -38,10 +39,12 @@ class SlackService:
         ]
 
     def send_nonprod_resource_wastage_alerts(self, db_wastage_ns):
+        
+        formatted_db_wastage_ns = "\n".join(f"- `{ns}`" for ns in db_wastage_ns)
         message = (
             f"*Resource wastage detected in CP nonprod environments*\n\n"
             f"DB wastage detected in following namespaces.\n\n"
-            f"{db_wastage_ns}"    
+            f"{formatted_db_wastage_ns}"    
         )
         blocks = self._create_block_with_message(message)
         self._send_alert_to_operations_engineering(blocks)
