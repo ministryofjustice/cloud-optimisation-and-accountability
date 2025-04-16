@@ -35,7 +35,7 @@ class GithubService:
                 "Authorization": f"Bearer {org_token}",
             }
         )
-    
+
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_cloud_platform_environments_content(self, path: str) -> dict:
 
@@ -45,7 +45,7 @@ class GithubService:
 
         response = self.github_client_rest_api.get(url, timeout=10)
         if response.status_code == response_okay:
-            logging.info("Namespaces list retrieved successfully from cloud-platform-environments.")
+            logging.info("Namespaces content retrieved successfully from cloud-platform-environments.")
             return json.loads(response.content.decode("utf-8"))
         raise ValueError(
-            "Failed to get namespaces list from cloud-platform-environments")
+            "Failed to get namespaces content from cloud-platform-environments")
