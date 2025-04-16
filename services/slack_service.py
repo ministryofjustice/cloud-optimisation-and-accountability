@@ -26,6 +26,7 @@ class SlackService:
             )
         except SlackApiError as e:
             logging.error("Slack API error: {%s}", e.response['error'])
+            raise
 
     def _create_block_with_message(self, message, block_type="section"):
         return [
