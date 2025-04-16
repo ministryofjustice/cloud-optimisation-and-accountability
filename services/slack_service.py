@@ -40,11 +40,9 @@ class SlackService:
 
     def send_nonprod_resource_wastage_alerts(self, db_wastage_ns, pod_wastage_ns):
 
-        formatted_pod_wastage_ns = "\n".join(f"- `{ns}`" for ns in pod_wastage_ns)
-        formatted_db_wastage_ns = "\n".join(f"- `{ns}`" for ns in db_wastage_ns)
         message_header = "*⚠️ Resource wastage detected in CP nonprod environments*"
-        db_section = f"📌*{len(db_wastage_ns)} RDS instances not configured to shut down outside of work hours in the following namespaces:*\n{formatted_db_wastage_ns}"
-        pod_section = f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime when the database is turned off at night in the following namespaces:*\n{formatted_pod_wastage_ns}"
+        db_section = f"📌*{len(db_wastage_ns)} RDS instances not configured to shut down outside of work hours in the following namespaces:*\n{db_wastage_ns}"
+        pod_section = f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime when the database is turned off at night in the following namespaces:*\n{pod_wastage_ns}"
 
         blocks = []
         blocks += self._create_block_with_message(message=message_header)
