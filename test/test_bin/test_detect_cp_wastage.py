@@ -86,7 +86,11 @@ class TestDetectResourceWastage:
             {"db_waste": None, "pod_waste": "test_pod_05_staging"},
             {"db_waste": None, "pod_waste": None}
         ]
+        mock_slack_service = mocker.patch("bin.detect_cp_resource_wastage.SlackService")
+        mock_slack_service_instance = mock_slack_service.return_value
+        
         detect_cp_resource_wastage()
 
         assert mock_get_environment_variables.call_count == 1
+        assert mock_slack_service_instance.send_nonprod_resource_wastage_alerts.call_count ==1
         assert mock_process_namespace.call_count == 3
