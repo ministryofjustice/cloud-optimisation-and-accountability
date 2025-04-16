@@ -1,0 +1,722 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "FinOps dashboard from the Cloud Optimisation and Accountability Team\n💰🌍",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 95,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "Cloud Optimisation and Accountability Team",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://peoplefinder.service.gov.uk/teams/cloud-optimisation-accountability-team"
+    }
+  ],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "description": "Unblended Cost in USD",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 1,
+          "rawSQL": "select round(sum(line_item_unblended_cost)) as cost from gpx \nWHERE resource_tags_user_application in ($application) \nand resource_tags_user_business_unit in ($unit)\nand line_item_usage_account_id  in ($account)\nand resource_tags_user_namespace  in ($namespace)\nand $__timeFilter(line_item_usage_start_date)",
+          "refId": "A"
+        }
+      ],
+      "title": "Cost",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "description": "Cost per region",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "currencyUSD"
+        },
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "cost",
+                  "ap-southeast-1",
+                  "ap-southeast-2"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "column": "line_item_usage_start_date",
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 0,
+          "rawSQL": "select product_region_code,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere product_region_code != ''\n\tand line_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\ngroup by product_region_code\norder by cost desc",
+          "refId": "A",
+          "table": "gpx"
+        }
+      ],
+      "title": "Regions",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-- MISSING --",
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 8,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 1,
+          "rawSQL": "select resource_tags_user_environment_name as env, sum(line_item_unblended_cost) as cost \nfrom $__table() \nwhere  line_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n  and resource_tags_user_namespace  in ($namespace)\n\n\tand $__timeFilter(line_item_usage_start_date)\n\tgroup by resource_tags_user_environment_name\n\torder by cost desc\n",
+          "refId": "A",
+          "table": "gpx"
+        }
+      ],
+      "title": "Cost per environment",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "description": "Splitting costs for EKS for the specified namespace(s)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 17,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 1,
+          "rawSQL": "select sum(split_line_item_split_cost) as used,  sum(split_line_item_unused_cost) as unused from gpx where resource_tags_aws_eks_namespace in (${namespace})",
+          "refId": "A"
+        }
+      ],
+      "title": "Split costs",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "-- MISSING --": {
+                  "color": "dark-red",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "noValue": "-- MISSING --",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "locale"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 11,
+        "x": 0,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": false
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 1,
+          "rawSQL": "select resource_tags_user_business_unit,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere \n\tline_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\ngroup by resource_tags_user_business_unit\norder by cost desc",
+          "refId": "A",
+          "table": "gpx"
+        }
+      ],
+      "title": "Cost per business unit",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-athena-datasource",
+        "uid": "eee8gt4tyjmrke"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 12,
+        "x": 11,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "none",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.4.1",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "eee8gt4tyjmrke"
+          },
+          "format": 1,
+          "rawSQL": "select product_product_name,\n  round(sum(line_item_unblended_cost),2) as cost \nFROM gpx\nWHERE line_item_unblended_cost > 0 \n and resource_tags_user_application IN ($application)\n and resource_tags_user_business_unit in ($unit)\n and line_item_usage_account_id  in ($account) \n and resource_tags_user_namespace  in ($namespace)\n and $__timeFilter(line_item_usage_start_date)\ngroup by product_product_name \nORDER BY cost DESC \nLIMIT 10;",
+          "refId": "A",
+          "table": "gpx"
+        }
+      ],
+      "title": "Top 10 Services",
+      "transparent": true,
+      "type": "barchart"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [
+    "Finops"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "eee8gt4tyjmrke"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Business unit",
+        "multi": true,
+        "name": "unit",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "select distinct resource_tags_user_business_unit from gpx",
+          "table": "gpx"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "eee8gt4tyjmrke"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Application",
+        "multi": true,
+        "name": "application",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "SELECT DISTINCT resource_tags_user_application FROM gpx where resource_tags_user_business_unit in ($unit) ",
+          "table": "gpx"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "eee8gt4tyjmrke"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Account",
+        "multi": true,
+        "name": "account",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "select distinct line_item_usage_account_id\nfrom gpx\nwhere \n\tresource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "eee8gt4tyjmrke"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Namespace",
+        "multi": true,
+        "name": "namespace",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "SELECT DISTINCT resource_tags_user_namespace FROM gpx where resource_tags_user_business_unit in ($unit) and resource_tags_user_application in ($application)",
+          "table": "gpx"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6M",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false
+  },
+  "timezone": "browser",
+  "title": "FinOps",
+  "uid": "eefmlx7flj4sgc",
+  "version": 25,
+  "weekStart": ""
+}
