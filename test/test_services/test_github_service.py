@@ -70,7 +70,7 @@ class TestGithubService:
             self.gh_service.get_cloud_platform_environments_content(
                 path="test_path")
         assert str(err.value) == (
-            "Failed to get namespaces list from cloud-platform-environments"
+            "Failed to get namespaces content from cloud-platform-environments"
         )
         mock_get_request.call_count == 3
         mock_get_request.assert_called_with(
