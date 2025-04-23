@@ -23,6 +23,7 @@ def process_query(query):
     }
 
     status_code = 400
+    message = ''
 
     while True:
         time.sleep(0.1)
@@ -47,25 +48,26 @@ def process_query(query):
                 'body': costs
             }
         elif state == 'FAILED':
+            message = query_details['QueryExecution']['Status']['StateChangeReason']
             break
         elif state == 'CANCELLED':
+            message = 'Query cancelled'
             break
 
     return {
         'statusCode': status_code,
-        'body': f"ERROR"
+        'body': message
     }
 
 def get_costs_period(billing_period, namespace):
   # TODO check that the billing period is valid
-  query = f"select product['product_name'], round(sum(line_item_unblended_cost),2) as cost from data where billing_period = '{billing_period}' and resource_tags['user_namespace'] = '{namespace}' group by product['product_name'] order by cost desc limit 10;"
+  query = f"select product['product_name'], round(sum(line_item_unblended_cost),2) as cost from data where billing_period = '{billing_period}' and resource_tags['user_namespace'] = '{namespace}' group by product['product_name'] order by cost desc limit 20;"
   return process_query(query)
 
-# def get_costs_dates(start_date, end_date, namespace):
+def get_costs_dates(start_date, end_date, namespace):
     # TODO check that the dates are valid
-    # TODO add them to the query
-    # query = f"select product['product_name'], round(sum(line_item_unblended_cost),2) as cost from data where resource_tags['user_namespace'] = '{namespace}' group by product['product_name'] order by cost desc limit 10;"
-    # return process_query(query)
+    query = f"select product['product_name'], round(sum(line_item_unblended_cost),2) as cost from data where resource_tags['user_namespace'] = '{namespace}' and line_item_usage_start_date >= DATE '{start_date}' and line_item_usage_start_date <= DATE '{end_date}' group by product['product_name'] order by cost desc limit 20;"
+    return process_query(query)
 
 def lambda_handler(event, context):
     # TODO check that we have a billing period and a namespace
@@ -83,4 +85,7 @@ event = {
 }
 
 costs = lambda_handler(event, {})
+print(costs)
+
+costs =  get_costs_dates('2025-02-01', '2025-02-28', 'hmpps-book-secure-move-api-staging')
 print(costs)
