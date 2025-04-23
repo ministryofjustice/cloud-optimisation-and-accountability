@@ -70,11 +70,24 @@ def get_costs_dates(start_date, end_date, namespace):
     return process_query(query)
 
 def lambda_handler(event, context):
-    # TODO check that we have a billing period and a namespace
-    nm = event['pathParameters']['namespace']
-    bp = event['pathParameters']['billing_period']
-    # TODO find if a path has a start date and end date and if so use the corresponding method instead
-    return get_costs_period(bp, nm)
+    # Extract path parameters
+    params = event.get('pathParameters', {})
+    nm = params.get('namespace')
+    bp = params.get('billing_period')
+
+    # Check if start_date and end_date exist
+    start_date_str = params.get('start_date')
+    end_date_str = params.get('end_date')
+
+    if start_date_str and end_date_str and nm:
+        return get_costs_dates(start_date_str, end_date_str, nm)
+    elif bp and nm:
+        return get_costs_period(bp, nm)
+    else:
+        return {
+            'statusCode': 400,
+            'body': 'Invalid parameters: missing namespace and/or billing period'
+        }
 
 # simulate the input sent to the lambda
 event = {
@@ -87,5 +100,12 @@ event = {
 costs = lambda_handler(event, {})
 print(costs)
 
-costs =  get_costs_dates('2025-02-01', '2025-02-28', 'hmpps-book-secure-move-api-staging')
+event = {
+    "pathParameters": {
+        "start_date": "2025-02-01",
+        "end_date": "2025-02-28",
+        "namespace": "hmpps-book-secure-move-api-staging"
+    }
+}
+costs = lambda_handler(event, {})
 print(costs)
