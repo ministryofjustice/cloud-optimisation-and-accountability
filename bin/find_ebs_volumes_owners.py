@@ -24,6 +24,7 @@ def _get_account_ou(account_id):
     else:
         return "Root"
 
+
 def find_ebs_volumes_owners():
     client_cost_opt = boto3.client("cost-optimization-hub", region_name="us-east-1")
     paginator = client_cost_opt.get_paginator("list_recommendations")
