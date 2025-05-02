@@ -79,7 +79,7 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
         moj_accounts_df = moj_accounts_df[["Id", "Name"]]
         account_ids = moj_accounts_df["Id"].tolist()
 
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             ous = list(executor.map(_get_account_ou, account_ids))
 
         moj_accounts_df["aws_OU"] = ous
@@ -93,7 +93,7 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
     filename = f"ebs_recomendations_{timestamp}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
     print(f"DataFrame dumped to {filename}")
-    
+
     SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
         file_path=filename,
         message="EBS volume recommendations",
