@@ -52,3 +52,16 @@ class SlackService:
         blocks += self._create_block_with_message(message=pod_section)
 
         self._send_alert_to_operations_engineering(blocks)
+    
+    def send_report_with_message(self, file_path: str, message: str, filename: str | None = None):
+        try:
+            with open(file_path, "rb") as file_content:
+                self.slack_client.files_upload(
+                    channels=self.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
+                    initial_comment=message,
+                    file=file_content,
+                    filename=filename or file_path
+                )
+        except SlackApiError as e:
+            logging.error("Slack API error: {%s}", e.response['error'])
+            raise
