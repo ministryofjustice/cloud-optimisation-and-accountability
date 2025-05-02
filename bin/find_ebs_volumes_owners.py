@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import boto3
 import pandas as pd
 
@@ -73,7 +74,12 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
     else:
         print(f"Accounts found: {len(moj_accounts_df)}")
         moj_accounts_df = moj_accounts_df[["Id", "Name"]]
-        moj_accounts_df['aws_OU'] = moj_accounts_df['Id'].apply(_get_account_ou)
+        account_ids = moj_accounts_df["Id"].tolist()
+
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            ous = list(executor.map(_get_account_ou, account_ids))
+
+        moj_accounts_df["aws_OU"] = ous
         moj_accounts_df = moj_accounts_df.rename(columns={"Id": "accountId", "Name": "accountName"})
 
     ebs_recommendation_df = ebs_recommendation_df.merge(moj_accounts_df[["accountId","accountName", "aws_OU"]], on="accountId", how="left")
