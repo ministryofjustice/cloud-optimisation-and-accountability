@@ -25,7 +25,7 @@ def _get_account_ou(account_id):
         return "Root"
 
 
-def find_ebs_volumes_owners():
+def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
     client_cost_opt = boto3.client("cost-optimization-hub", region_name="us-east-1")
     paginator = client_cost_opt.get_paginator("list_recommendations")
 
@@ -77,8 +77,9 @@ def find_ebs_volumes_owners():
         moj_accounts_df = moj_accounts_df.rename(columns={"Id": "accountId", "Name": "accountName"})
 
     ebs_recommendation_df = ebs_recommendation_df.merge(moj_accounts_df[["accountId","accountName", "aws_OU"]], on="accountId", how="left")
-
     ebs_recommendation_df = ebs_recommendation_df.rename(columns={"accountName": "aws_accountName", "accountId": "aws_accountId" })
+    ebs_recommendation_df = ebs_recommendation_df.loc[ebs_recommendation_df["estimatedMonthlySavings"] >= montly_savings_threshold]
+    ebs_recommendation_df = ebs_recommendation_df.sort_values(by="estimatedMonthlySavings", ascending=False).reset_index(drop=True)
     ebs_recommendation_df.to_csv('data/ebs_recomendations.csv', index=False)
 
     return ebs_recommendation_df
