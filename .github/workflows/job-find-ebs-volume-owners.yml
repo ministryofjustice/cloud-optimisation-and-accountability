@@ -1,4 +1,4 @@
-name: ♻️ Detect CP Resource Wastage
+name: 🔎 Find EBS Volume Owners
 
 on:
   workflow_dispatch:
