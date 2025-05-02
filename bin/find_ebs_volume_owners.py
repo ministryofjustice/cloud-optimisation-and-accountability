@@ -4,7 +4,6 @@ import os
 import pandas as pd
 from datetime import datetime
 from services.slack_service import SlackService
-import time
 
 
 def _extract_tag_value(tags_list, key):
