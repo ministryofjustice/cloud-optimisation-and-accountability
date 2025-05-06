@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 import boto3
 import os
 import pandas as pd
