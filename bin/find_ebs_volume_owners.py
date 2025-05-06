@@ -79,8 +79,10 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
         moj_accounts_df = moj_accounts_df[["Id", "Name"]]
         account_ids = moj_accounts_df["Id"].tolist()
 
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            ous = list(executor.map(_get_account_ou, account_ids))
+        ous = []
+        for account_id in account_ids:
+            ou_name = _get_account_ou(account_id)
+            ous.append(ou_name)
 
         moj_accounts_df["aws_OU"] = ous
         moj_accounts_df = moj_accounts_df.rename(columns={"Id": "accountId", "Name": "accountName"})
