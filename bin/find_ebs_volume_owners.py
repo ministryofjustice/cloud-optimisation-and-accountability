@@ -1,9 +1,15 @@
-from concurrent.futures import ThreadPoolExecutor
 import boto3
+import logging
 import os
 import pandas as pd
 from datetime import datetime
 from services.slack_service import SlackService
+
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 def _extract_tag_value(tags_list, key):
@@ -51,9 +57,9 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
     ebs_recommendation_df = pd.DataFrame(all_recommendations)
 
     if ebs_recommendation_df.empty:
-        print("No recommendations found.")
+        logger.info("No recommendations found.")
     else:
-        print(f"Recommendations found: {len(ebs_recommendation_df)}")
+        logger.info("Recommendations found: %s", len(ebs_recommendation_df))
         ebs_recommendation_df["owner"] = ebs_recommendation_df["tags"].apply(lambda tags: _extract_tag_value(tags, "owner"))
         ebs_recommendation_df["business_unit"] = ebs_recommendation_df["tags"].apply(lambda tags: _extract_tag_value(tags, "business-unit"))
         ebs_recommendation_df = ebs_recommendation_df[["recommendationId", "resourceId", "currentResourceType",
@@ -73,14 +79,17 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
 
     moj_accounts_df = pd.DataFrame(all_moj_accounts)
     if moj_accounts_df.empty:
-        print("No accounts found.")
+        logger.info("No accounts found.")
     else:
-        print(f"Accounts found: {len(moj_accounts_df)}")
+        logger.info("Accounts found: %s", len(moj_accounts_df))
         moj_accounts_df = moj_accounts_df[["Id", "Name"]]
         account_ids = moj_accounts_df["Id"].tolist()
 
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            ous = list(executor.map(_get_account_ou, account_ids))
+        ous = []
+        for account_id in account_ids:
+            ou_name = _get_account_ou(account_id)
+            logger.info("Parrent aws account found for: %s", account_id)
+            ous.append(ou_name)
 
         moj_accounts_df["aws_OU"] = ous
         moj_accounts_df = moj_accounts_df.rename(columns={"Id": "accountId", "Name": "accountName"})
@@ -92,7 +101,7 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f"ebs_recomendations_{timestamp}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
-    print(f"DataFrame dumped to {filename}")
+    logger.info("DataFrame dumped to %s", filename)
 
     SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
         file_path=filename,
