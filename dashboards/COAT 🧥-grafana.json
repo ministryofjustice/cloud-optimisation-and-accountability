@@ -93,6 +93,18 @@
       "tooltip": "",
       "type": "link",
       "url": "https://peoplefinder.service.gov.uk/teams/cloud-optimisation-accountability-team"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Video tutorial",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://justiceuk.sharepoint.com/:v:/s/CloudOptimisationAccoutabilityTeam/ET1Y4EObA8hPgTmCfd6-jq8BqjvwlRmpRDjyOucIGtXLuQ?e=mnSgKY"
     }
   ],
   "panels": [
@@ -1164,6 +1176,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 27,
+  "version": 28,
   "weekStart": ""
 }
