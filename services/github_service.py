@@ -49,3 +49,26 @@ class GithubService:
             return json.loads(response.content.decode("utf-8"))
         raise ValueError(
             "Failed to get namespaces content from cloud-platform-environments")
+
+    @retry(stop_max_attempt_number=3, wait_fixed=2000)
+    def get_all_namespaces(self) -> list:
+        logging.info("Fetching full file tree from cloud-platform-environments repo")
+        url = f"https://api.github.com/repos/ministryofjustice/cloud-platform-environments/git/trees/main?recursive=1"
+
+        response = self.github_client_rest_api.get(url, timeout=10)
+        if response.status_code == 200:
+            tree = json.loads(response.content.decode("utf-8")).get("tree", [])
+
+            namespace_names = {
+                item["path"].split("/")[2]
+                for item in tree
+                if item["path"].startswith("namespaces/live.cloud-platform.service.justice.gov.uk/")
+                and len(item["path"].split("/")) > 2
+                and item["type"] == "blob"
+            }
+
+            return sorted(set(namespace_names))
+
+        else:
+            logging.error(f"Failed to fetch tree: {response.text}")
+            raise ValueError("Failed to get full namespace file list.")
