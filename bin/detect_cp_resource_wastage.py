@@ -52,7 +52,7 @@ def detect_cp_resource_wastage():
     github_service = GithubService(github_token, MINISTRY_OF_JUSTICE, ENTERPRISE)
 
     logger.info("Fetching all namespaces...")
-    namespaces = [item["name"] for item in github_service.get_cloud_platform_environments_content("namespaces/live.cloud-platform.service.justice.gov.uk")]
+    namespaces = github_service.get_all_namespaces()
     nonprod_namespaces = [ns for ns in namespaces if re.search(r'dev|staging|preprod', ns)]
     resource_wastage = {"db_waste": [],
                         "pod_waste": []}
