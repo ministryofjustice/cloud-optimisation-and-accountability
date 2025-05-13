@@ -61,7 +61,7 @@ class TestGithubService:
 
     def test_get_workflow_run_details_error(self, mocker):
         mock_response = MagicMock()
-        mock_response.status_code = 404
+        mock_response.status_code = 500
         mock_response.content = {"message": "Not Found"}
         mock_get_request = mocker.patch.object(
             self.gh_service.github_client_rest_api, "get", return_value=mock_response)
