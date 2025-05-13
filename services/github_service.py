@@ -38,8 +38,6 @@ class GithubService:
 
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_cloud_platform_environments_content(self, path: str) -> dict:
-
-        logging.info("Retrieving namespaces list from cloud-platform-environments repository")
         response_okay = 200
         url = f"https://api.github.com/repos/ministryofjustice/cloud-platform-environments/contents/{path}"
 
@@ -47,8 +45,12 @@ class GithubService:
         if response.status_code == response_okay:
             logging.info("Namespaces content retrieved successfully from cloud-platform-environments.")
             return json.loads(response.content.decode("utf-8"))
-        raise ValueError(
-            "Failed to get namespaces content from cloud-platform-environments")
+        elif response.status_code == 404:
+            logging.info("Path does not exist in the cloud-platform-environments repository: %s", path)
+        else:
+            logging.info("Response: %s", response.text)
+            raise ValueError(
+                "Failed to get namespaces content from cloud-platform-environments: %s", path))
 
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_all_namespaces(self) -> list:
@@ -70,5 +72,5 @@ class GithubService:
             return sorted(set(namespace_names))
 
         else:
-            logging.error(f"Failed to fetch tree: {response.text}")
+            logging.info(f"Failed to fetch tree: {response.text}")
             raise ValueError("Failed to get full namespace file list.")
