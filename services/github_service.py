@@ -50,7 +50,7 @@ class GithubService:
         else:
             logging.info("Response: %s", response.text)
             raise ValueError(
-                "Failed to get namespaces content from cloud-platform-environments: %s", path))
+                f"Failed to get namespaces content from cloud-platform-environments: {path}")
 
     @retry(stop_max_attempt_number=3, wait_fixed=2000)
     def get_all_namespaces(self) -> list:
