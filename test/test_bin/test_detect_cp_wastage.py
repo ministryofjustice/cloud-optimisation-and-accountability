@@ -77,9 +77,8 @@ class TestDetectResourceWastage:
         mock_github_service = mocker.patch("bin.detect_cp_resource_wastage.GithubService")
         mock_github_service_instance = mock_github_service.return_value
         mock_github_service_instance.get_all_namespaces.return_value = [
-            {"name": "test-ns-04-dev"},
-            {"name": "test-ns-05-staging"},
-            {"name": "test-ns-06-preprod"}]
+            "test-ns-04-dev", "test-ns-05-staging",
+            "test-ns-06-preprod"]
         mock_process_namespace = mocker.patch("bin.detect_cp_resource_wastage._process_namespace")
         mock_process_namespace.side_effect = [
             {"db_waste": "test_ns_04_dev", "pod_waste": None},
