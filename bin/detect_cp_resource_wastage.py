@@ -1,6 +1,7 @@
 import base64
 import re
 import os
+import time
 import logging
 from typing import Dict, Optional
 from services.github_service import GithubService
@@ -25,15 +26,34 @@ def _get_environment_variables() -> str:
     return github_token
 
 
-def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]] :
+def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]]:
+    logger.info("Processing ns: %s", ns)
 
     result = {'db_waste': None, 'pod_waste': None}
 
+    max_retries = 3
+    retry_delay = 2  # seconds
+
+    for attempt in range(max_retries):
+        resources_repo = github_service.get_cloud_platform_environments_content(
+            f"namespaces/live.cloud-platform.service.justice.gov.uk/{ns}/resources"
+        )
+
+        if resources_repo is not None:
+            break  # success
+        else:
+            logger.warning("Attempt %d: No resources found for namespace '%s'. Retrying in %d seconds...", 
+                           attempt + 1, ns, retry_delay)
+            time.sleep(retry_delay)
+    else:
+        # All attempts failed
+        logger.error("Failed to fetch resources for namespace '%s' after %d attempts", ns, max_retries)
+        return result
+
     resources = [
         resource["name"]
-        for resource in github_service.get_cloud_platform_environments_content(
-            f"namespaces/live.cloud-platform.service.justice.gov.uk/{ns}/resources"
-            )]
+        for resource in resources_repo]
+
     if "rds.tf" in resources:
         rds_file = github_service.get_cloud_platform_environments_content(
             f"namespaces/live.cloud-platform.service.justice.gov.uk/{ns}/resources/rds.tf")
@@ -52,12 +72,13 @@ def detect_cp_resource_wastage():
     github_service = GithubService(github_token, MINISTRY_OF_JUSTICE, ENTERPRISE)
 
     logger.info("Fetching all namespaces...")
-    namespaces = [item["name"] for item in github_service.get_cloud_platform_environments_content("namespaces/live.cloud-platform.service.justice.gov.uk")]
+    namespaces = github_service.get_all_namespaces()
     nonprod_namespaces = [ns for ns in namespaces if re.search(r'dev|staging|preprod', ns)]
     resource_wastage = {"db_waste": [],
                         "pod_waste": []}
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
+        logger.info("Processing namespaces in parallel...")
         futures = [executor.submit(_process_namespace, ns, github_service) for ns in nonprod_namespaces]
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
