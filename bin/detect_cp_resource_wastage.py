@@ -25,7 +25,7 @@ def _get_environment_variables() -> str:
     return github_token
 
 
-def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]] :
+def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]]:
 
     result = {'db_waste': None, 'pod_waste': None}
 
