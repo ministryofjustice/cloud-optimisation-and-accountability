@@ -77,3 +77,43 @@ class TestGithubService:
             "https://api.github.com/repos/ministryofjustice/cloud-platform-environments/contents/test_path",
             timeout=10
         )
+
+    def test_get_all_namespaces_success(self, mocker):
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.content = json.dumps({
+            "tree": [
+                {"path": "namespaces/live.cloud-platform.service.justice.gov.uk/ns1/somefile.yaml", "type": "blob"},
+                {"path": "namespaces/live.cloud-platform.service.justice.gov.uk/ns2/anotherfile.yaml", "type": "blob"},
+                {"path": "namespaces/live.cloud-platform.service.justice.gov.uk/ns1/readme.md", "type": "blob"},
+                {"path": "namespaces/other-path/ns3/file.yaml", "type": "blob"},
+                {"path": "namespaces/live.cloud-platform.service.justice.gov.uk/not/a/blob", "type": "tree"}
+            ]
+        }).encode("utf-8")
+
+        mock_get_request = mocker.patch.object(
+            self.gh_service.github_client_rest_api, "get", return_value=mock_response)
+
+        namespaces = self.gh_service.get_all_namespaces()
+        assert namespaces == ["ns1", "ns2"]
+        mock_get_request.assert_called_once_with(
+            "https://api.github.com/repos/ministryofjustice/cloud-platform-environments/git/trees/main?recursive=1",
+            timeout=10
+        )
+
+    def test_get_all_namespaces_error(self, mocker):
+        mock_response = MagicMock()
+        mock_response.status_code = 500
+        mock_response.text = "Internal Server Error"
+
+        mock_get_request = mocker.patch.object(
+            self.gh_service.github_client_rest_api, "get", return_value=mock_response)
+
+        with pytest.raises(ValueError) as exc:
+            self.gh_service.get_all_namespaces()
+        assert str(exc.value) == "Failed to get full namespace file list."
+        mock_get_request.call_count == 3
+        mock_get_request.assert_called_with(
+            "https://api.github.com/repos/ministryofjustice/cloud-platform-environments/git/trees/main?recursive=1",
+            timeout=10
+        )
