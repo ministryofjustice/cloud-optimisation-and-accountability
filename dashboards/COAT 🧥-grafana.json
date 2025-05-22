@@ -1,65 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA",
-      "label": "example-development-primary-athena",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "grafana-athena-datasource",
-      "pluginName": "Amazon Athena"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "barchart",
-      "name": "Bar chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "10.4.1"
-    },
-    {
-      "type": "datasource",
-      "id": "grafana-athena-datasource",
-      "name": "Amazon Athena",
-      "version": "2.17.5"
-    },
-    {
-      "type": "panel",
-      "id": "piechart",
-      "name": "Pie chart",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -80,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 95,
   "links": [
     {
       "asDropdown": false,
@@ -111,7 +50,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "description": "as a percentage of costs",
       "fieldConfig": {
@@ -177,12 +116,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM gpx where line_item_unblended_cost > 0 \n  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\n\t) AS business_unit\nFROM gpx\nwhere line_item_unblended_cost > 0\n\tand resource_tags_user_business_unit != ''\n  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\n",
+          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0 \n  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS business_unit\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_business_unit'] != ''\n  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n",
           "refId": "A",
-          "table": "gpx"
+          "table": "data"
         },
         {
           "connectionArgs": {
@@ -194,12 +133,13 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM gpx where line_item_unblended_cost > 0\n\t\t  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\n\t) AS application\nFROM gpx\nwhere line_item_unblended_cost > 0\n\tand resource_tags_user_application != ''\n  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)",
-          "refId": "B"
+          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS application\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_application'] != ''\n  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)",
+          "refId": "B",
+          "table": "data"
         },
         {
           "connectionArgs": {
@@ -211,12 +151,13 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM gpx where line_item_unblended_cost > 0\n\t\t  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\n\t) AS namespace\nFROM gpx\nwhere line_item_unblended_cost > 0\n\tand resource_tags_user_namespace != ''\n  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)",
-          "refId": "C"
+          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS namespace\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_namespace'] != ''\n  and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)",
+          "refId": "C",
+          "table": "data"
         },
         {
           "connectionArgs": {
@@ -228,12 +169,13 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM gpx where line_item_unblended_cost > 0\n\t\t  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\n\t) AS environment\nFROM gpx\nwhere line_item_unblended_cost > 0\n\tand resource_tags_user_environment_name != ''\n  and resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)",
-          "refId": "D"
+          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS environment\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_namespace'] != ''\nand (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)",
+          "refId": "D",
+          "table": "data"
         }
       ],
       "title": "Tag coverage",
@@ -243,7 +185,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "description": "Unblended Cost in USD",
       "fieldConfig": {
@@ -279,7 +221,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -300,11 +242,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
-          "format": 1,
-          "rawSQL": "select round(sum(line_item_unblended_cost)) as cost from gpx \nWHERE resource_tags_user_application in ($application) \nand resource_tags_user_business_unit in ($unit)\nand line_item_usage_account_id  in ($account)\nand resource_tags_user_namespace  in ($namespace)\nand $__timeFilter(line_item_usage_start_date)",
-          "refId": "A"
+          "format": 0,
+          "rawSQL": "select \n  line_item_usage_start_date,\n  round(sum(line_item_unblended_cost)) as cost from $__table \nWHERE (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\nand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\nand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\nand (resource_tags['user_namespace']  in ($namespace) OR $namespace = '_ALL_')\nand billing_period  in ($period)\ngroup by 1\norder by 1\n\n",
+          "refId": "A",
+          "table": "data"
         }
       ],
       "title": "Cost",
@@ -314,7 +257,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "description": "Cost per region",
       "fieldConfig": {
@@ -390,7 +333,6 @@
       "pluginVersion": "10.4.1",
       "targets": [
         {
-          "column": "line_item_usage_start_date",
           "connectionArgs": {
             "catalog": "__default",
             "database": "__default",
@@ -400,12 +342,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 0,
-          "rawSQL": "select product_region_code,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere product_region_code != ''\n\tand line_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\ngroup by product_region_code\norder by cost desc",
+          "rawSQL": "select product_region_code,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere product_region_code != ''\n\tand line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\ngroup by product_region_code\norder by cost desc",
           "refId": "A",
-          "table": "gpx"
+          "table": "data"
         }
       ],
       "title": "Regions",
@@ -415,7 +357,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -474,12 +416,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags_user_environment_name as env, sum(line_item_unblended_cost) as cost \nfrom $__table() \nwhere  line_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n  and resource_tags_user_namespace  in ($namespace)\n\n\tand $__timeFilter(line_item_usage_start_date)\n\tgroup by resource_tags_user_environment_name\n\torder by cost desc\n",
+          "rawSQL": "select resource_tags['user_environment_name'] as env, sum(line_item_unblended_cost) as cost \nfrom $__table() \nwhere  line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name in ($account)  OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\n\tgroup by resource_tags['user_environment_name']\n\torder by cost desc",
           "refId": "A",
-          "table": "gpx"
+          "table": "data"
         }
       ],
       "title": "Cost per environment",
@@ -489,7 +431,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "description": "Splitting costs for EKS for the specified namespace(s)",
       "fieldConfig": {
@@ -553,11 +495,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select sum(split_line_item_split_cost) as used,  sum(split_line_item_unused_cost) as unused from gpx where resource_tags_aws_eks_namespace in (${namespace})",
-          "refId": "A"
+          "rawSQL": "select sum(split_line_item_split_cost) as used,  sum(split_line_item_unused_cost) as unused from $__table where \n(resource_tags['aws_eks_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)",
+          "refId": "A",
+          "table": "data"
         }
       ],
       "title": "Split costs",
@@ -567,7 +510,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -637,12 +580,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags_user_business_unit,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere \n\tline_item_unblended_cost > 0\n\tand resource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n\tand line_item_usage_account_id  in ($account)\n\tand resource_tags_user_namespace  in ($namespace)\n\tand $__timeFilter(line_item_usage_start_date)\ngroup by resource_tags_user_business_unit\norder by cost desc",
+          "rawSQL": "select resource_tags['user_business_unit'],\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere \n\tline_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR $account = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n\tand billing_period  in ($period)\ngroup by resource_tags['user_business_unit']\norder by cost desc",
           "refId": "A",
-          "table": "gpx"
+          "table": "data"
         }
       ],
       "title": "Cost per business unit",
@@ -652,7 +595,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -735,12 +678,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select product_product_name,\n  round(sum(line_item_unblended_cost),2) as cost \nFROM gpx\nWHERE line_item_unblended_cost > 0 \n and resource_tags_user_application IN ($application)\n and resource_tags_user_business_unit in ($unit)\n and line_item_usage_account_id  in ($account) \n and resource_tags_user_namespace  in ($namespace)\n and $__timeFilter(line_item_usage_start_date)\ngroup by product_product_name \nORDER BY cost DESC \nLIMIT 10;",
+          "rawSQL": "select product['product_name'],\n  round(sum(line_item_unblended_cost),2) as cost \nFROM $__table\nWHERE line_item_unblended_cost > 0 \n and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')\n and (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n and (line_item_usage_account_name  in ($account) OR $account = '_ALL_') \n and (resource_tags['user_namespace'] in ($namespace) OR $namespace = '_ALL_')\n and billing_period  in ($period)\ngroup by product['product_name']\nORDER BY cost DESC \nLIMIT 10;",
           "refId": "A",
-          "table": "gpx"
+          "table": "data"
         }
       ],
       "title": "Top 10 Services",
@@ -763,7 +706,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -790,7 +733,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
         "overrides": [
           {
@@ -840,11 +784,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags_user_namespace, sum(line_item_unblended_cost) as cost from gpx \nwhere resource_tags_user_namespace != '' and  $__timeFilter(line_item_usage_start_date)\ngroup by resource_tags_user_namespace order by cost desc limit 10",
-          "refId": "A"
+          "rawSQL": "select resource_tags['user_namespace'], sum(line_item_unblended_cost) as cost from $__table \nwhere resource_tags['user_namespace'] != '' and  billing_period  in ($period)\ngroup by resource_tags['user_namespace'] order by cost desc limit 10",
+          "refId": "A",
+          "table": "data"
         }
       ],
       "title": "Most expensive namespaces",
@@ -854,7 +799,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -881,7 +826,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
         "overrides": [
           {
@@ -931,11 +877,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags_user_application, sum(line_item_unblended_cost) as cost from gpx \nwhere resource_tags_user_application != '' \tand $__timeFilter(line_item_usage_start_date)\ngroup by resource_tags_user_application order by cost desc limit 10\n",
-          "refId": "A"
+          "rawSQL": "select resource_tags['user_application'], sum(line_item_unblended_cost) as cost from $__table  \nwhere resource_tags['user_application'] != '' \tand billing_period  in ($period)\ngroup by resource_tags['user_application'] order by cost desc limit 10\n",
+          "refId": "A",
+          "table": "data"
         }
       ],
       "title": "Most expensive applications",
@@ -945,7 +892,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -972,7 +919,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "currencyUSD"
         },
         "overrides": [
           {
@@ -1022,11 +970,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select line_item_usage_account_id, sum(line_item_unblended_cost) as cost from gpx \nwhere line_item_usage_account_id != '' \tand $__timeFilter(line_item_usage_start_date)\ngroup by line_item_usage_account_id order by cost desc limit 10\n",
-          "refId": "A"
+          "rawSQL": "select line_item_usage_account_name, sum(line_item_unblended_cost) as cost from $__table \nwhere line_item_usage_account_name != '' \tand billing_period  in ($period)\ngroup by line_item_usage_account_name order by cost desc limit 10\n",
+          "refId": "A",
+          "table": "data"
         }
       ],
       "title": "Most expensive accounts",
@@ -1042,10 +991,19 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "allValue": "'_ALL_'",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "grafana-athena-datasource",
-          "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+          "uid": "femjm2hiylji8a"
         },
         "definition": "",
         "hide": 0,
@@ -1063,8 +1021,8 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "select distinct resource_tags_user_business_unit from gpx",
-          "table": "gpx"
+          "rawSQL": "select distinct resource_tags['user_business_unit'] from $__table",
+          "table": "data"
         },
         "refresh": 1,
         "regex": "",
@@ -1073,10 +1031,19 @@
         "type": "query"
       },
       {
-        "current": {},
+        "allValue": "'_ALL_'",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "grafana-athena-datasource",
-          "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+          "uid": "femjm2hiylji8a"
         },
         "definition": "",
         "hide": 0,
@@ -1094,8 +1061,8 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "SELECT DISTINCT resource_tags_user_application FROM gpx where resource_tags_user_business_unit in ($unit) ",
-          "table": "gpx"
+          "rawSQL": "SELECT DISTINCT resource_tags['user_application'] FROM $__table where (resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_') ",
+          "table": "data"
         },
         "refresh": 1,
         "regex": "",
@@ -1104,10 +1071,19 @@
         "type": "query"
       },
       {
-        "current": {},
+        "allValue": "'_ALL_'",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "grafana-athena-datasource",
-          "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+          "uid": "femjm2hiylji8a"
         },
         "definition": "",
         "hide": 0,
@@ -1125,7 +1101,8 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "select distinct line_item_usage_account_id\nfrom gpx\nwhere \n\tresource_tags_user_application in ($application)\n\tand resource_tags_user_business_unit in ($unit)\n"
+          "rawSQL": "select distinct line_item_usage_account_name\nfrom $__table\nwhere \n\t(resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n",
+          "table": "data"
         },
         "refresh": 1,
         "regex": "",
@@ -1134,10 +1111,19 @@
         "type": "query"
       },
       {
-        "current": {},
+        "allValue": "'_ALL_'",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "grafana-athena-datasource",
-          "uid": "${DS_EXAMPLE-DEVELOPMENT-PRIMARY-ATHENA}"
+          "uid": "femjm2hiylji8a"
         },
         "definition": "",
         "hide": 0,
@@ -1155,27 +1141,66 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "SELECT DISTINCT resource_tags_user_namespace FROM gpx where resource_tags_user_business_unit in ($unit) and resource_tags_user_application in ($application)",
-          "table": "gpx"
+          "rawSQL": "SELECT DISTINCT resource_tags['user_namespace'] FROM $__table where\n \t(resource_tags['user_business_unit'] in ($unit) OR $unit = '_ALL_')\n and (resource_tags['user_application'] in ($application) OR $application = '_ALL_')",
+          "table": "data"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "2025-05"
+          ],
+          "value": [
+            "2025-05"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "femjm2hiylji8a"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Billing period",
+        "multi": true,
+        "name": "period",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "select distinct billing_period from $__table",
+          "table": "data"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 6,
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-6M",
-    "to": "now"
+    "from": "now-1d/d",
+    "to": "now-1d/d"
   },
   "timepicker": {
-    "hidden": false
+    "hidden": true
   },
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 28,
+  "version": 46,
   "weekStart": ""
 }
