@@ -1,9 +1,11 @@
 import base64
 import re
 import os
+import boto3
 import time
 import logging
-from typing import Dict, Optional
+import csv
+from typing import Dict, Optional, List, Union
 from services.github_service import GithubService
 from services.slack_service import SlackService
 from config.constants import ENTERPRISE, MINISTRY_OF_JUSTICE
@@ -24,6 +26,26 @@ def _get_environment_variables() -> str:
             "The env variable GH_TOKEN is empty or missing")
 
     return github_token
+
+def _write_csv(file_name: str, headers: list, data: List[Union[list, str, dict]]) -> str:
+    
+    with open(file_name, mode="w", newline="") as csvfile:
+        if all(isinstance(row, dict) for row in data):
+            writer = csv.DictWriter(csvfile, fieldnames=headers)
+            writer.writeheader()
+            writer.writerows(data)
+        else:
+            writer = csv.writer(csvfile)
+            writer.writerow(headers)
+            for row in data:
+                if isinstance(row, list):
+                    writer.writerow(row)
+                elif isinstance(row, str):
+                    writer.writerow([row])
+                else:
+                    writer.writerow([str(row)])
+
+    return file_name
 
 
 def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Optional[str]]:
@@ -93,6 +115,21 @@ def detect_cp_resource_wastage():
         db_wastage_ns=resource_wastage['db_waste'],
         pod_wastage_ns=resource_wastage['pod_waste']
     )
+
+    pod_csv = _write_csv(
+    file_name="pod_waste.csv",
+    headers=["Namespace", "Wastage Info"],
+    data=resource_wastage['pod_waste']
+    )
+
+    db_csv =_write_csv(
+    file_name="db_waste.csv",
+    headers=["Namespace", "Wastage Info"],
+    data=resource_wastage['db_waste']
+    )
+
+    s3 = boto3.resource('s3')
+    s3.Bucket('coat-reports-development').upload_file(db_csv, f'rds_waste_reports/{db_csv}')
 
 
 if __name__ == "__main__":
