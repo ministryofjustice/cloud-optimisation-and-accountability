@@ -2,7 +2,7 @@ import base64
 import re
 import os
 import boto3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import logging
 import csv
