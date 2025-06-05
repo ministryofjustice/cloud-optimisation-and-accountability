@@ -1018,7 +1018,7 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "select distinct resource_tags['user_business_unit'] from $__table where and billing_period  in ($period)",
+          "rawSQL": "select distinct resource_tags['user_business_unit'] from $__table where billing_period  in ($period)",
           "table": "data"
         },
         "refresh": 1,
@@ -1198,6 +1198,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 50,
+  "version": 51,
   "weekStart": ""
 }
