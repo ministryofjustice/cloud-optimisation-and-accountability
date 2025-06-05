@@ -3,6 +3,10 @@ name: ♻️ Detect CP Resource Wastage
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   detect-cp-nonprod-resource-wastage:
     runs-on: ubuntu-latest
