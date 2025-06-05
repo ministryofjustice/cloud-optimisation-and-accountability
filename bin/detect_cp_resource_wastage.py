@@ -2,6 +2,7 @@ import base64
 import re
 import os
 import boto3
+from datetime import datetime, timedelta
 import time
 import logging
 import csv
@@ -88,7 +89,7 @@ def _process_namespace(ns: str, github_service: GithubService) -> Dict[str, Opti
     return result
 
 
-def detect_cp_resource_wastage():
+def detect_cp_resource_wastage(run_manually: bool = False) -> None:
 
     github_token = _get_environment_variables()
     github_service = GithubService(github_token, MINISTRY_OF_JUSTICE, ENTERPRISE)
@@ -111,26 +112,33 @@ def detect_cp_resource_wastage():
                 resource_wastage['pod_waste'].append(result['pod_waste'])
                 logger.info("Pod wastage detected: %s", result['pod_waste'])
 
-    '''SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
-        db_wastage_ns=resource_wastage['db_waste'],
-        pod_wastage_ns=resource_wastage['pod_waste']
-    )'''
+    if run_manually:
+        logger.info("Manual run detected – sending Slack alert.")
+        SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
+            db_wastage_ns=resource_wastage['db_waste'],
+            pod_wastage_ns=resource_wastage['pod_waste']
+        )
+    else:
+        report_date = datetime.now(timezone.utc).date() - timedelta(days=1)
+        report_date_str = report_date.isoformat()
 
-    pod_csv = _write_csv(
-    file_name="pod_waste.csv",
-    headers=["Namespace", "Wastage Info"],
-    data=resource_wastage['pod_waste']
-    )
+        pod_csv = _write_csv(
+            file_name=report_date_str,
+            headers=["Namespace"],
+            data=resource_wastage['pod_waste']
+            )
 
-    db_csv =_write_csv(
-    file_name="db_waste.csv",
-    headers=["Namespace", "Wastage Info"],
-    data=resource_wastage['db_waste']
-    )
+        db_csv = _write_csv(
+            file_name=report_date_str,
+            headers=["Namespace"],
+            data=resource_wastage['db_waste']
+            )
 
-    s3 = boto3.resource('s3')
-    s3.Bucket('coat-reports-development').upload_file(db_csv, f'rds_waste_reports/{db_csv}')
+        s3 = boto3.resource('s3')
+        s3.Bucket('coat-reports-development').upload_file(db_csv, f'rds_waste_reports/{db_csv}')
+        s3.Bucket('coat-reports-development').upload_file(db_csv, f'pod_waste_reports/{pod_csv}')
 
 
 if __name__ == "__main__":
-    detect_cp_resource_wastage()
+    run_manually_flag = os.getenv("RUN_MANUALLY", "false").lower() == "true"
+    detect_cp_resource_wastage(run_manually=run_manually_flag)
