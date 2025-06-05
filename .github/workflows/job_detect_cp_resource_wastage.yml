@@ -2,6 +2,8 @@ name: ♻️ Detect CP Resource Wastage
 
 on:
   workflow_dispatch:
+  schedule:
+  - cron: '0 0 1 * *'
 
 permissions:
   id-token: write
@@ -25,10 +27,17 @@ jobs:
         with:
           role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_REPORT_UPLOAD_ARN}}
           aws-region: eu-west-2
-      - run: pipenv run python3 -m bin.detect_cp_resource_wastage
+      - name: Run Python script with optional manual flag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            pipenv run python3 -m bin.detect_cp_resource_wastage --run_manually
+          else
+            pipenv run python3 -m bin.detect_cp_resource_wastage
+          fi
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
+          RUN_MANUALLY: ${{ github.event_name == 'workflow_dispatch' }}
       - name: Report failure to Slack
         if: always()
         uses: ravsamhq/notify-slack-action@472601e839b758e36c455b5d3e5e1a217d4807bd # 2.5.0
