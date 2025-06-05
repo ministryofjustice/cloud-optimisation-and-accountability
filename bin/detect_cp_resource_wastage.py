@@ -111,10 +111,10 @@ def detect_cp_resource_wastage():
                 resource_wastage['pod_waste'].append(result['pod_waste'])
                 logger.info("Pod wastage detected: %s", result['pod_waste'])
 
-    SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
+    '''SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_nonprod_resource_wastage_alerts(
         db_wastage_ns=resource_wastage['db_waste'],
         pod_wastage_ns=resource_wastage['pod_waste']
-    )
+    )'''
 
     pod_csv = _write_csv(
     file_name="pod_waste.csv",
