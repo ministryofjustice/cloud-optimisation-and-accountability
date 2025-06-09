@@ -2,6 +2,8 @@ name: 🔎 Find EBS Volume Owners
 
 on:
   workflow_dispatch:
+  schedule:
+  - cron: '11 * * * *'
 
 permissions:
   id-token: write
