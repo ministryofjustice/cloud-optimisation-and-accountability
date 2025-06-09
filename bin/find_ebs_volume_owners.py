@@ -2,7 +2,7 @@ import boto3
 import logging
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from services.slack_service import SlackService
 
 
@@ -98,8 +98,8 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
     ebs_recommendation_df = ebs_recommendation_df.rename(columns={"accountName": "aws_accountName", "accountId": "aws_accountId" })
     ebs_recommendation_df = ebs_recommendation_df.loc[ebs_recommendation_df["estimatedMonthlySavings"] >= monthly_savings_threshold]
     ebs_recommendation_df = ebs_recommendation_df.sort_values(by="estimatedMonthlySavings", ascending=False).reset_index(drop=True)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"ebs_recomendations_{timestamp}.csv"
+    report_date = datetime.now(timezone.utc).date() - timedelta(days=1)
+    filename = f"{report_date}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
     logger.info("DataFrame dumped to %s", filename)
 
