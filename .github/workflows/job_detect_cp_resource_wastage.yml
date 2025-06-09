@@ -3,7 +3,7 @@ name: ♻️ Detect CP Resource Wastage
 on:
   workflow_dispatch:
   schedule:
-  - cron: '11 * * * *'
+  - cron: '0 0 1 * *'
 
 permissions:
   id-token: write
