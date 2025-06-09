@@ -111,7 +111,7 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
             filename=filename
         )
 
+
 if __name__ == "__main__":
-    if __name__ == "__main__":
     run_manually_flag = os.getenv("RUN_MANUALLY", "false").lower() == "true"
     find_ebs_volumes_owners(run_manually=run_manually_flag)
