@@ -2,7 +2,7 @@ import boto3
 import logging
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from services.slack_service import SlackService
 
 
@@ -35,7 +35,7 @@ def _get_account_ou(account_id):
         return "Root"
 
 
-def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
+def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshold: float=10.0):
     client_cost_opt = boto3.client("cost-optimization-hub", region_name="us-east-1")
     paginator = client_cost_opt.get_paginator("list_recommendations")
 
@@ -96,18 +96,22 @@ def find_ebs_volumes_owners(montly_savings_threshold: float=10.0):
 
     ebs_recommendation_df = ebs_recommendation_df.merge(moj_accounts_df[["accountId","accountName", "aws_OU"]], on="accountId", how="left")
     ebs_recommendation_df = ebs_recommendation_df.rename(columns={"accountName": "aws_accountName", "accountId": "aws_accountId" })
-    ebs_recommendation_df = ebs_recommendation_df.loc[ebs_recommendation_df["estimatedMonthlySavings"] >= montly_savings_threshold]
+    ebs_recommendation_df = ebs_recommendation_df.loc[ebs_recommendation_df["estimatedMonthlySavings"] >= monthly_savings_threshold]
     ebs_recommendation_df = ebs_recommendation_df.sort_values(by="estimatedMonthlySavings", ascending=False).reset_index(drop=True)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"ebs_recomendations_{timestamp}.csv"
+    report_date = datetime.now(timezone.utc).date() - timedelta(days=1)
+    filename = f"{report_date}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
     logger.info("DataFrame dumped to %s", filename)
 
-    SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
-        file_path=filename,
-        message="EBS volume recommendations",
-        filename=filename
-    )
+    if run_manually:
+        logger.info("Manual run detected sending Slack alert.")
+        SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
+            file_path=filename,
+            message="EBS volume recommendations",
+            filename=filename
+        )
 
 if __name__ == "__main__":
-    find_ebs_volumes_owners()
+    if __name__ == "__main__":
+    run_manually_flag = os.getenv("RUN_MANUALLY", "false").lower() == "true"
+    find_ebs_volumes_owners(run_manually=run_manually_flag)
