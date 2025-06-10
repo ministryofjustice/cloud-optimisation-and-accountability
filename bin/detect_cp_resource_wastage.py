@@ -133,10 +133,10 @@ def detect_cp_resource_wastage(run_manually: bool = False) -> None:
             headers=["Namespace"],
             data=resource_wastage['db_waste']
             )
-
+        bucket_name = os.environ['S3_BUCKET_NAME']
         s3 = boto3.resource('s3')
-        s3.Bucket('coat-reports-development').upload_file(db_csv, f'rds_waste_reports/{db_csv}')
-        s3.Bucket('coat-reports-development').upload_file(db_csv, f'pod_waste_reports/{pod_csv}')
+        s3.Bucket(bucket_name).upload_file(db_csv, f'rds_waste_reports/{db_csv}')
+        s3.Bucket(bucket_name).upload_file(db_csv, f'pod_waste_reports/{pod_csv}')
 
 
 if __name__ == "__main__":
