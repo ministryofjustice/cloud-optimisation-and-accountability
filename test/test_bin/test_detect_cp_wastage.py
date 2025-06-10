@@ -85,9 +85,12 @@ class TestDetectResourceWastage:
             {"db_waste": None, "pod_waste": "test_pod_05_staging"},
             {"db_waste": None, "pod_waste": None}
         ]
+        mock_bucket_name = mocker.patch("os.environ")
+        mock_bucket_name.return_value = "test-bucket-name"
         mock_s3 = mocker.patch("bin.detect_cp_resource_wastage.boto3.resource")
         mock_bucket = mock_s3.return_value.Bucket.return_value
         mock_bucket.upload_file.return_value = None
+
 
         detect_cp_resource_wastage(run_manually=False)
 
