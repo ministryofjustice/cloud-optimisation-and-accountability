@@ -19,7 +19,7 @@ def _extract_tag_value(tags_list, key):
     return None
 
 
-def _get_account_ou(account_id):
+def _get_account_organisational_unit(account_id):
     client_orgs = boto3.client("organizations", region_name="eu-west-2")
     response = client_orgs.list_parents(
             ChildId=account_id)
@@ -53,11 +53,11 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
         items = page.get("items", [])
         all_recommendations.extend(items)
 
-
     ebs_recommendation_df = pd.DataFrame(all_recommendations)
 
     if ebs_recommendation_df.empty:
         logger.info("No recommendations found.")
+        return
     else:
         logger.info("Recommendations found: %s", len(ebs_recommendation_df))
         ebs_recommendation_df["owner"] = ebs_recommendation_df["tags"].apply(lambda tags: _extract_tag_value(tags, "owner"))
@@ -79,7 +79,8 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
 
     moj_accounts_df = pd.DataFrame(all_moj_accounts)
     if moj_accounts_df.empty:
-        logger.info("No accounts found.")
+        logger.info("No accounts found in the organization.")
+        return
     else:
         logger.info("Accounts found: %s", len(moj_accounts_df))
         moj_accounts_df = moj_accounts_df[["Id", "Name"]]
@@ -87,7 +88,7 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
 
         ous = []
         for account_id in account_ids:
-            ou_name = _get_account_ou(account_id)
+            ou_name = _get_account_organisational_unit(account_id)
             logger.info("Parrent aws account found for: %s", account_id)
             ous.append(ou_name)
 
