@@ -19,7 +19,7 @@ def _extract_tag_value(tags_list, key):
     return None
 
 
-def _get_account_ou(account_id):
+def _get_account_organisational_unit(account_id):
     client_orgs = boto3.client("organizations", region_name="eu-west-2")
     response = client_orgs.list_parents(
             ChildId=account_id)
@@ -88,7 +88,7 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
 
         ous = []
         for account_id in account_ids:
-            ou_name = _get_account_ou(account_id)
+            ou_name = _get_account_organisational_unit(account_id)
             logger.info("Parrent aws account found for: %s", account_id)
             ous.append(ou_name)
 

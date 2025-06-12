@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 from datetime import datetime, timezone, timedelta
-from bin.find_ebs_volume_owners import _extract_tag_value, _get_account_ou, find_ebs_volumes_owners
+from bin.find_ebs_volume_owners import _extract_tag_value, _get_account_organisational_unit, find_ebs_volumes_owners
 
 
 class TestFindEbsVolumeOwners:
@@ -13,7 +13,7 @@ class TestFindEbsVolumeOwners:
         assert _extract_tag_value(tags, "business-unit") == "test_unit"
         assert _extract_tag_value(tags, "non-existent") is None
 
-    def test_get_account_ou_organizational_unit(self, mocker):
+    def test_get_account_get_organisational_unit(self, mocker):
         mock_client = mocker.patch("boto3.client")
         mock_orgs = mock_client.return_value
         mock_orgs.list_parents.return_value = {
@@ -22,16 +22,16 @@ class TestFindEbsVolumeOwners:
         mock_orgs.describe_organizational_unit.return_value = {
             'OrganizationalUnit': {'Name': 'TestOU'}
         }
-        ou_name = _get_account_ou("123456789012")
+        ou_name = _get_account_organisational_unit("123456789012")
         assert ou_name == "TestOU"
 
-    def test_get_account_ou_non_organizational_unit(self, mocker):
+    def test_get_account_get_organisational_unit_root(self, mocker):
         mock_client = mocker.patch("boto3.client")
         mock_orgs = mock_client.return_value
         mock_orgs.list_parents.return_value = {
             'Parents': [{'Id': 'r-12345678', 'Type': 'ROOT'}]
         }
-        ou_name = _get_account_ou("123456789012")
+        ou_name = _get_account_organisational_unit("123456789012")
         assert ou_name == "Root"
 
     def test_find_ebs_volumes_owners_no_recommendations(self, mocker):
@@ -121,7 +121,7 @@ class TestFindEbsVolumeOwners:
             'Accounts': [{'Id': '123456789101', 'Name': 'test_account'}]
         }]
         mock_get_account_ou = mocker.patch(
-            "bin.find_ebs_volume_owners._get_account_ou")
+            "bin.find_ebs_volume_owners._get_account_organisational_unit")
         mock_get_account_ou.return_value = "TestOU"
 
         mock_logger = mocker.patch("bin.find_ebs_volume_owners.logger")
@@ -179,7 +179,7 @@ class TestFindEbsVolumeOwners:
             'Accounts': [{'Id': '123456789101', 'Name': 'test_account'}]
         }]
         mock_get_account_ou = mocker.patch(
-            "bin.find_ebs_volume_owners._get_account_ou")
+            "bin.find_ebs_volume_owners._get_account_organisational_unit")
         mock_get_account_ou.return_value = "TestOU"
         mock_logger = mocker.patch("bin.find_ebs_volume_owners.logger")
         mock_slack_cls = mocker.patch("bin.find_ebs_volume_owners.SlackService")
