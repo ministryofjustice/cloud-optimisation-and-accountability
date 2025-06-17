@@ -1,12 +1,33 @@
-# References to previewing locally
-http://127.0.0.1:4567
-http://localhost:4567
-
-# Links from README
-https://ministryofjustice.github.io/template-documentation-site/legacy-tdt-documentation
-https://github-community.service.justice.gov.uk/repository-standards/template-documentation-site
-
-# Links from source/legacy-tdt-documentation
-https://www.larry-the-cat.service.gov.uk
-http://www.htaccesstools.com/htpasswd-generator
-https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml
+<https://127.0.0.1:4001>
+<http://localhost:4567>
+<https://github.com/ministryofjustice/%7BPROJECT_NAME%7D/settings/keys>
+<https://manage.auth0.com/>
+<https://moj-digital-tools.pagerduty.com/>
+<https://github.com/ministryofjustice/dns>
+<https://github.com/ministryofjustice/moj-ip-addresses>
+<https://github.com/ministryofjustice/mta-sts>
+<https://api.github.com/repos/ministryofjustice/github-collaborators/git/refs/heads/made-tech-ima-team>
+<https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#REPO-NAME>
+<https://img.shields.io/>*
+<https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/api/v1/compliant_public_repositories/endpoint/operations-engineering>
+<https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/REPO-NAME>
+<https://github.com/ministryofjustice/operations-engineering-runbooks/issues/>*
+<https://drive.google.com/>*
+<https://docs.google.com/>*
+<https://github.com/ministryofjustice/data-platform-support/issues/new/choose>
+<https://calendar.google.com/>*
+<https://github.com/organizations/ministryofjustice/settings/personal-access-token-requests>
+<https://github.com/organizations/moj-analytical-services/settings/personal-access-token-requests>
+<https://github.com/ministryofjustice/operations-engineering-reports>
+<https://github.com/settings/keys>
+<https://github.com/ministryofjustice/github-collaborators/pulls>
+<https://github.com/organizations/ministryofjustice/settings/installations/16911235>
+<https://github.com/ministryofjustice/operations-engineering/actions/workflows/dormant-users-remove-users.yml>
+<https://github.com/ministryofjustice/yjaf-infra-aws-mgmt/blob/main/env_configs/yjaf-mgmt-users.tfvars>
+<https://github.com/ministryofjustice/yjaf-infra-aws-mgmt>
+<https://github.com/ministryofjustice/yjaf-infra-aws-mgmt/blob/main/user-groups/users.tf>
+<https://hub.docker.com/orgs/ministryofjustice/members>
+<https://intranet.justice.gov.uk/documents/>*
+<https://intranet.justice.gov.uk/guidance/>*
+<https://justiceuk.sharepoint.com/sites/>*
+<https://app.docker.com/admin/orgs/ministryofjustice/members>
