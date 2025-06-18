@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 from bin.find_ebs_volume_owners import _extract_tag_value, _get_account_organisational_unit, find_ebs_volumes_owners
-
+from unittest.mock import call
 
 class TestFindEbsVolumeOwners:
 
@@ -144,10 +144,18 @@ class TestFindEbsVolumeOwners:
         mock_logger.info.assert_any_call("Accounts found: %s", 1)
         mock_get_account_ou.assert_called_once_with("123456789101")
         mock_logger.info.assert_any_call("Manual run detected sending Slack alert.")
-        mock_slack.send_report_with_message.assert_called_once_with(
-            file_path='2025-05-31.csv',
-            message="EBS volume recommendations",
-            filename='2025-05-31.csv')
+        mock_slack.send_report_with_message.assert_has_calls([
+            call(
+                file_path='2025-05-31.csv',
+                message="EBS volume recommendations",
+                filename='2025-05-31.csv'
+            ),
+            call(
+                file_path='aggregated_2025-05-31.csv',
+                message="Aggregated EBS volume recommendations",
+                filename='aggregated_2025-05-31.csv'
+            )
+        ])
 
     def test_find_ebs_volumes_owners_recommendations_scheduled_run(self, mocker):
         mock_boto3_client = mocker.patch("boto3.client")
