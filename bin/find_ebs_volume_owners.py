@@ -108,7 +108,7 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
     )
     agg_df['total_estimatedMonthlyCost'] = agg_df['total_estimatedMonthlyCost'].round(2)
     agg_df['total_estimatedMonthlySavings'] = agg_df['total_estimatedMonthlySavings'].round(2)
-   
+
     report_date = datetime.now(timezone.utc).date() - timedelta(days=1)
     filename = f"{report_date}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
@@ -123,6 +123,11 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
             file_path=filename,
             message="EBS volume recommendations",
             filename=filename
+        )
+        SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
+            file_path=agg_filename,
+            message="Aggregated EBS volume recommendations",
+            filename=agg_filename
         )
 
 
