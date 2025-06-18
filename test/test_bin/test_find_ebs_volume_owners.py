@@ -199,4 +199,6 @@ class TestFindEbsVolumeOwners:
         mock_orgs.get_paginator.assert_called_once_with("list_accounts")
         mock_logger.info.assert_any_call("Accounts found: %s", 1)
         mock_get_account_ou.assert_called_once_with("123456789101")
+        mock_logger.info.assert_any_call("Aggregated DataFrame dumped to %s", "aggregated_2025-05-31.csv")
+        mock_logger.info.assert_any_call("DataFrame dumped to %s", "2025-05-31.csv")
         mock_slack.send_report_with_message.assert_not_called()
