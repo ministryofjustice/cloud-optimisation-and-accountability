@@ -5,13 +5,14 @@ IMAGE := ghcr.io/ministryofjustice/tech-docs-github-pages-publisher@sha256:30d00
 
 review-docs:
 	python3 -m bin.document_review_checker
-	
+
 preview:
-	docker run --rm \
-		-v $$(pwd)/config:/app/config \
-		-v $$(pwd)/source:/app/source \
-		-p 4567:4567 \
-		-it $(IMAGE) /scripts/preview.sh
+	docker run -it --rm \
+	    --name tech-docs-github-pages-publisher-preview \
+	    --volume $(PWD)/config:/tech-docs-github-pages-publisher/config \
+		--volume $(PWD)/source:/tech-docs-github-pages-publisher/source \
+		--publish 4567:4567 \
+		$(IMAGE)/usr/local/bin/preview
 
 deploy:
 	docker run --rm \
