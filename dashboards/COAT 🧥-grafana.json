@@ -743,7 +743,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -835,7 +836,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -927,7 +929,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1239,6 +1242,42 @@
         "skipUrlSync": false,
         "sort": 6,
         "type": "query"
+      },
+      {
+        "allValue": "'_ALL_'",
+        "current": {
+          "selected": false,
+          "text": "correspondence",
+          "value": "correspondence"
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "femjm2hiylji8a"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Owner",
+        "multi": true,
+        "name": "owner",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "SELECT DISTINCT resource_tags['user_owner'] FROM $__table where\n \t(resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_') and billing_period  in ($period)",
+          "table": "data"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
       }
     ]
   },
@@ -1252,6 +1291,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 68,
+  "version": 69,
   "weekStart": ""
 }
