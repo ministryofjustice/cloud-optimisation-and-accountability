@@ -1,0 +1,32 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Operations Engineering
+last_reviewed_on: 2025-06-25
+review_in: 6 months
+---
+
+# Operations Engineering
+
+## Introduction
+
+The Operations Engineering team focuses on purchasing, constructing, and maintaining a variety of tools that aid in the development and management of software on a large scale.
+
+Although our primary platform for development and hosting is the [Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/), the tools and standards we develop will be accessible and applicable across a variety of platforms and hosting environments throughout the organisation.
+
+Please note that there are certain services that we do not offer. For details on these services, kindly refer to [this documentation](documentation/information/we-dont-do-that.html).
+
+## Audience
+
+This guide is designed for developers, power users, and all team members at the Ministry of Justice, offering insight into the range of services provided by Operations Engineering.
+
+## Contents
+
+### Quick Links
+
+* [How to contact Operations Engineering](quicklinks/contact.html)
+* [Not Supported by Operations Engineering](quicklinks/we-dont-do-that.html)
+* [Operations Engineering Break Glass Process For Emergency Access](quicklinks/break-glass-process.html)
+
+### Organisational Fit
+
+Operations Engineering falls under the Hosting Service within the Platforms and Architecture sector at the Ministry of Justice.
