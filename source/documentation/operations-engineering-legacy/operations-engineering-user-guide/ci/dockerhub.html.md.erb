@@ -1,0 +1,47 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: DockerHub and Docker Desktop Usage Guidelines
+last_reviewed_on: 2025-06-26
+review_in: 6 months
+---
+
+# Docker
+
+## Docker Business Subscription
+
+The Ministry of Justice have a Business Subcription with Docker which is centrally managed and paid for via the 
+Operations Engineering Team within Platfoms and Architecure.
+
+The purpose of this is to firstly enable teams to easily publish, share and store images to faciliate modern CI/CD pipelines
+using containered applications with DockeHub. Secondly to enhance local development workflows when working with containerised
+applications with Docker Desktop.
+
+### Quota
+
+> The Ministry of Justices' Docker Business Subscription reserves the following usage quotas:
+>
+> - 400 Seats/Licences
+>
+
+Teams are resonsible for managing any application level quotas such as Image Pull Rate Limit for Authenticated Users. More details 
+of quotas for Docker Business can be found on the [Docker Pricing Page](https://www.docker.com/pricing/).
+
+### Services
+
+> The Ministry of Justices' Docker Business Subscription enables access to the following services:
+>
+> - [Ministry of Justice UK DockerHub Organisation](https://hub.docker.com/u/ministryofjustice)
+> - [Docker Desktop](https://www.docker.com/products/docker-desktop/) ⚠️ **Docker Desktop Legally Requires a Licence to be Used For MoJ Tasks** - please ensure you have signed into Docker Desktop with an account that has an MoJ licence 
+
+## User Access
+
+Users signing up to DockerHub with an `@justice.gov.uk` will be automatically re-directed to an SSO flow for HMCTS and will not be able to create an acccount in Docker
+with this email directly, unless your email is registered with the HMCTS Identity Provider.
+
+If you require access to the [Ministry of Justice UK DockerHub Organisation](https://hub.docker.com/u/ministryofjustice) you can request access via the #ask-operations-engineering Slack channel. Please include your Docker username in the request.
+
+If you do not have an existing Docker username you can [sign-up](https://app.docker.com/signup?) an account in the first instance.
+
+## Support and Troubleshooting
+
+- If you have any issues, please reach out to #ask-operations-engineering on Slack.
