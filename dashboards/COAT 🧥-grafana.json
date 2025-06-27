@@ -306,7 +306,7 @@
           "table": "data"
         }
       ],
-      "title": "Cost",
+      "title": "Cost in USD",
       "transparent": true,
       "type": "stat"
     },
@@ -1366,6 +1366,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 74,
+  "version": 75,
   "weekStart": ""
 }
