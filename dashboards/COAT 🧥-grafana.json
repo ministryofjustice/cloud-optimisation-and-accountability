@@ -247,6 +247,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "decimals": 2,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -257,7 +258,7 @@
               }
             ]
           },
-          "unit": "currencyUSD"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -281,6 +282,7 @@
           "values": false
         },
         "showPercentChange": false,
+        "text": {},
         "textMode": "value",
         "wideLayout": true
       },
@@ -299,7 +301,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 0,
-          "rawSQL": "select \n  line_item_usage_start_date,\n  round(sum(line_item_unblended_cost)) as cost from $__table \nWHERE (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\nand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\nand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\nand (resource_tags['user_namespace']  in ($namespace) OR concat($namespace ,'') = '_ALL_')\nand (resource_tags['user_service_area']  in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\nand (line_item_line_item_type not in ('Tax'))\nand billing_period  in ($period)\ngroup by 1\norder by 1\n\n",
+          "rawSQL": "select \n  line_item_usage_start_date,\n  round(sum(line_item_unblended_cost), 2) as cost from $__table \nWHERE (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\nand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\nand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\nand (resource_tags['user_namespace']  in ($namespace) OR concat($namespace ,'') = '_ALL_')\nand (resource_tags['user_service_area']  in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\nand (line_item_line_item_type not in ('Tax'))\nand billing_period  in ($period)\ngroup by 1\norder by 1\n\n",
           "refId": "A",
           "table": "data"
         }
@@ -1364,6 +1366,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 73,
+  "version": 74,
   "weekStart": ""
 }
