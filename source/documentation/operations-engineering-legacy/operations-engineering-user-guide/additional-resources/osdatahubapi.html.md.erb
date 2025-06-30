@@ -1,0 +1,64 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: OS Data Hub
+last_reviewed_on: 2025-03-03
+review_in: 6 months
+---
+
+# OS Data Hub
+
+## Overview
+
+The Ministry of Justice uses [OS Data Hub](https://osdatahub.os.uk/) for a number of address and map API tools.
+
+Here are the APIs that are available:
+
+* [OS Places API](https://osdatahub.os.uk/docs/places/overview)
+* [OS Linked Identifiers API](https://osdatahub.os.uk/docs/linkedIdentifiers/overview)
+* [OS Names API](https://osdatahub.os.uk/docs/names/overview)
+* [OS Vector Tile API](https://osdatahub.os.uk/docs/vts/overview)
+* [OS Features API](https://osdatahub.os.uk/docs/wfs/overview)
+* [OS Maps API](https://osdatahub.os.uk/docs/wmts/overview)
+* [OS NGD API – Features](https://osdatahub.os.uk/docs/ofa/overview)
+* [OS NGD API – Tiles](https://osdatahub.os.uk/docs/ota/overview)
+* [OS Downloads API](https://osdatahub.os.uk/docs/downloads/overview)
+
+We provide access to the OS Datahub so that Teams can create and manage their API keys.
+
+## Requesting access to OS Datahub
+
+Self [sign-up up to the Public Sector Plan](https://osdatahub.os.uk/plans). Cick on the "Sign-up Now" button and enter a work email address.
+
+## Creating a Team Space to manage your API keys
+
+After you have signed up to OS Datahub you should submit a request for a Team Space, or ask to be added to an existing Team Space. Contact #ask-operations-engineering slack channel or [operations-engineering@digital.justice.gov.uk](mailto:operations-engineering@digital.justice.gov.uk) with team name details. We recommend that Team Space names are in the format `<business-unit> <application>` e.g. `LAA CCMS`.
+
+## Creating API Keys
+
+You will be able to create you own API keys follow [OS Datahub documentation](https://osdatahub.os.uk/).
+
+We recommend the following when creating keys:
+- API keys have the naming convention `<business-unit> <application> <environment>` e.g. `LAA CCMS Development`
+- API key per environment i.e. dev, staging and prod
+
+When you have created your API key add it to your Team Space to ensure that access is limited to your Team. Any keys that are not managed within a Team Space can be seen by other users in the account.
+
+## Cost of OS Places API
+
+There is no cost to service teams for use of the service. The MoJ is part of the [Public Sector Geospacial Agreement](https://www.ordnancesurvey.co.uk/business-government/public-sector-geospatial-agreement) which makes the service free to Public Sector organisations.
+
+## Revoking Keys
+
+If an API key is no longer required you can delete a key via your Team Space.
+
+## What if my key gets exposed?
+
+OS Data Hub API keys should be treated like any secret/credential. If exposed you can recycle your key via your Team Space.
+
+Whilst the API provides data that is already in the public domain, there is the potential for financial risk to the Ministry of Justice should a key be misused.
+
+## Further Support
+
+Full documentation for the APIs can be found [here](https://osdatahub.os.uk/docs).
+
+If further support from Ordnance Survey is needed please contact #ask-operations-engineering slack channel or [operations-engineering@digital.justice.gov.uk](mailto:operations-engineering@digital.justice.gov.uk), with details for required support, in the first instance so that a ticket can be raised.
