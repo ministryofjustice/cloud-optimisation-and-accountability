@@ -1,5 +1,7 @@
+*.csv
 .env
 .terraform/
+data/
 coverage/
 venv/
 env/
