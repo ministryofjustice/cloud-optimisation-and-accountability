@@ -99,10 +99,23 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
     ebs_recommendation_df = ebs_recommendation_df.rename(columns={"accountName": "aws_accountName", "accountId": "aws_accountId" })
     ebs_recommendation_df = ebs_recommendation_df.loc[ebs_recommendation_df["estimatedMonthlySavings"] >= monthly_savings_threshold]
     ebs_recommendation_df = ebs_recommendation_df.sort_values(by="estimatedMonthlySavings", ascending=False).reset_index(drop=True)
+    
+    # Aggregate by aws_OU and aws_accountName
+    agg_df = ebs_recommendation_df.groupby(['aws_OU', 'aws_accountName'], as_index=False).agg(
+        total_estimatedMonthlyCost=pd.NamedAgg(column='estimatedMonthlyCost', aggfunc='sum'),
+        total_estimatedMonthlySavings=pd.NamedAgg(column='estimatedMonthlySavings', aggfunc='sum'),
+        ebs_volume_count=pd.NamedAgg(column='recommendationId', aggfunc='count')
+    )
+    agg_df['total_estimatedMonthlyCost'] = agg_df['total_estimatedMonthlyCost'].round(2)
+    agg_df['total_estimatedMonthlySavings'] = agg_df['total_estimatedMonthlySavings'].round(2)
+
     report_date = datetime.now(timezone.utc).date() - timedelta(days=1)
     filename = f"{report_date}.csv"
     ebs_recommendation_df.to_csv(filename, index=False)
     logger.info("DataFrame dumped to %s", filename)
+    agg_filename = f"aggregated_{report_date}.csv"
+    agg_df.to_csv(agg_filename, index=False)
+    logger.info("Aggregated DataFrame dumped to %s", agg_filename)
 
     if run_manually:
         logger.info("Manual run detected sending Slack alert.")
@@ -110,6 +123,11 @@ def find_ebs_volumes_owners(run_manually: bool = False, monthly_savings_threshol
             file_path=filename,
             message="EBS volume recommendations",
             filename=filename
+        )
+        SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
+            file_path=agg_filename,
+            message="Aggregated EBS volume recommendations",
+            filename=agg_filename
         )
 
 
