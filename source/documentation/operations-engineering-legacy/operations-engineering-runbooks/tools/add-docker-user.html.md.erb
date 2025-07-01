@@ -1,0 +1,42 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Add Docker User (Manual Process)
+last_reviewed_on: 2025-07-01
+review_in: 6 months
+---
+
+# Add Docker User (Manual Process)
+
+> Docker Hub does currently have SSO setup at a PoC level, this document is mainly for backup process.
+
+## Manually adding a user to the Ministry of Justice Docker Organization
+
+[Docker](https://www.docker.com) is a MoJ's product of choice for implementation of container images
+
+Users require a license to user Docker due to a change in Docker's licence model.
+
+## Pre-requisites
+
+You must have Docker organization `Owner` permissions.
+
+The request must include the users Docker Username i.e. they must have created a Docker account in advance of requesting to be added to the MoJ subscription.
+
+## Adding a User to the MoJ Docker Organization
+
+1. Login into [Docker](https://www.docker.com).
+
+2. Go to [Admin Console](https://app.docker.com/admin/orgs/ministryofjustice/members)
+
+3. Click "Invite" button
+
+4. Select "Emails or username"
+
+5. Add users Docker Username
+
+6. In the "Select a role" field choose `Member`
+
+7. In the @Select a team.." field choose `pushers`
+
+8. Click "Invite" button to issue the invite and exit
+
+9. Notify the user that an invite has been sent
