@@ -2,6 +2,8 @@ name: 🔎 Find EBS Volume Owners
 
 on:
   workflow_dispatch:
+  schedule:
+  - cron: '0 0 1 * *'
 
 permissions:
   id-token: write
@@ -21,13 +23,26 @@ jobs:
           pip install pipenv
           pipenv install
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@486457dc46e82b9a740ca0ef1dac6a38a3fc272d # v4.0.2
+        uses: aws-actions/configure-aws-credentials@3d8cba388a057b13744d61818a337e40a119b1a7 # v4.0.2
         with:
           role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_READONLY_ARN}}
           aws-region: eu-west-2
-      - run: pipenv run python3 -m bin.find_ebs_volume_owners
+      - name: Run Python script with optional manual flag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            pipenv run python3 -m bin.find_ebs_volume_owners --run_manually
+          else
+            pipenv run python3 -m bin.find_ebs_volume_owners
+            fi
         env:
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
+          RUN_MANUALLY: ${{ github.event_name == 'workflow_dispatch' }}
+      - name: Upload report artifact if scheduled run
+        if: github.event_name == 'schedule'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ebs-report
+          path: '*.csv'
       - name: Report failure to Slack
         if: always()
         uses: ravsamhq/notify-slack-action@472601e839b758e36c455b5d3e5e1a217d4807bd # 2.5.0
@@ -37,3 +52,25 @@ jobs:
           notification_title: "Failed to run CP resource wastage job"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  upload-ebs-owners-report:
+    if: github.event_name == 'schedule'
+    needs: generate-csv-ebs-owners-optimizer-recommendations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ebs-report
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@3d8cba388a057b13744d61818a337e40a119b1a7 # v4.0.2
+        with:
+          role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_REPORT_UPLOAD_ARN}}
+          aws-region: eu-west-2
+      - name: Upload all CSV files to S3
+        run: |
+          for filename in *.csv; do
+            echo "Uploading $filename to S3"
+            aws s3 cp "$filename" "s3://${{ secrets.S3_REPORT_BUCKET }}/ebs_waste_reports/$filename"
+          done
+     
