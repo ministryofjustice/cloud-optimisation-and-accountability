@@ -1,0 +1,24 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Register new justice.gov.uk or service.justice.gov.uk subdomain
+last_reviewed_on: 2025-06-30
+review_in: 6 months
+---
+
+# Register new `justice.gov.uk` or `service.justice.gov.uk` subdomain
+
+The purpose of this runbook is for the registration of `justice.gov.uk` or `service.justice.gov.uk` subdomains.
+
+However, we don't actually register these subdomains as we already have delegated management of those subdomains. This is actually creation of new subdomains in the existing Hostedzones i.e. creating a DNS record.
+
+## Pre-requisites
+
+- New requests for subdomains must meet the [MoJ domain naming standard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/operations-engineering-legacy/operations-engineering-user-guide/dns/domain-naming-standard.html).
+
+- Requests where delegation is involved must adhere to our rules around [delegation](https://runbooks.operations-engineering.service.justice.gov.uk/documentation/dns/domain-delegation.html).
+
+## Create subdomain
+
+This process follows the standard process for adding DNS records via [DNS](https://github.com/ministryofjustice/dns).
+
+Inform requester when changes have been completed.
