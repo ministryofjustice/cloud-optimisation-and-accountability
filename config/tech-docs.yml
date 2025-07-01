@@ -1,0 +1,19 @@
+---
+# https://github.com/alphagov/tech-docs-gem/blob/main/example/config/tech-docs.yml
+
+host: https://cloud-optimisation-and-accountability.justice.gov.uk
+show_govuk_logo: false
+service_name: Cloud Optimisation and Accountability
+service_link: /
+header_links: 
+  GitHub: https://github.com/ministryofjustice/cloud-optimisation-and-accountability
+enable_search: true
+collapsible_nav: false
+max_toc_heading_level: 3
+prevent_indexing: true
+show_contribution_banner: true
+github_repo: ministryofjustice/cloud-optimisation-and-accountability
+github_branch: main
+full_service_name: Cloud Optimisation and Accountability
+show_expiry: true
+show_review_banner: true
