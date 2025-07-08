@@ -1,6 +1,6 @@
 ---
 name: 🎫 Ticket Template
-description: 🤝 Team agreed standard template for creating tickets
+about: 🤝 Team agreed standard template for creating tickets
 ---
 
 ## 🧑‍💼 User Need
