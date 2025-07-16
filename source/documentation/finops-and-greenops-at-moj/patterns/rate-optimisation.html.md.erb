@@ -1,0 +1,28 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: What is Rate Optimisation?
+last_reviewed_on: 2025-07-16
+review_in: 6 months
+---
+
+# What is Rate Optimisation?
+
+**Rate optimization** is the practice of reducing cloud costs by lowering the **unit price** of the services you consume, without necessarily changing the amount of usage. Unlike usage optimization, which focuses on reducing how much you consume, rate optimization focuses on **paying less for the same usage**.
+
+This is often achieved by selecting the most cost-effective pricing models, commitment plans, and resource types. This are usually in the form of commercial offerings.
+
+It is important to remember that rate optimsiation is only part of the work to maximise the value of your cloud. It will reduce what you pay for a resource, but it won't reduce the amount of a resource you are using, and therefore doesn't address waste, over provisioning or enviornmental impact. A combination of rate and usage optimisation will maximise cloud efficiency.
+
+## Examples of rate optimisations
+
+- **[Savings Plans](https://aws.amazon.com/savingsplans/)** - Offers a rate reduction on compute resources in exchange for 1 or 3 years commitment. Ideal for predicatble long running workloads.
+- **[Reserved Instances](https://aws.amazon.com/aws-cost-management/aws-cost-optimization/reserved-instances/)** - Offers a rate reduction on other resources (e.g. RDS, Opensearch, Elasticache) in exchange for 1 or 3 years commitment. Ideal for predicatble long running workloads.
+- **[Spot Instances](https://aws.amazon.com/ec2/spot/)** - Buying unused EC2 (compute) capacity at up to 90% discount. Ideal for stateless or interruptible workloads.
+- **[Graviton Instances](https://aws.amazon.com/ec2/graviton/)** - ARM-based AWS Graviton processors offer better price/performance for many workloads, typically 20-40% cheaper for equivalent performance.
+- **[Region-Based Rates](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/cost_pricing_model_region_cost.html)** - Running workloads in lower-cost regions can yield significant savings.
+- **[Tiered Storage Rates](https://aws.amazon.com/s3/storage-classes/#topic-0)** - Move infrequently accessed data to cheaper storage classes.                  
+
+## Useful Links
+
+- [Rate Optimization](https://www.finops.org/framework/capabilities/rate-optimization/) by [FinOps Foundation](https://www.finops.org/)
+- [AWS Cost Optimization](https://docs.aws.amazon.com/whitepapers/latest/how-aws-pricing-works/aws-cost-optimization.html)
