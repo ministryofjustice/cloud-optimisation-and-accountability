@@ -41,7 +41,7 @@ jobs:
           S3_BUCKET_NAME: ${{ secrets.S3_REPORT_BUCKET }}
       - name: Report failure to Slack
         if: always()
-        uses: ravsamhq/notify-slack-action@9e7ca9833c15237f9cb93fbbccd38e37793e79f1 # 2.5.0
+        uses: ravsamhq/notify-slack-action@d1b6d18f2f197bd6b780e541ea47d06daaf47655 # 2.5.0
         with:
           status: ${{ job.status }}
           notify_when: "failure"
