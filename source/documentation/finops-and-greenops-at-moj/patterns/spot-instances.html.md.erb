@@ -1,0 +1,38 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Spot Instances
+last_reviewed_on: 2025-07-23
+review_in: 6 months
+---
+
+# Spot Instances
+
+## What Are Spot Instances?
+
+[Spot Instances](https://aws.amazon.com/ec2/spot/) let you use AWS's unused EC2 capacity at up to 90% discount compared to On-Demand prices. However, they can be interrupted with only 2 minutes' notice when AWS needs the capacity back.
+
+## When to use Spot Instances
+
+Spot Instances are best for **fault-tolerant, stateless, or parallelizable workloads**.
+
+- Batch Processing / Data Analysis - jobs can be checkpointed or restarted without data loss e.g. image rendering, video encoding, big data ETL, log processing
+
+- CI/CD workloads - build/test jobs can be restarted easily if interrupted e.g. code builds, test environments, packaging
+
+- Machine Learning (ML) Training - ML training jobs can often resume from checkpoints or be parallelized
+
+- Stateless Web Services in Auto Scaling Groups - You can mix Spot with On-Demand or Reserved Instances to save costs while maintaining availability e.g. backend services or APIs with horizontal scaling.
+
+## When not to use Spot Instances
+
+Avoid Spot Instances when you need:
+
+- guaranteed availability - e.g. customer-facing applications, databases, or critical services
+
+- stateful applications - applications that rely heavily on persistent storage or specific instance states may not be suitable, unless you have robust mechanisms for handling interruptions
+
+- low-latency requirements - i.e. spot interruptions might introduce unacceptable latency or recovery time
+
+## Reference
+
+- [Amazon EC2 Spot Instances User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html)
