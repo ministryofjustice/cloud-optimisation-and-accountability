@@ -1,7 +1,7 @@
 ---
 owner_slack: "#operations-engineering-alerts"
 title: Spot Instances
-last_reviewed_on: 2025-07-23
+last_reviewed_on: 2025-07-25
 review_in: 6 months
 ---
 
@@ -32,6 +32,10 @@ Avoid Spot Instances when you need:
 - stateful applications - applications that rely heavily on persistent storage or specific instance states may not be suitable, unless you have robust mechanisms for handling interruptions
 
 - low-latency requirements - i.e. spot interruptions might introduce unacceptable latency or recovery time
+
+## Best Practices
+
+[AWS Guidance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-best-practices.html) on best practices for using Spot Instances.
 
 ## Case Study
 
