@@ -19,3 +19,7 @@ terraform {
   required_version = "~> 1.10"
 }
 
+provider "github" {
+  token = var.github_token
+  owner = "ministryofjustice"
+}
