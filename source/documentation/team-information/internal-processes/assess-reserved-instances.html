@@ -33,6 +33,20 @@ This will generate a set of recommendations that can be assessed. There are a nu
 
 ### Assessment against defined criteria
 
+The strongest recommendations will meet a larger number if these criteria:
+
+1. Recommedation aligns to [Reserving Infrastucture Capacity](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/patterns/reserved-instances.html#reserving-infrastructure-capacity) guidance?
+
+2. Resource is not already covered by our AWS Compute Savings Plan i.e. also purchasing an RI would lead to over commitment, and therefore waste.
+
+3. Usage trends have been consistent for the last 6 to 12 months
+
+> NB: We may still consider resources with less usage history but it will be critical to understand future usage via engamenet with the resource owners. See Engagement
+
+4. Resources are for "production" services i.e. less likley to see signifcant change that may impact usage
+
+5. Estimated usage of RI close to 100% i.e. no waste
+
 ### Engagement
 
 The based on the data and our assessment criteria an RI recommedation may appear a good commitment. However, without engagement with the owner of those resources we may purchase a year long commitment for a resources that may be tuned off a week later. This is waste as we would be committed to pay for a resource that is not being used. This is why it is essential to discuss plans for the usage of these resources with the owners. 
@@ -57,13 +71,14 @@ When the decision is made to purchase an RI there are some constraints around wh
 - Reservation for one year only
 - No upfront cost (with the exception of DynamoDB which doesn't offer this and must be partical upfront cost).
 
-Purchasing is carried out via the relevant AWS console or via CLI. Here is the relevant AS guidance for each RI type:
+Purchasing is carried out via the relevant AWS console or via CLI. Here is the relevant AWS guidance for each RI type:
 
 - [RDS Reserved Instances](https://aws.amazon.com/rds/reserved-instances/#2)
 - [Opensearch Reserved Instances](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ri.html)
 - [Redshift Reserved Instances](https://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-offering-console.html)
 - [Elasticache Reserved Instances](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/CacheNodes.Reserved.html#reserved-nodes-purchasing)
 - [DynamoDB Reserved Capacity](https://aws.amazon.com/dynamodb/reserved-capacity/)
+- [EC2 Reserved Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-concepts-buying.html)
 
 ## Logging RIs
 
