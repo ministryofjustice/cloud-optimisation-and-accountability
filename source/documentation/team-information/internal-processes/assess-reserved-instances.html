@@ -19,11 +19,31 @@ There are a number of steps to gather data and evaluate RIs to ensure that we ar
 
 ### Gather recommendations
 
+Use AWS [Reserved Instances Recommendations](https://docs.aws.amazon.com/cost-management/latest/userguide/ri-recommendations.html) via the Billing and Cost Management Console, to indentify potential RI optimisation opportunities.
+
+Depending on the type of resources there are some filters that can be applied to identify appropriate recommendations:
+
+- **Offering class** - This is EC2 specific and allows you to select **"[Convertible](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-convertible-exchange.html)"** RIs. This can help mitigate risk of waste by converting the RI to a different type.
+- **Recommendation level** - Select **"Payer"**. This allows us to purchase and use RIs across all accounts within the MoJ Organisation.
+- **Term** - Select **"1-year"**. We do not purchase RIs over a year to mitigate risk of waste. We can consider this is the future as our FinOps practice matures.
+- **Payment option** - Select **"No upfront"**. This provides saving rates based on no upfront payment. This offers the lowest saving, but due to Commercial constraints we are not able to make upfront commitments for resources.
+- **Based on the last** -  Select one of 7, 30 or 60 days. This is the look back period for analysis of usage.
+
+This will generate a set of recommendations that can be assessed. There are a number of factors we will look at that will determine whether we will accept a recommendation.
+
 ### Assessment against defined criteria
 
 ### Engagement
 
+The based on the data and our assessment criteria an RI recommedation may appear a good commitment. However, without engagement with the owner of those resources we may purchase a year long commitment for a resources that may be tuned off a week later. This is waste as we would be committed to pay for a resource that is not being used. This is why it is essential to discuss plans for the usage of these resources with the owners. 
+
+If the resource usage will be consistent for the next 12 months we should purchase the RI.
+
+In some instances there may be multiple owners of a similar resource. In these instances we may decide that engagement across all owners may not be necessary, but we may purchase a lower number of units that would be shared across all the owners. We then have flexibility to apply savings across multiple accounts.
+
 ### Decision to purchase
+
+If the assessment and engagememt supports the decision to purchase the RI we can move forward with the purchase. See Purchasing RIs. After an RI is purchased this is recorded in our tracker. See Logging RIs.
 
 ## Review of existing RIs
 
