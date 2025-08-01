@@ -1,0 +1,85 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Assessment and Purchase of Reserved Instances
+last_reviewed_on: 2025-08-01
+review_in: 3 months
+---
+
+# Assessment and Purchase of Reserved Instances (RI)
+
+## Purpose
+
+The purpose of this guide is to formalise the process for assessment and purchase of RIs. A Reserved Instance is a cloud pricing model where users commit to using specific resources for a set term in exchange for discounted rates.
+
+The guide provides a reusable framework to maximise effective use of RIs, and avoid vacancy (wasted commitments).
+
+## Assessment of new RI opportunities
+
+There are a number of steps to gather data and evaluate RIs to ensure that we are purchasing the best opportunities and minimise risk of waste.
+
+### Gather recommendations
+
+Use AWS [Reserved Instances Recommendations](https://docs.aws.amazon.com/cost-management/latest/userguide/ri-recommendations.html) via the Billing and Cost Management Console, to indentify potential RI optimisation opportunities.
+
+Depending on the type of resources there are some filters that can be applied to identify appropriate recommendations:
+
+- **Offering class** - This is EC2 specific and allows you to select **"[Convertible](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-convertible-exchange.html)"** RIs. This can help mitigate risk of waste by converting the RI to a different type.
+- **Recommendation level** - Select **"Payer"**. This allows us to purchase and use RIs across all accounts within the MoJ Organisation.
+- **Term** - Select **"1-year"**. We do not purchase RIs over a year to mitigate risk of waste. We can consider this in the future as our FinOps practice matures.
+- **Payment option** - Select **"No upfront"**. This provides saving rates based on no upfront payment. This offers the lowest saving, but due to Commercial constraints we are not able to make upfront commitments for resources.
+- **Based on the last** -  Select one of 7, 30 or 60 days. This is the look back period for analysis of usage.
+
+This will generate a set of recommendations that can be assessed. There are a number of factors we will look at that will determine whether we will accept a recommendation.
+
+### Assessment against defined criteria
+
+The most appropriate recommendations will meet a larger number of these criteria:
+
+1. Recommedation aligns to [Reserving Infrastucture Capacity](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/patterns/reserved-instances.html#reserving-infrastructure-capacity) guidance?
+
+2. Resource is not already covered by our AWS Compute Savings Plan i.e. also purchasing an RI would lead to over commitment, and therefore waste.
+
+3. Usage trends have been consistent for the last 6 to 12 months
+
+> NB: We may still consider resources with less usage history but it will be critical to understand future usage via engamenet with the resource owners. See Engagement
+
+4. Resources are for "production" services i.e. less likley to see signifcant change that may impact usage
+
+5. Estimated usage of RI close to 100% i.e. no waste
+
+### Engagement
+
+The based on the data and our assessment criteria an RI recommedation may appear a good commitment. However, without engagement with the owner of those resources we may purchase a year long commitment for a resources that may be tuned off a week later. This is waste as we would be committed to pay for a resource that is not being used. This is why it is essential to discuss plans for the usage of these resources with the owners. 
+
+If the resource usage will be consistent for the next 12 months we should purchase the RI.
+
+In some instances there may be multiple owners of a similar resource. In these instances we may decide that engagement across all owners may not be necessary, but we may purchase a lower number of units that would be shared across all the owners. We then have flexibility to apply savings across multiple accounts.
+
+### Decision to purchase
+
+If the assessment and engagememt supports the decision to purchase the RI we can move forward with the purchase. See Purchasing RIs. After an RI is purchased this is recorded in our tracker. See Logging RIs.
+
+## Review of existing RIs
+
+On a monthly basis the performance of RIs is reviewed as part of the monthly COAT Check-In (meeting with Platforms & Architecture Leadership).
+
+As part of the data gathering (Utilisation and Coverage metrics) we can see whether we can purchase more of an existing RI i.e. an existing instance type has increased so we could improve coverage by buying more units, or usage is reducing some hold off on buying more. We aim for **100% utilisation** and **85% coverage** of a reservation. This reduces risk of over reservation i.e. waste.
+
+## Purchasing RIs
+
+When the decision is made to purchase an RI there are some constraints around what we can purchase:
+- Reservation for one year only
+- No upfront cost (with the exception of DynamoDB which doesn't offer this and must be partical upfront cost).
+
+Purchasing is carried out via the relevant AWS console or via CLI. Here is the relevant AWS guidance for each RI type:
+
+- [RDS Reserved Instances](https://aws.amazon.com/rds/reserved-instances/#2)
+- [Opensearch Reserved Instances](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ri.html)
+- [Redshift Reserved Instances](https://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-offering-console.html)
+- [Elasticache Reserved Instances](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/CacheNodes.Reserved.html#reserved-nodes-purchasing)
+- [DynamoDB Reserved Capacity](https://aws.amazon.com/dynamodb/reserved-capacity/)
+- [EC2 Reserved Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-concepts-buying.html)
+
+## Logging RIs
+
+To ensure we can track our RIs you must update the [AWS Reserved Instances Tracker](https://justiceuk.sharepoint.com/:x:/r/sites/CloudOptimisationAccoutabilityTeam/Shared%20Documents/Internal%20Team/Reserved%20Instances/AWS%20Reserved%20Instances%20Tracker%20FY%202025-26.xlsx?d=w1e2d842764444edc8a7d4d2eceea528f&csf=1&web=1&e=P0Awt8) for the relevant financial year.

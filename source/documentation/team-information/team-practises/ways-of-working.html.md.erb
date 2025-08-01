@@ -1,7 +1,7 @@
 ---
 owner_slack: "#operations-engineering-alerts"
 title: Ways of Working
-last_reviewed_on: 2025-06-25
+last_reviewed_on: 2025-07-25
 review_in: 3 months
 ---
 
@@ -27,6 +27,7 @@ To increase team awareness of progress and/or updates on a specific ticket, we a
 
 - New information is discovered that may alter the acceptance criteria or functional requirements of a ticket.
 - A team member has upcoming leave and is still working on a ticket, ensuring that when picked up by someone new a brief overview of the current status is passed on.
+- There are related PR's or stories, in which case we will add the relevant link. Preferably, we use the story  **Development** setting to link to PRs and the **Relationships** setting to indicate story dependancies (parent, blocking).
 
 ### **✅ We Use 2-Week Sprints**
 
@@ -39,9 +40,9 @@ We embrace Firebreak Sprints as a vital component of our engineering process, de
 
 For inspiration and guidance, we look to the GOV.UK team's approach to Firebreak Sprints. Their experiences underscore the value of such initiatives in promoting technical excellence and team well-being. For more information, please see our documentation describing [Firebreak Sprints](firebreak-sprints.html).
 
-### **✅ Sprint backlog contents**
+### **✅ Current sprint contents**
 
-The stories in a sprint backlog will depend on priorities, however we will always include stories from the following catagories:
+The stories in the current sprint will depend on priorities, however we will always include stories from the following catagories:
 
 - **sprint goal stories** - these will directly relate to roadmap priorities and form the majority of the sprint backlog.
 - **refactor story** - at least one refactor story to ensure that our code is well maintained.
@@ -62,6 +63,7 @@ Quarterly Goals are:
 - ✅ A concise list of 3 goals that are achievable within the quarter
 - ✅ Aligned with the team's overall objectives and priorities
 - ✅ Regularly reviewed and updated to reflect our evolving needs and progress i.e. if a goal is completed early, we can add a new one or adjust existing goals as we learn more about our work
+- ✅ The first sprint retro of each new quarter will be a Ways Of Working reflection to discuss if any changes or updates to our working practises are required
 
 Quarterly Goals are not:
 
@@ -98,50 +100,44 @@ Outcome: The team was unable to give sufficient attention to the goal. This serv
 
 ## **Ceremonies**
 
-### **✅ Backlog Refinement**
+### **✅ Story Refinement**
 
 These sessions enable us to review, prioritise, and adapt our tasks. By fine-tuning upcoming work items, we ensure
-clarity and focus. Backlog refinement promotes effective planning, enabling us to address potential challenges in
+clarity and focus. Refinement promotes effective planning, enabling us to address potential challenges in
 advance. These sessions foster collaboration, empowering team members to contribute ideas and clarify doubts. Through
-these targeted discussions, we maintain a well-organized backlog. Engaging in backlog refinement enhances our readiness
-for future sprints.
+these targeted discussions, we maintain a well-organized backlog and workable stories.
 
 ### **✅ Demos**
 
-These sessions ensure transparency, collaboration, and rapid improvement. By showcasing completed work to stakeholders,
-we align everyone with our progress and gather immediate feedback. This process fosters team pride and accountability.
-Additionally, demos empower stakeholders with direct insights, enhancing their engagement. Through these efficient
-sessions, we celebrate successes, pinpoint areas for growth, and pivot effectively for upcoming sprints, ensuring our
-continuous development and team cohesion.
+These sessions ensure transparency, collaboration, and rapid improvement. By showcasing completed work to the rest of the Team,
+we align everyone with our progress and gather immediate feedback. This process fosters team pride and accountability. Through these efficient
+sessions, we celebrate successes, pinpoint areas for growth, and pivot effectively for upcoming sprints, ensuring ourcontinuous development and team cohesion.
 
-### **✅ Milestone Planning**
+### **💡 EPIC Breakdown**
 
-To manage and deliver larger, more complex projects, we dedicate focused planning sessions for each phase of our Agile delivery process. These sessions are structured around specific delivery phases—Discovery, Alpha, Beta, Live, and Retirement—each represented by a dedicated milestone in our GitHub repository.
+To manage and deliver larger, more complex projects, we dedicate focused planning sessions to review EPICs and break these down into workable sub-issues.
 
-1. Dedicated Milestones for Each Phase: We create a separate milestone for each delivery phase in GitHub, ensuring transparent tracking and accountability for all tasks and objectives associated with that phase.
+1. EPIC User Story: We create an EPIC user story for the overall project.
 
-2. Planning for Future Phases: After establishing the tasks for the current milestone, we look ahead to upcoming phases. This proactive approach allows us to anticipate future needs and align our efforts accordingly, ensuring smooth transitions between phases.
+2. Create Sub-Issues: During the planning phase we idenfity and create Sub-Issues that are linked to the overal EPIC.
 
 3. Fostering Collaboration and Inclusion: These planning sessions are designed to be inclusive, giving every team member a voice in the process. Engaging all team members early enhances collaboration, gathers diverse insights, and ensures alignment on our shared goals.
 
 #### Meeting Structure
 
-Below is a suggested structure for the milestone planning meetings. This can evolve over time as we find a system that works best for the team:
+Below is a suggested structure for EPIC Breakdown meetings. This can evolve over time as we find a system that works best for the team:
 
-1. **Review Full Milestone List (~10 Minutes):**:
-   Review the full list of Operations Engineering [milestones](https://github.com/ministryofjustice/operations-engineering/milestones). Some milestones are hidden from the [default list](https://github.com/orgs/ministryofjustice/projects/52/views/11) due to no active stories being allocated to them.
+1. **Review Current EPICS (~10 Minutes):**:
+   Review the full list of EPICS.
 
-   This section of the meeting is to confirm that the team is still happy with their state, and whether additional tickets are needed to bring these into the active milestone section.
+   This section of the meeting is to confirm that the team is still happy with their state, and whether additional tickets are needed.
 
-2. **Initial Ticket Sort (~40 Minutes):**:
-   Starting from the top of the active milestone list the team reviews the current list of tickets. Each ticket is confirmed by the team to be an essential part of the work needed to complete the milestone.
+2. **Breakdown (~40 Minutes):**:
+   For each EPIC the team reviews the current list of tickets. Each ticket is confirmed by the team to be an essential part of the work needed to complete the EPIC.
 
-   Once completed, we add any relevant stories from the backlog that currently have no milestones assigned, and create new stories should we feel further work is needed. These stories are not to be filled out in detail, and act only as placeholders until the team's refinement meeting.
+   As we review update the EPIC and create Sub-Issues. These do not need to be fully formed, but must be created using the stort template. Sub-Issues will need to be refined before they can be worked on.
 
-   For this section we need to take into consideration the stage of the milestone (alpha, beta, etc) when deciding on the work that is required.
-
-3. **Milestone Progress Overview (~10 Minutes):**:
-   The team performs a final review of the active milestones to ensure we are happy that everything in progress is relevant. This is an opportunity to close off milestones that are complete or are no longer relevant to the team.
+   For this section we need to take into consideration the stage of the EPIC (alpha, beta, etc) when deciding on the work that is required.
 
 ### **✅ Retrospectives**
 
@@ -182,29 +178,6 @@ Sprint planning will now be conducted in three stages to prepare our tickets for
 
 By breaking the sprint planning into these three distinct parts, we aim to improve preparation, reduce uncertainty, and optimise the time spent in planning. This approach also ensures that the team is well-prepared to tackle the sprint's tasks with clear expectations and a shared understanding.
 
-### **✅ Emergency Sprint Planning**
-
-In the event that we complete our sprint goal, and we have insufficient stories in the sprint backlog during a sprint we can call and emergency sprint planning session.
-
-If an emergency planning session is called we should agree as a team whether to hold the session. We may want to consider risk or other stories from the backlog in the first instance.
-
-The emergency planning will be a scalled down version of sprint planning, but follow the same format.
-
-### **✅ Firebreak Sprint Planning**
-
-When running a sprint planning session during a Firebreak, we aim to structure is as follows:
-
-1. **Initial Sprint Planning Session (~10 minutes):**
-   Much the same as regular planning, the first part of the meeting is a brief session led by the Project Manager. The goal is to provide an overview of the upcoming items in the Firebreak sprint and a rough sorting of the relevant tickets. We should also take some time here to briefly review the current Firebreak milestones to make sure the team is happy with their purpose and currently assigned tickets.
-
-2. **Individual User Presentations (~30 minutes):**
-   This section of the meeting gives each team member an opportunity to present their idea for a Firebreak story to the rest of the team. This will help ensure everyone understands what work is required to complete the story, and gives the team a changes to ask questions and challenge or suggest alternatives for the proposed approach.
-
-   It's important here for the team to agree that the proposed Firebreak story is appropriately sized for the sprint.
-
-3. **Firebreak Epics and Sub Issues (~20 minutes):**
-   This portion of the meeting gives us some time to associate any new Firebreak stories with the appropriate Firebreak milestones. If a ticket is not relevant to a milestone, it can be brought in as a standalone story.
-
 ### **✅ Daily Stand-Up Meetings**
 
 Our team holds daily stand-up meetings* in the morning to improve communication and collaboration. This consistent timing
@@ -229,7 +202,7 @@ Post a brief update in the designated Slack channel if you cannot attend stand-u
 and any help you need keeps the team informed and ensures we can support each other effectively, even when we're not
 physically present.
 
-### **✅ Stand-Down Reflections for Continuous Growth**
+### **💡 Stand-Down Reflections for Continuous Growth**
 
 As we wrap up the day, let's reflect and share a moment in our Stand-Down thread. Post updates to celebrate
 progress, voice frustrations to seek support, and highlight wins to spread joy. This transparency fosters teamwork and
@@ -237,6 +210,7 @@ growth.
 
 - **Updates**: Please make sure to note what you've accomplished.
 - **Frustrations**: Share any obstacles - remember, it's us against the problem.
+- **Risks**: Thinking about your obstacles - do we need to escalate these on the risk register
 - **Wins**: Let's cheer for our victories, big or small.
 
 Stay constructive and kind.
