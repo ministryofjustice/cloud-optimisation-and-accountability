@@ -1,7 +1,7 @@
 # importing github_branch_protection
 import {
   to = module.ministryofjustice.module.cloud-optimisation-and-accountability.github_branch_protection.default
-  id = "cloud-optimisation-and-accountability:main"
+  id = "R_kgDOOWCmUg:main"
 }
 
 # importing github_repository
@@ -19,7 +19,7 @@ import {
 # importing github_branch_protection
 import {
   to = module.ministryofjustice.module.coat-cur-data-pipeline.github_branch_protection.default
-  id = "coat-cur-data-pipeline:main"
+  id = "R_kgDOPEW5dg:main"
 }
 
 # importing github_repository
