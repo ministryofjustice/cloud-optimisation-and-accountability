@@ -1,5 +1,5 @@
 module "cloud-optimisation-and-accountability" {
-  source = "../../modules/github-repository"
+  source = "../../modules/github-repository-new"
 
   poc = false
 
