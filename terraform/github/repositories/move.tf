@@ -1,8 +1,8 @@
-# # moved github_branch_protection
-# moved {
-#   from = module.ministryofjustice.module.cloud-optimisation-and-accountability.github_branch_protection.default
-#   to   = module.ministryofjustice-new.module.cloud-optimisation-and-accountability-new.github_branch_protection.default
-# }
+# moved github_branch_protection
+moved {
+  from = module.ministryofjustice.module.cloud-optimisation-and-accountability.github_branch_protection.default
+  to   = module.ministryofjustice-new.module.cloud-optimisation-and-accountability-new.github_branch_protection.default
+}
 
 # # moved github_repository
 # moved {
