@@ -1,6 +1,6 @@
-module "coat-cur-data-pipeline" {
-  source  = "ministryofjustice/repository/github"
-  version = "1.2.1"
+module "coat-cur-data-pipeline-new" {
+  source = "../../modules/github-repository"
+
 
   poc = false
 
