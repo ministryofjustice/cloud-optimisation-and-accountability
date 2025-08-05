@@ -1,6 +1,5 @@
 module "cloud-optimisation-and-accountability" {
-  source  = "ministryofjustice/repository/github"
-  version = "1.2.1"
+  source = "../../modules/github-repository"
 
   poc = false
 
