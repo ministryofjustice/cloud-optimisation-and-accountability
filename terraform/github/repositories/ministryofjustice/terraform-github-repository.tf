@@ -1,4 +1,4 @@
-module "terraform-github-repository" {
+module "terraform-github-repository-testing" {
   source = "../../modules/github-repository"
 
   poc = false
