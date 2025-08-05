@@ -1,5 +1,5 @@
-module "coat-cur-data-pipeline" {
-  source = "../../modules/github-repository-new"
+module "coat-cur-data-pipeline-new" {
+  source = "../../modules/github-repository"
 
 
   poc = false
