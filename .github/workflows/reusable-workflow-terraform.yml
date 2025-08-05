@@ -119,9 +119,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: |
-          set -o pipefail
-          terraform plan -input=false -no-color | make -f "$GITHUB_WORKSPACE/Makefile" redact-terraform-output
+        run: terraform plan -input=false -no-color | make -f "$GITHUB_WORKSPACE/Makefile" redact-terraform-output
 
       - name: Post Plan to GitHub PR
         if: github.ref != 'refs/heads/main'
@@ -141,7 +139,7 @@ jobs:
           set -o pipefail
           terraform apply -input=false -no-color -auto-approve | make -f "$GITHUB_WORKSPACE/Makefile" redact-terraform-output
         if: github.ref == 'refs/heads/main'
-
+        
       - name: Report failure to Slack
         if: ${{ always() && github.ref == 'refs/heads/main' }}
         uses: ravsamhq/notify-slack-action@472601e839b758e36c455b5d3e5e1a217d4807bd # 2.5.0
