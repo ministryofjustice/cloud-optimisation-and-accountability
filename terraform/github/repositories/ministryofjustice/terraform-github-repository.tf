@@ -1,4 +1,4 @@
-module "cloud-optimisation-and-accountability" {
+module "terraform-github-repository" {
   source = "../../modules/github-repository"
 
   poc = false
