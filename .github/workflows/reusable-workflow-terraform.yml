@@ -136,7 +136,9 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         id: apply
-        run: terraform apply -input=false -no-color -auto-approve | make -f "$GITHUB_WORKSPACE/Makefile" redact-terraform-output
+        run:  |
+          set -o pipefail
+          terraform apply -input=false -no-color -auto-approve | make -f "$GITHUB_WORKSPACE/Makefile" redact-terraform-output
 
       - name: Report failure to Slack
         if: ${{ always() && github.ref == 'refs/heads/main' }}
