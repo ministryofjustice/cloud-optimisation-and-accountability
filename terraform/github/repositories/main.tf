@@ -1,26 +1,5 @@
-terraform {
-  backend "s3" {
-    acl     = "private"
-    bucket  = "coat-github-repos-tfstate"
-    encrypt = true
-    key     = "terraform/github-repos/terraform.tfstate"
-    region  = "eu-west-2"
-  }
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
-    github = {
-      source  = "integrations/github"
-      version = "~> 5.0"
-    }
-  }
-  required_version = "~> 1.6"
-}
+module "ministryofjustice-new" {
+  source = "./ministryofjustice"
 
-provider "github" {
-  token = var.github_token
-  owner = "ministryofjustice"
+  cloud_optimisation_and_accountability_team_id = data.github_team.cloud_optimisation_and_accountability.id
 }
-
