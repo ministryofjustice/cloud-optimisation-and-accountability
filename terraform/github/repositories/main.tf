@@ -22,7 +22,7 @@ module "cloud-optimisation-and-accountability" {
 }
 
 #coat-cur-data-pipeline
-module "coat-cur-data-pipeline-new" {
+module "coat-cur-data-pipeline" {
   source = "../modules/github-repository"
 
 
