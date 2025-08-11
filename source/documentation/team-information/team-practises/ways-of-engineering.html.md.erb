@@ -1,7 +1,7 @@
 ---
 owner_slack: "#operations-engineering-alerts"
 title: Ways of Engineering
-last_reviewed_on: 2025-06-25
+last_reviewed_on: 2025-08-11
 review_in: 3 months
 ---
 
@@ -83,6 +83,10 @@ To enhance our security posture and streamline the management of vulnerabilities
 ### **✅ Implement CodeQL for Python Code Security Review**
 
 To uphold the highest security standards in our Python codebase, we have decided to integrate CodeQL into our development workflow. CodeQL will serve as a critical tool in identifying security weaknesses within our Python code at pull request (PR) stages and on a regular basis through automated scans. Including CodeQL aims to enhance our proactive security measures, allowing us to address vulnerabilities effectively and maintain the integrity of our applications.
+
+### **✅ Pin GitHub Actions to a Commit Hash**
+
+Using a fixed version (via commit hash) ensures that you're using exactly the version of an action you reviewed or tested. If you reference actions by a mutable tag like main or v1, the underlying code can change without warning, potentially introducing vulnerabilities, malicious code or breaking changes. Dependencies can evolve, sometimes breaking compatibility. If a new version of an action is released under the same tag, it might contain breaking changes that disrupt your workflow. Commit hashes lock in known-good versions.
 
 ## Adding/Adjusting Ways of Engineering
 
