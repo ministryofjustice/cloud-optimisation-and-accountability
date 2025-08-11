@@ -6,7 +6,7 @@ locals {
 
 #cloud-optimisation-and-accountability
 module "cloud-optimisation-and-accountability" {
-  source = "../../modules/github-repository"
+  source = "../modules/github-repository"
 
   poc = false
 
@@ -23,7 +23,7 @@ module "cloud-optimisation-and-accountability" {
 
 #coat-cur-data-pipeline
 module "coat-cur-data-pipeline-new" {
-  source = "../../modules/github-repository"
+  source = "../modules/github-repository"
 
 
   poc = false
