@@ -51,8 +51,8 @@ def generate_query_total_tagging_coverage(billing_period: str,
     :return: SQL query string."""
 
     query_total_tagging_coverage = f"""
-    SELECT 
-      100.0 * 
+    SELECT
+      100.0 *
         (
           SELECT SUM(line_item_unblended_cost)
           FROM data
