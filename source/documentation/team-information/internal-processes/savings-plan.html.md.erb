@@ -20,7 +20,7 @@ There are 3 types of Savings Plan available:
 - EC2 Instance
 - SageMaker AI
 
-Our preferred type of plan is **Compute Saving Plan**, as it provides the greatest flexibility for how it applies saving,s and provides better coverage for the types of resources used by MoJ.
+Our preferred type of plan is **Compute Saving Plan**, as it provides the greatest flexibility for how it applies savings and provides better coverage for the types of resources used by MoJ.
 
 ## Calculation of hourly usage
 
@@ -30,19 +30,31 @@ To determine our hourly usage we use the [Purchase Analyzer](https://docs.aws.am
 
 ![hourly usage graph example](../../images/hourly-usage-graph-example.png)
 
-The peaks in the chart show spiky and inconsistent usage. Committing at these levels leads to waste. Ideally we want to choose an hourly rate that is below this spikly area i.e. the blue line. At MoJ we aim to cover **70%** of our usage. This ensures we maximise our savings without risk of over commitment. 
+The peaks in the chart show spiky and inconsistent usage. Committing at these levels leads to waste. Ideally we want to choose an hourly rate that is below this spiky area i.e. the blue line. At MoJ we aim to cover **70%** of our usage. This ensures we maximise our savings without risk of over commitment. 
 
 > NB - We may aim to increase this coverage as our practice matures.
 
 ## Commitment durantion
 
-Historically MoJ has purchased an annual Savings Plan. However, for the plan that starts in May 2025 we opted to a blended 3 year and 1 year plan.
+Historically MoJ has purchased an annual Savings Plan. However, for the plan that starts in May 2025 we opted to a blended 3 year and 1 year plan. 
+
+By committing a lower percentage of our overal commitment for a longer period we have been able to significantly improve the optimisation and savings associated with the plan. We then cover the remaining higher risk usage for a shorter period to allow us to mitigate risk of usage, and allow us to make chabges to our plan annually.
+
+In practice we calculate 70% of our hourly usage, and then commit 30% of that for a 3 year period, and the remaining usage for a one year period. This achieves a greater saving than three one year Savings Plans for 70% of usage over a 3 years period. 
+
+> Example:
+>
+> If our usage is equivalent to $100 per hour we would aim to commit to 70% coverage i.e. $70 per hour
+>
+> We would purchase a 3 year commitment for 30% of $70 per hour i.e. $21 per hour for 3 years
+>
+> We would purchase a 1 year commitment for 70% of $70 per hour i.e. $49% per hour for 1 year
 
 ## Purchase the Savings Plan
 
 Follow AWS documentation to [purchase the Saving Plan](https://docs.aws.amazon.com/savingsplans/latest/userguide/purchase-sp-direct.html).
 
-> NB - You must select `No Upfront`payment option.
+> NB - You must select `No Upfront` payment option.
 
 > NB - You must schedule a new plan to start as the existing plan finished i.e. to ensure no break in coverage.
 
@@ -53,3 +65,7 @@ We review performance of the Savinsg Plan on a monthly basis. There are two repo
 - The [Savings Plans coverage report](https://docs.aws.amazon.com/savingsplans/latest/userguide/ce-sp-usingCR.html) shows what percentage of your applicable AWS usage costs are being covered by your Savings Plans during your selected time period.
 
 - Savings Plans [utilization](https://docs.aws.amazon.com/savingsplans/latest/userguide/ce-sp-usingPR.html) shows you the percentage of your Savings Plans commitment that you're using across your On-Demand usage. You can use your Savings Plans utilization report to visually understand how your Savings Plans apply to your usage over the configured time period. Along with a visualized graph, the report shows high-level metrics based on your selected Savings Plan, filters, and lookback periods. Utilization is calculated based on how your Savings Plans applied to your usage over the lookback period.
+
+## Renewing the Savings Plan
+
+In advance of the expiry of the Savings Plans we should review history plan performance as well as predicted increases based on forecast data. This may lead to an increase or reduction in our commitments. 
