@@ -186,8 +186,9 @@ def generate_tagging_coverage_metrics(
           query_tagging_per_aws_account)
         results_aws_account = boto3.client('athena').get_query_results(
           QueryExecutionId=athena_aws_account_ex_id)
-        account_tagging_cov_percentage = float(results_aws_account['ResultSet'][
-          'Rows'][1]['Data'][0]['VarCharValue']) if 'VarCharValue' in results_aws_account[
+        account_tagging_cov_percentage = float(results_aws_account[
+          'ResultSet']['Rows'][1]['Data'][0][
+            'VarCharValue']) if 'VarCharValue' in results_aws_account[
             'ResultSet']['Rows'][1]['Data'][0] else None
         df_tagging_coverage_aws_accounts.at[
           index, 'account_tagging_coverage_pct'] = account_tagging_cov_percentage
