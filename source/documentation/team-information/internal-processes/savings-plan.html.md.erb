@@ -1,0 +1,38 @@
+---
+owner_slack: "#operations-engineering-alerts"
+title: Assessment and Purchase of Savings Plans
+last_reviewed_on: 2025-08-12
+review_in: 3 months
+---
+
+# Assessment and Purchase of Savings Plans
+
+## Purpose
+
+The purpose of this guide is to formalise the process for assessment and purchase of Savings Plans. A [Savings Plan (SP)](https://aws.amazon.com/savingsplans/) is a cloud pricing model where users commit to using specific resources for a set term in exchange for discounted rates.
+
+The guide provides a reusable framework to maximise effective use of SPs, and avoid vacancy (wasted commitments).
+
+## Types of Savings Plan
+
+There are 3 types of Savings Plan available:
+- Compute
+- EC2 Instance
+- SageMaker AI
+
+Our preferred type of plan is **Compute Saving Plan**, as it provides the greatest flexibility for how it applies saving,s and provides better coverage for the types of resources used by MoJ.
+
+## Calculation of hourly usage
+
+A key part of purchasing a Savings Plan is determining your hourly commitment. This is how much usuage you are committing to for a 1 year or 3 year period.
+
+To determine our hourly usage we use the [Purchase Analyzer](https://docs.aws.amazon.com/savingsplans/latest/userguide/sp-purchase-analysis.html) within the Billing and Cost Management console. When this process is finished it will provide you with an chart of hourly usage.
+
+
+
+If you over commit you introduce waste, or if you undercommit you may not maximise your savings. At MoJ we aim to cover **70%** of our usage. This ensures we maximise our savings without risk of over commitment. 
+
+> NB - We may aim to increase this coverage as our practice matures.
+
+
+
