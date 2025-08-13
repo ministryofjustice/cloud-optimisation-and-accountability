@@ -197,8 +197,8 @@ def generate_tagging_coverage_metrics(
     logger.info("Tagging coverage for AWS accounts completed.")
 
     df_tagging_coverage_aws_accounts.dropna(
-    subset=["account_tagging_coverage_pct"],
-    inplace=True
+      subset=["account_tagging_coverage_pct"],
+      inplace=True
     )
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="account_tagging_coverage_pct",
@@ -242,8 +242,8 @@ def generate_excel_report(
         doughnut_chart = workbook.add_chart({"type": "doughnut"})
         doughnut_chart.add_series({
             "name": "Total Tagging Coverage [%]",
-            "categories": ["Summary", 1, 1, 2, 1],  
-            "values": ["Summary", 1, 2, 2, 2],      
+            "categories": ["Summary", 1, 1, 2, 1],
+            "values": ["Summary", 1, 2, 2, 2],
             "points": [
                 {"fill": {"color": '#4CAF50'}},
                 {"fill": {"color": '#D3D3D3'}},
@@ -256,12 +256,12 @@ def generate_excel_report(
         df_cols = df_tagging_coverage_aws_accounts.columns.tolist()
         account_col = (
           df_cols.index("line_item_usage_account_name")
-          if "line_item_usage_account_name" in df_cols 
+          if "line_item_usage_account_name" in df_cols
           else 0
         )
         coverage_col = (
           df_cols.index("account_tagging_coverage_pct")
-          if "account_tagging_coverage_pct" in df_cols 
+          if "account_tagging_coverage_pct" in df_cols
           else 1
         )
 
@@ -281,8 +281,10 @@ def generate_excel_report(
 
     logger.info("Excel report generated at: %s", output_path)
 
-#Just for testing
-"""total_tagging_cov_percentage, df_tagging_coverage_aws_accounts = generate_tagging_coverage_metrics(
+
+# Just for testing
+"""total_tagging_cov_percentage,
+df_tagging_coverage_aws_accounts = generate_tagging_coverage_metrics(
     business_unit='HMPPS',
     billing_period='2025-07')
 
@@ -291,3 +293,4 @@ generate_excel_report(
     df_tagging_coverage_aws_accounts,
     business_unit='HMPPS'
 )"""
+
