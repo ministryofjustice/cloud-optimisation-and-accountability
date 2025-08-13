@@ -199,7 +199,9 @@ def generate_tagging_coverage_metrics(
       subset=["account_tagging_coverage_pct"],
       inplace=True
     )
-    df_tagging_coverage_aws_accounts.rename(columns={"line_item_usage_account_id": "AWS_account_id", "line_item_usage_account_name": "AWS_account_name"}, inplace=True)
+    df_tagging_coverage_aws_accounts.rename(
+      columns={"line_item_usage_account_id": "AWS_account_id",
+               "line_item_usage_account_name": "AWS_account_name"}, inplace=True)
 
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="account_tagging_coverage_pct",
