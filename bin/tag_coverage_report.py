@@ -179,7 +179,6 @@ def generate_tagging_coverage_metrics(
     logger.info("Calculating tagging coverage for each AWS account.")
     for index, row in df_tagging_coverage_aws_accounts.iterrows():
         aws_account_name = row["line_item_usage_account_name"]
-        print
         logger.info("Processing AWS account: %s", aws_account_name)
         query_tagging_per_aws_account = generate_query_tagging_per_aws_account(
           aws_account_name, billing_period, business_unit)
@@ -200,6 +199,8 @@ def generate_tagging_coverage_metrics(
       subset=["account_tagging_coverage_pct"],
       inplace=True
     )
+    df_tagging_coverage_aws_accounts.rename(columns={"line_item_usage_account_id": "AWS_account_id", "line_item_usage_account_name": "AWS_account_name"}, inplace=True)
+
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="account_tagging_coverage_pct",
       ascending=False).reset_index(drop=True)
@@ -220,7 +221,11 @@ def generate_excel_report(
     output_path = f"tagging_coverage_report_{business_unit}.xlsx"
     with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
         summary_df = pd.DataFrame({
-          "Total Tagging Coverage (%)": [total_tagging_cov_percentage]
+            "Status": ["Tagged", "Untagged"],
+            "Coverage (%)": [
+                total_tagging_cov_percentage,
+                100 - total_tagging_cov_percentage
+            ]
         })
         summary_df.to_excel(writer, sheet_name="Summary", index=False)
 
@@ -231,19 +236,11 @@ def generate_excel_report(
         summary_ws = writer.sheets["Summary"]
         account_ws = writer.sheets["Account Coverage"]
 
-        summary_ws.write("B1", "Status")
-        summary_ws.write("B2", "Tagged")
-        summary_ws.write("B3", "Untagged")
-
-        summary_ws.write("C1", "Coverage")
-        summary_ws.write("C2", total_tagging_cov_percentage)
-        summary_ws.write("C3", 100 - total_tagging_cov_percentage)
-
         doughnut_chart = workbook.add_chart({"type": "doughnut"})
         doughnut_chart.add_series({
             "name": "Total Tagging Coverage [%]",
-            "categories": ["Summary", 1, 1, 2, 1],
-            "values": ["Summary", 1, 2, 2, 2],
+            "categories": ["Summary", 1, 0, 2, 0],
+            "values": ["Summary", 1, 1, 2, 1],
             "points": [
                 {"fill": {"color": '#4CAF50'}},
                 {"fill": {"color": '#D3D3D3'}},
@@ -255,8 +252,8 @@ def generate_excel_report(
 
         df_cols = df_tagging_coverage_aws_accounts.columns.tolist()
         account_col = (
-          df_cols.index("line_item_usage_account_name")
-          if "line_item_usage_account_name" in df_cols
+          df_cols.index("AWS_account_name")
+          if "AWS_account_name" in df_cols
           else 0
         )
         coverage_col = (
