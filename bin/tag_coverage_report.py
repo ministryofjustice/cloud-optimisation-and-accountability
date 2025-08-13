@@ -280,17 +280,3 @@ def generate_excel_report(
         account_ws.insert_chart("D2", bar_chart, {"x_scale": 7, "y_scale": 3})
 
     logger.info("Excel report generated at: %s", output_path)
-
-
-# Just for testing
-"""total_tagging_cov_percentage,
-df_tagging_coverage_aws_accounts = generate_tagging_coverage_metrics(
-    business_unit='HMPPS',
-    billing_period='2025-07')
-
-generate_excel_report(
-    total_tagging_cov_percentage,
-    df_tagging_coverage_aws_accounts,
-    business_unit='HMPPS'
-)"""
-
