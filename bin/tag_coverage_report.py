@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 def athena_execute_query(
     query: str,
-    database: str = 'cur_v2_database',
-    s3_output: str = 's3://coat-production-cur-v2-hourly/athena-results/',
+    database: str = "cur_v2_database",
+    s3_output: str = "s3://coat-production-cur-v2-hourly/athena-results/",
 ) -> str:
 
     """
@@ -35,12 +35,12 @@ def athena_execute_query(
     logger.info("Started Athena query with execution ID: %s", query_execution_id)
     while True:
         result = athena_client.get_query_execution(QueryExecutionId=query_execution_id)
-        state = result['QueryExecution']['Status']['State']
-        if state in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
+        state = result["QueryExecution"]["Status"]["State"]
+        if state in ["SUCCEEDED", "FAILED", "CANCELLED"]:
             break
         time.sleep(2)
 
-    if state != 'SUCCEEDED':
+    if state != "SUCCEEDED":
         raise RuntimeError(f"Query failed or was cancelled: {state}")
 
     return query_execution_id
@@ -153,47 +153,129 @@ def generate_tagging_coverage_metrics(
     logger.info("Executing query for total tagging coverage.")
     athena_tagging_cov_execution_id = athena_execute_query(
       query_total_tagging_coverage)
-    results_tagging_coverage = boto3.client('athena').get_query_results(
+    results_tagging_coverage = boto3.client("athena").get_query_results(
       QueryExecutionId=athena_tagging_cov_execution_id)
-    total_tagging_cov_percentage = float(results_tagging_coverage['ResultSet'][
-      'Rows'][1]['Data'][0]['VarCharValue'])
+    total_tagging_cov_percentage = round(float(results_tagging_coverage["ResultSet"][
+      "Rows"][1]["Data"][0]["VarCharValue"]), 2)
     logger.info(
       "Total tagging coverage percentage: %.2f%%", total_tagging_cov_percentage)
 
     logger.info("Executing query for list of AWS accounts.")
     athena_bu_aws_account_ex_id = athena_execute_query(query_list_of_aws_accounts)
-    results_bu_aws_accounts = boto3.client('athena').get_query_results(
+    results_bu_aws_accounts = boto3.client("athena").get_query_results(
       QueryExecutionId=athena_bu_aws_account_ex_id)
-    rows = results_bu_aws_accounts['ResultSet']['Rows']
+    rows = results_bu_aws_accounts["ResultSet"]["Rows"]
     cleaned_data = [
-      [col['VarCharValue'] for col in row['Data']]
+      [col["VarCharValue"] for col in row["Data"]]
       for row in rows
-      if len(row['Data']) == 2
+      if len(row["Data"]) == 2
       ]
 
     headers = cleaned_data[0]
     df_tagging_coverage_aws_accounts = pd.DataFrame(cleaned_data[1:], columns=headers)
-    logger.info("Retrieved %d AWS accounts for business unit '%s'.",
+    logger.info("Retrieved %d AWS accounts for business unit %s.",
                 len(df_tagging_coverage_aws_accounts), business_unit)
 
     logger.info("Calculating tagging coverage for each AWS account.")
     for index, row in df_tagging_coverage_aws_accounts.iterrows():
-        aws_account_name = row['line_item_usage_account_name']
+        aws_account_name = row["line_item_usage_account_name"]
         logger.info("Processing AWS account: %s", aws_account_name)
         query_tagging_per_aws_account = generate_query_tagging_per_aws_account(
           aws_account_name, billing_period, business_unit)
         athena_aws_account_ex_id = athena_execute_query(
           query_tagging_per_aws_account)
-        results_aws_account = boto3.client('athena').get_query_results(
+        results_aws_account = boto3.client("athena").get_query_results(
           QueryExecutionId=athena_aws_account_ex_id)
-        account_tagging_cov_percentage = float(results_aws_account[
-          'ResultSet']['Rows'][1]['Data'][0][
-            'VarCharValue']) if 'VarCharValue' in results_aws_account[
-            'ResultSet']['Rows'][1]['Data'][0] else None
+        account_tagging_cov_percentage = round(float(results_aws_account[
+          "ResultSet"]["Rows"][1]["Data"][0][
+            "VarCharValue"]), 2) if "VarCharValue" in results_aws_account[
+            "ResultSet"]["Rows"][1]["Data"][0] else None
         df_tagging_coverage_aws_accounts.at[
-          index, 'account_tagging_coverage_pct'] = account_tagging_cov_percentage
+          index, "account_tagging_coverage_pct"] = account_tagging_cov_percentage
 
     logger.info("Tagging coverage for AWS accounts completed.")
+
+    df_tagging_coverage_aws_accounts.dropna(
+      subset=["account_tagging_coverage_pct"],
+      inplace=True
+    )
+    df_tagging_coverage_aws_accounts.rename(
+      columns={"line_item_usage_account_id": "AWS_account_id",
+               "line_item_usage_account_name": "AWS_account_name"}, inplace=True)
+
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
-      by='line_item_usage_account_name').reset_index(drop=True)
+      by="account_tagging_coverage_pct",
+      ascending=False).reset_index(drop=True)
     return total_tagging_cov_percentage, df_tagging_coverage_aws_accounts
+
+
+def generate_excel_report(
+    total_tagging_cov_percentage: float,
+    df_tagging_coverage_aws_accounts: pd.DataFrame,
+    business_unit: str
+  ) -> None:
+    """
+    Generates an Excel report with overall tagging coverage and per-account coverage.
+    :param total_tagging_cov_percentage: Overall tagging coverage percentage.
+    :param df_tagging_coverage_aws_accounts: DataFrame with per-account coverage.
+    :param output_path: Path to save the Excel file.
+    """
+    output_path = f"tagging_coverage_report_{business_unit}.xlsx"
+    with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
+        summary_df = pd.DataFrame({
+            "Status": ["Tagged", "Untagged"],
+            "Coverage (%)": [
+                total_tagging_cov_percentage,
+                100 - total_tagging_cov_percentage
+            ]
+        })
+        summary_df.to_excel(writer, sheet_name="Summary", index=False)
+
+        df_tagging_coverage_aws_accounts.to_excel(
+          writer, sheet_name="Account Coverage", index=False
+        )
+        workbook = writer.book
+        summary_ws = writer.sheets["Summary"]
+        account_ws = writer.sheets["Account Coverage"]
+
+        doughnut_chart = workbook.add_chart({"type": "doughnut"})
+        doughnut_chart.add_series({
+            "name": "Total Tagging Coverage [%]",
+            "categories": ["Summary", 1, 0, 2, 0],
+            "values": ["Summary", 1, 1, 2, 1],
+            "points": [
+                {"fill": {"color": '#4CAF50'}},
+                {"fill": {"color": '#D3D3D3'}},
+            ],
+            "data_labels": {"value": True, "num_format": '0.00"%"'},
+        })
+        doughnut_chart.set_legend({"position": "left"})
+        summary_ws.insert_chart("E2", doughnut_chart, {"x_scale": 1.5, "y_scale": 1.5})
+
+        df_cols = df_tagging_coverage_aws_accounts.columns.tolist()
+        account_col = (
+          df_cols.index("AWS_account_name")
+          if "AWS_account_name" in df_cols
+          else 0
+        )
+        coverage_col = (
+          df_cols.index("account_tagging_coverage_pct")
+          if "account_tagging_coverage_pct" in df_cols
+          else 1
+        )
+
+        n_accounts = len(df_tagging_coverage_aws_accounts)
+        bar_chart = workbook.add_chart({"type": "column"})
+        bar_chart.add_series({
+          "name": "Tagging Coverage by Account [%]",
+          "categories": ["Account Coverage", 1, account_col, n_accounts, account_col],
+          "values": ["Account Coverage", 1, coverage_col, n_accounts, coverage_col],
+          "fill": {"color": "#1f77b4"}
+          })
+
+        bar_chart.set_x_axis({"name": "Account"})
+        bar_chart.set_y_axis({"name": "Coverage (%)", "num_format": '0"%"', "max": 100})
+        bar_chart.set_legend({"position": "none"})
+        account_ws.insert_chart("D2", bar_chart, {"x_scale": 7, "y_scale": 3})
+
+    logger.info("Excel report generated at: %s", output_path)
