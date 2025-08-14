@@ -3,6 +3,7 @@ import logging
 import time
 import pandas as pd
 from typing import Tuple
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -139,6 +140,41 @@ def generate_query_tagging_per_aws_account_for_tag(
     return query_tagging_per_aws_account
 
 
+def fetch_account_coverage(index, aws_account_name, tag_key, billing_period, business_unit):
+    logger.info("Processing AWS account coverage %s for tag %s", aws_account_name, tag_key)
+    query_aws_account_per_tag = generate_query_tagging_per_aws_account_for_tag(
+        aws_account_name, billing_period, business_unit, tag_key
+    )
+    athena_aws_account_per_tag_ex_id = athena_execute_query(query_aws_account_per_tag)
+    results_aws_account_per_tag = boto3.client("athena").get_query_results(
+        QueryExecutionId=athena_aws_account_per_tag_ex_id
+    )
+    aws_account_cov_prc_per_tag = (
+        round(float(results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+        if "VarCharValue" in results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]
+        else 0
+    )
+    return index, tag_key, aws_account_cov_prc_per_tag
+
+
+def fetch_total_tag_coverage(tag_key, billing_period, business_unit):
+    logger.info("Processing total coverage for tag key: %s", tag_key)
+    query_total_coverage = generate_query_total_tagging_coverage_for_tag(
+        billing_period, business_unit, tag_key
+    )
+    athena_total_coverage_ex_id = athena_execute_query(query_total_coverage)
+    results_total_coverage = boto3.client("athena").get_query_results(
+        QueryExecutionId=athena_total_coverage_ex_id
+    )
+    total_tagging_cov_prc = (
+        round(float(results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+        if "VarCharValue" in results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]
+        else 0
+    )
+    logger.info("Total tagging coverage for %s: %.2f%%", tag_key, total_tagging_cov_prc)
+    return tag_key, total_tagging_cov_prc
+
+
 def generate_tagging_coverage_metrics(
     business_unit: str,
     billing_period: str,
@@ -174,50 +210,41 @@ def generate_tagging_coverage_metrics(
         "line_item_usage_account_name": "AWS_account_name"
     })
 
-    for tag_key in tag_keys:
-        logger.info("Processing tag key: %s", tag_key)
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [
+            executor.submit(fetch_total_tag_coverage, tag_key, billing_period, business_unit)
+            for tag_key in tag_keys
+        ]
+        for future in as_completed(futures):
+            tag_key, coverage = future.result()
+            total_tag_coverage[tag_key] = coverage
 
-        query_total_coverage = generate_query_total_tagging_coverage_for_tag(
-          billing_period, business_unit, tag_key)
-        logger.info("Executing query for total tagging coverage for tag %s", tag_key)
-        athena_total_coverage_ex_id = athena_execute_query(
-          query_total_coverage)
-        results_total_coverage = boto3.client("athena").get_query_results(
-          QueryExecutionId=athena_total_coverage_ex_id)
-        total_tagging_cov_prc = (
-          round(float(results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
-          if "VarCharValue" in results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]
-          else 0
-        )
-        logger.info(
-          "Total tagging coverage percentage for %s: %.2f%%",
-          tag_key, total_tagging_cov_prc)
-        total_tag_coverage[tag_key] = total_tagging_cov_prc
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = []
+        for tag_key, coverage in total_tag_coverage.items():
+            if coverage > 0:
+                for index, row in df_tagging_coverage_aws_accounts.iterrows():
+                    futures.append(
+                        executor.submit(
+                            fetch_account_coverage,
+                            index,
+                            row["AWS_account_name"],
+                            tag_key,
+                            billing_period,
+                            business_unit
+                        )
+                    )
+                logger.info("Completed per-account tagging coverage for tag %s", tag_key)
 
-        if total_tagging_cov_prc > 0:
-            logger.info("Calculating tagging coverage for each AWS account for %s.", tag_key)
-            for index, row in df_tagging_coverage_aws_accounts.iterrows():
-                aws_account_name = row["AWS_account_name"]
-                logger.info("Processing AWS account %s for tag %s", aws_account_name, tag_key)
-                query_aws_account_per_tag = generate_query_tagging_per_aws_account_for_tag(
-                  aws_account_name, billing_period, business_unit, tag_key)
-                athena_aws_account_per_tag_ex_id = athena_execute_query(
-                  query_aws_account_per_tag)
-                results_aws_account_per_tag = boto3.client("athena").get_query_results(
-                  QueryExecutionId=athena_aws_account_per_tag_ex_id)
-                aws_account_cov_prc_per_tag = (
-                  round(float(results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
-                  if "VarCharValue" in results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]
-                  else 0
-                )
-                df_tagging_coverage_aws_accounts.at[
-                  index, tag_key] = aws_account_cov_prc_per_tag
-
-            logger.info("Tagging coverage for AWS accounts for tag %s completed.", tag_key)
+        for future in as_completed(futures):
+            index, tag_key, account_cov = future.result()
+            df_tagging_coverage_aws_accounts.at[index, tag_key] = account_cov
+      
 
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="AWS_account_name",  
       ascending=False).reset_index(drop=True)
+
     return total_tag_coverage, df_tagging_coverage_aws_accounts
 
 
