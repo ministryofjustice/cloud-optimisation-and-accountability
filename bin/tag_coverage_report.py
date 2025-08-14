@@ -46,8 +46,11 @@ def athena_execute_query(
     return query_execution_id
 
 
-def generate_query_total_tagging_coverage(billing_period: str,
-                                          business_unit: str) -> str:
+def generate_query_total_tagging_coverage_for_tag(
+  billing_period: str,
+  business_unit: str,
+  tag_key: str
+  ) -> str:
     """    Generates a SQL query to calculate the total tagging coverage percentage.
     :param billing_period: The billing period for which to calculate coverage.
     :param business_unit: The business unit for which to calculate coverage.
@@ -62,8 +65,8 @@ def generate_query_total_tagging_coverage(billing_period: str,
           WHERE billing_period = '{billing_period}'
             AND cost_category['business_unit'] = '{business_unit}'
             AND line_item_unblended_cost > 0
-            AND resource_tags['user_business_unit'] IS NOT NULL
-            AND resource_tags['user_business_unit'] <> ''
+            AND resource_tags['{tag_key}'] IS NOT NULL
+            AND resource_tags['{tag_key}'] <> ''
 
         )
       /
@@ -96,10 +99,11 @@ def generate_query_list_of_aws_accounts(billing_period: str,
     return query_list_of_aws_accounts
 
 
-def generate_query_tagging_per_aws_account(
+def generate_query_tagging_per_aws_account_for_tag(
     aws_account_name: str,
     billing_period: str,
-    business_unit: str
+    business_unit: str,
+    tag_key: str
   ) -> str:
     """Generates a SQL query to calculate tagging coverage for a specific AWS account.
     :param aws_account_name: The name of the AWS account.
@@ -117,8 +121,8 @@ def generate_query_tagging_per_aws_account(
             AND cost_category['business_unit'] = '{business_unit}'
             AND line_item_usage_account_name = '{aws_account_name}'
             AND line_item_unblended_cost > 0
-            AND resource_tags['user_business_unit'] IS NOT NULL
-            AND resource_tags['user_business_unit'] <> ''
+            AND resource_tags['{tag_key}'] IS NOT NULL
+            AND resource_tags['{tag_key}'] <> ''
         )
       /
         (
@@ -137,30 +141,21 @@ def generate_query_tagging_per_aws_account(
 
 def generate_tagging_coverage_metrics(
     business_unit: str,
-    billing_period: str
+    billing_period: str,
+    tag_keys: list[str] = ["user_business_unit", "user_application",
+                           "user_service_area", "user_owner", "user_is_production"]
 ) -> Tuple[int, pd.DataFrame]:
     """
     Generates tagging coverage metrics for a specific business unit and billing period.
     :param business_unit: The business unit for which to generate metrics.
     :param billing_period: The billing period for which to generate metrics.
-    :return: A tuple containing the overall tagging coverage percentage and
-    a DataFrame with per-account"""
-    query_total_tagging_coverage = generate_query_total_tagging_coverage(
-      billing_period, business_unit)
+    :param tag_keys: List of tag keys to consider for coverage.
+    :return: Dict of total coverage per tag, and a DataFrame with per-account & per-tag coverage.
+    """
+    
+    logger.info("Fetching AWS accounts for business unit %s", business_unit)
     query_list_of_aws_accounts = generate_query_list_of_aws_accounts(
       billing_period, business_unit)
-
-    logger.info("Executing query for total tagging coverage.")
-    athena_tagging_cov_execution_id = athena_execute_query(
-      query_total_tagging_coverage)
-    results_tagging_coverage = boto3.client("athena").get_query_results(
-      QueryExecutionId=athena_tagging_cov_execution_id)
-    total_tagging_cov_percentage = round(float(results_tagging_coverage["ResultSet"][
-      "Rows"][1]["Data"][0]["VarCharValue"]), 2)
-    logger.info(
-      "Total tagging coverage percentage: %.2f%%", total_tagging_cov_percentage)
-
-    logger.info("Executing query for list of AWS accounts.")
     athena_bu_aws_account_ex_id = athena_execute_query(query_list_of_aws_accounts)
     results_bu_aws_accounts = boto3.client("athena").get_query_results(
       QueryExecutionId=athena_bu_aws_account_ex_id)
@@ -170,43 +165,60 @@ def generate_tagging_coverage_metrics(
       for row in rows
       if len(row["Data"]) == 2
       ]
-
     headers = cleaned_data[0]
-    df_tagging_coverage_aws_accounts = pd.DataFrame(cleaned_data[1:], columns=headers)
-    logger.info("Retrieved %d AWS accounts for business unit %s.",
-                len(df_tagging_coverage_aws_accounts), business_unit)
+    df_aws_accounts = pd.DataFrame(cleaned_data[1:], columns=headers)
 
-    logger.info("Calculating tagging coverage for each AWS account.")
-    for index, row in df_tagging_coverage_aws_accounts.iterrows():
-        aws_account_name = row["line_item_usage_account_name"]
-        logger.info("Processing AWS account: %s", aws_account_name)
-        query_tagging_per_aws_account = generate_query_tagging_per_aws_account(
-          aws_account_name, billing_period, business_unit)
-        athena_aws_account_ex_id = athena_execute_query(
-          query_tagging_per_aws_account)
-        results_aws_account = boto3.client("athena").get_query_results(
-          QueryExecutionId=athena_aws_account_ex_id)
-        account_tagging_cov_percentage = round(float(results_aws_account[
-          "ResultSet"]["Rows"][1]["Data"][0][
-            "VarCharValue"]), 2) if "VarCharValue" in results_aws_account[
-            "ResultSet"]["Rows"][1]["Data"][0] else None
-        df_tagging_coverage_aws_accounts.at[
-          index, "account_tagging_coverage_pct"] = account_tagging_cov_percentage
+    total_tag_coverage = {}
+    df_tagging_coverage_aws_accounts = df_aws_accounts.rename(columns={
+        "line_item_usage_account_id": "AWS_account_id",
+        "line_item_usage_account_name": "AWS_account_name"
+    })
 
-    logger.info("Tagging coverage for AWS accounts completed.")
+    for tag_key in tag_keys:
+        logger.info("Processing tag key: %s", tag_key)
 
-    df_tagging_coverage_aws_accounts.dropna(
-      subset=["account_tagging_coverage_pct"],
-      inplace=True
-    )
-    df_tagging_coverage_aws_accounts.rename(
-      columns={"line_item_usage_account_id": "AWS_account_id",
-               "line_item_usage_account_name": "AWS_account_name"}, inplace=True)
+        query_total_coverage = generate_query_total_tagging_coverage_for_tag(
+          billing_period, business_unit, tag_key)
+        logger.info("Executing query for total tagging coverage for tag %s", tag_key)
+        athena_total_coverage_ex_id = athena_execute_query(
+          query_total_coverage)
+        results_total_coverage = boto3.client("athena").get_query_results(
+          QueryExecutionId=athena_total_coverage_ex_id)
+        total_tagging_cov_prc = (
+          round(float(results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+          if "VarCharValue" in results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]
+          else 0
+        )
+        logger.info(
+          "Total tagging coverage percentage for %s: %.2f%%",
+          tag_key, total_tagging_cov_prc)
+        total_tag_coverage[tag_key] = total_tagging_cov_prc
+
+        if total_tagging_cov_prc > 0:
+            logger.info("Calculating tagging coverage for each AWS account for %s.", tag_key)
+            for index, row in df_tagging_coverage_aws_accounts.iterrows():
+                aws_account_name = row["AWS_account_name"]
+                logger.info("Processing AWS account %s for tag %s", aws_account_name, tag_key)
+                query_aws_account_per_tag = generate_query_tagging_per_aws_account_for_tag(
+                  aws_account_name, billing_period, business_unit, tag_key)
+                athena_aws_account_per_tag_ex_id = athena_execute_query(
+                  query_aws_account_per_tag)
+                results_aws_account_per_tag = boto3.client("athena").get_query_results(
+                  QueryExecutionId=athena_aws_account_per_tag_ex_id)
+                aws_account_cov_prc_per_tag = (
+                  round(float(results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+                  if "VarCharValue" in results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]
+                  else 0
+                )
+                df_tagging_coverage_aws_accounts.at[
+                  index, tag_key] = aws_account_cov_prc_per_tag
+
+            logger.info("Tagging coverage for AWS accounts for tag %s completed.", tag_key)
 
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
-      by="account_tagging_coverage_pct",
+      by="AWS_account_name",  
       ascending=False).reset_index(drop=True)
-    return total_tagging_cov_percentage, df_tagging_coverage_aws_accounts
+    return total_tag_coverage, df_tagging_coverage_aws_accounts
 
 
 def generate_excel_report(
