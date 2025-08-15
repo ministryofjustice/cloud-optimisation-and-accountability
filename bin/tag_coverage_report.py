@@ -193,7 +193,8 @@ def generate_tagging_coverage_metrics(
     :param business_unit: The business unit for which to generate metrics.
     :param billing_period: The billing period for which to generate metrics.
     :param tag_keys: List of tag keys to consider for coverage.
-    :return: Dict of total coverage per tag, and a DataFrame with per-account & per-tag coverage.
+    :return: df of total coverage per tag,
+    and a df with coverage per-account & per-tag.
     """
 
     logger.info("Fetching AWS accounts for business unit %s", business_unit)
@@ -252,7 +253,7 @@ def generate_tagging_coverage_metrics(
     df_total_tagging_coverage = pd.DataFrame(
       total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
-      by="AWS_account_name",  
+      by="AWS_account_name",
       ascending=False).reset_index(drop=True)
 
     return df_total_tagging_coverage, df_tagging_coverage_aws_accounts
