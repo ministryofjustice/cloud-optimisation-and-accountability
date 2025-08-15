@@ -181,7 +181,7 @@ def fetch_total_tag_coverage(tag_key, billing_period, business_unit):
     logger.info("Total tagging coverage for %s: %.2f%%", tag_key, total_tagging_cov_prc)
     return tag_key, total_tagging_cov_prc
 
-
+# pylint: disable=W0102,R0914
 def generate_tagging_coverage_metrics(
     business_unit: str,
     billing_period: str,
