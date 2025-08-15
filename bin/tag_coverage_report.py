@@ -254,8 +254,7 @@ def generate_tagging_coverage_metrics(
     df_total_tagging_coverage = pd.DataFrame(
       total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
-      by="AWS_account_name",
-      ascending=False).reset_index(drop=True)
+      by="AWS_account_name").reset_index(drop=True)
 
     return df_total_tagging_coverage, df_tagging_coverage_aws_accounts
 
@@ -293,6 +292,7 @@ def generate_excel_report(
         chart.set_title({'name': 'Total Tagging Coverage'})
         chart.set_y_axis({'name': 'Coverage (%)'})
         chart.set_x_axis({'name': 'Tag'})
+        chart.set_legend({'position': 'none'})
 
         chart.add_series({
             'name': 'Coverage (%)',
