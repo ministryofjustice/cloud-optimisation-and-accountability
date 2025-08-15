@@ -188,7 +188,7 @@ def generate_tagging_coverage_metrics(
     :param tag_keys: List of tag keys to consider for coverage.
     :return: Dict of total coverage per tag, and a DataFrame with per-account & per-tag coverage.
     """
-    
+
     logger.info("Fetching AWS accounts for business unit %s", business_unit)
     query_list_of_aws_accounts = generate_query_list_of_aws_accounts(
       billing_period, business_unit)
@@ -239,17 +239,17 @@ def generate_tagging_coverage_metrics(
         for future in as_completed(futures):
             index, tag_key, account_cov = future.result()
             df_tagging_coverage_aws_accounts.at[index, tag_key] = account_cov
-      
 
+    df_total_tagging_coverage = pd.DataFrame(total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="AWS_account_name",  
       ascending=False).reset_index(drop=True)
 
-    return total_tag_coverage, df_tagging_coverage_aws_accounts
+    return df_total_tagging_coverage, df_tagging_coverage_aws_accounts
 
 
 def generate_excel_report(
-    total_tagging_cov_percentage: float,
+    df_total_tagging_coverage: pd.DataFrame,
     df_tagging_coverage_aws_accounts: pd.DataFrame,
     business_unit: str
   ) -> None:
@@ -259,62 +259,34 @@ def generate_excel_report(
     :param df_tagging_coverage_aws_accounts: DataFrame with per-account coverage.
     :param output_path: Path to save the Excel file.
     """
+    df_total_tagging_coverage['Tag'] = df_total_tagging_coverage['Tag'].str.replace(r'^user_', '', regex=True)
+    df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.rename(columns=lambda x: x[len("user_"):] if x.startswith("user_") else x)
+
     output_path = f"tagging_coverage_report_{business_unit}.xlsx"
     with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-        summary_df = pd.DataFrame({
-            "Status": ["Tagged", "Untagged"],
-            "Coverage (%)": [
-                total_tagging_cov_percentage,
-                100 - total_tagging_cov_percentage
-            ]
-        })
-        summary_df.to_excel(writer, sheet_name="Summary", index=False)
+        df_total_tagging_coverage.to_excel(writer, sheet_name="Total Coverage per Tag", index=False)
 
         df_tagging_coverage_aws_accounts.to_excel(
-          writer, sheet_name="Account Coverage", index=False
+          writer, sheet_name="Account Coverage per Tag", index=False
         )
         workbook = writer.book
-        summary_ws = writer.sheets["Summary"]
-        account_ws = writer.sheets["Account Coverage"]
+        summary_ws = writer.sheets["Total Coverage per Tag"]
 
-        doughnut_chart = workbook.add_chart({"type": "doughnut"})
-        doughnut_chart.add_series({
-            "name": "Total Tagging Coverage [%]",
-            "categories": ["Summary", 1, 0, 2, 0],
-            "values": ["Summary", 1, 1, 2, 1],
-            "points": [
-                {"fill": {"color": '#4CAF50'}},
-                {"fill": {"color": '#D3D3D3'}},
-            ],
-            "data_labels": {"value": True, "num_format": '0.00"%"'},
+        colors = ['#5DADE2', '#58D68D', '#EB984E', '#878f99', '#AF7AC5']
+
+        chart = workbook.add_chart({'type': 'column'})
+        chart.set_title({'name': 'Total Tagging Coverage'})
+        chart.set_y_axis({'name': 'Coverage (%)'})
+        chart.set_x_axis({'name': 'Tag'})
+
+        chart.add_series({
+            'name': 'Coverage (%)',
+            'categories': ['Total Coverage per Tag', 1, 0, len(df_total_tagging_coverage), 0],
+            'values': ['Total Coverage per Tag', 1, 1, len(df_total_tagging_coverage), 1],
+            'data_labels': {'value': True},
+            'points': [{'fill': {'color': colors[i % len(colors)]}} for i in range(len(df_total_tagging_coverage))]
         })
-        doughnut_chart.set_legend({"position": "left"})
-        summary_ws.insert_chart("E2", doughnut_chart, {"x_scale": 1.5, "y_scale": 1.5})
 
-        df_cols = df_tagging_coverage_aws_accounts.columns.tolist()
-        account_col = (
-          df_cols.index("AWS_account_name")
-          if "AWS_account_name" in df_cols
-          else 0
-        )
-        coverage_col = (
-          df_cols.index("account_tagging_coverage_pct")
-          if "account_tagging_coverage_pct" in df_cols
-          else 1
-        )
-
-        n_accounts = len(df_tagging_coverage_aws_accounts)
-        bar_chart = workbook.add_chart({"type": "column"})
-        bar_chart.add_series({
-          "name": "Tagging Coverage by Account [%]",
-          "categories": ["Account Coverage", 1, account_col, n_accounts, account_col],
-          "values": ["Account Coverage", 1, coverage_col, n_accounts, coverage_col],
-          "fill": {"color": "#1f77b4"}
-          })
-
-        bar_chart.set_x_axis({"name": "Account"})
-        bar_chart.set_y_axis({"name": "Coverage (%)", "num_format": '0"%"', "max": 100})
-        bar_chart.set_legend({"position": "none"})
-        account_ws.insert_chart("D2", bar_chart, {"x_scale": 7, "y_scale": 3})
+        summary_ws.insert_chart('D2', chart, {'x_scale': 1.5, 'y_scale': 1.5})
 
     logger.info("Excel report generated at: %s", output_path)
