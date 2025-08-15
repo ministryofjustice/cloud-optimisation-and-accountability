@@ -140,8 +140,11 @@ def generate_query_tagging_per_aws_account_for_tag(
     return query_tagging_per_aws_account
 
 
-def fetch_account_coverage(index, aws_account_name, tag_key, billing_period, business_unit):
-    logger.info("Processing AWS account coverage %s for tag %s", aws_account_name, tag_key)
+def fetch_account_coverage(index, aws_account_name,
+                           tag_key, billing_period,
+                           business_unit):
+    logger.info("Processing AWS account coverage %s for tag %s",
+                aws_account_name, tag_key)
     query_aws_account_per_tag = generate_query_tagging_per_aws_account_for_tag(
         aws_account_name, billing_period, business_unit, tag_key
     )
@@ -150,8 +153,10 @@ def fetch_account_coverage(index, aws_account_name, tag_key, billing_period, bus
         QueryExecutionId=athena_aws_account_per_tag_ex_id
     )
     aws_account_cov_prc_per_tag = (
-        round(float(results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
-        if "VarCharValue" in results_aws_account_per_tag["ResultSet"]["Rows"][1]["Data"][0]
+        round(float(results_aws_account_per_tag[
+          "ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+        if "VarCharValue" in results_aws_account_per_tag[
+          "ResultSet"]["Rows"][1]["Data"][0]
         else 0
     )
     return index, tag_key, aws_account_cov_prc_per_tag
@@ -167,8 +172,10 @@ def fetch_total_tag_coverage(tag_key, billing_period, business_unit):
         QueryExecutionId=athena_total_coverage_ex_id
     )
     total_tagging_cov_prc = (
-        round(float(results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
-        if "VarCharValue" in results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]
+        round(float(results_total_coverage[
+          "ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]), 2)
+        if "VarCharValue" in results_total_coverage[
+          "ResultSet"]["Rows"][1]["Data"][0]
         else 0
     )
     logger.info("Total tagging coverage for %s: %.2f%%", tag_key, total_tagging_cov_prc)
@@ -212,7 +219,8 @@ def generate_tagging_coverage_metrics(
 
     with ThreadPoolExecutor(max_workers=5) as executor:
         futures = [
-            executor.submit(fetch_total_tag_coverage, tag_key, billing_period, business_unit)
+            executor.submit(fetch_total_tag_coverage, tag_key,
+                            billing_period, business_unit)
             for tag_key in tag_keys
         ]
         for future in as_completed(futures):
@@ -234,13 +242,15 @@ def generate_tagging_coverage_metrics(
                             business_unit
                         )
                     )
-                logger.info("Completed per-account tagging coverage for tag %s", tag_key)
+                logger.info(
+                  "Completed per-account tagging coverage for tag %s", tag_key)
 
         for future in as_completed(futures):
             index, tag_key, account_cov = future.result()
             df_tagging_coverage_aws_accounts.at[index, tag_key] = account_cov
 
-    df_total_tagging_coverage = pd.DataFrame(total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
+    df_total_tagging_coverage = pd.DataFrame(
+      total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
       by="AWS_account_name",  
       ascending=False).reset_index(drop=True)
@@ -259,12 +269,15 @@ def generate_excel_report(
     :param df_tagging_coverage_aws_accounts: DataFrame with per-account coverage.
     :param output_path: Path to save the Excel file.
     """
-    df_total_tagging_coverage['Tag'] = df_total_tagging_coverage['Tag'].str.replace(r'^user_', '', regex=True)
-    df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.rename(columns=lambda x: x[len("user_"):] if x.startswith("user_") else x)
+    df_total_tagging_coverage['Tag'] = df_total_tagging_coverage['Tag'].str.replace(
+      r'^user_', '', regex=True)
+    df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.rename(
+      columns=lambda x: x[len("user_"):] if x.startswith("user_") else x)
 
     output_path = f"tagging_coverage_report_{business_unit}.xlsx"
     with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-        df_total_tagging_coverage.to_excel(writer, sheet_name="Total Coverage per Tag", index=False)
+        df_total_tagging_coverage.to_excel(
+          writer, sheet_name="Total Coverage per Tag", index=False)
 
         df_tagging_coverage_aws_accounts.to_excel(
           writer, sheet_name="Account Coverage per Tag", index=False
@@ -281,10 +294,13 @@ def generate_excel_report(
 
         chart.add_series({
             'name': 'Coverage (%)',
-            'categories': ['Total Coverage per Tag', 1, 0, len(df_total_tagging_coverage), 0],
-            'values': ['Total Coverage per Tag', 1, 1, len(df_total_tagging_coverage), 1],
+            'categories': ['Total Coverage per Tag', 1, 0,
+                           len(df_total_tagging_coverage), 0],
+            'values': ['Total Coverage per Tag', 1, 1,
+                       len(df_total_tagging_coverage), 1],
             'data_labels': {'value': True},
-            'points': [{'fill': {'color': colors[i % len(colors)]}} for i in range(len(df_total_tagging_coverage))]
+            'points': [{'fill': {'color': colors[i % len(colors)]}}
+                       for i in range(len(df_total_tagging_coverage))]
         })
 
         summary_ws.insert_chart('D2', chart, {'x_scale': 1.5, 'y_scale': 1.5})
