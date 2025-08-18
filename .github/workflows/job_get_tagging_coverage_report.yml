@@ -1,6 +1,10 @@
 name: 📈 Get Tagging Coverage Report
 
 on:
+  on:
+    pull_request:
+      branches:
+        - main
   workflow_dispatch:
     inputs:
       billing_period:
