@@ -1,0 +1,61 @@
+name: 📈 Get Tagging Coverage Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      billing_period:
+        description: "Billing period in format YYYY-MM (e.g., 2025-01)"
+        required: true
+        type: string
+      business_unit:
+        description: "Select a business unit"
+        required: true
+        type: choice
+        options:
+          - HMPPS
+          - Platforms
+          - LAA
+          - Central Digital
+          - Technology Services
+          - OPG
+          - HMCTS
+          - YJB
+          - CICA
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  detect-cp-nonprod-resource-wastage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+          cache: "pipenv"
+      - name: Install Pipenv
+        run: |
+          pip install pipenv
+          pipenv install
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@3d8cba388a057b13744d61818a337e40a119b1a7 # v4.0.2
+        with:
+          role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_REPORT_UPLOAD_ARN}}
+          aws-region: eu-west-2
+      - name: Run Python script 
+        run: |
+            pipenv run python3 -m bin.tagging_coverage_report
+        env:
+          GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
+          ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
+      - name: Report failure to Slack
+        if: always()
+        uses: ravsamhq/notify-slack-action@9e7ca9833c15237f9cb93fbbccd38e37793e79f1 # 2.5.0
+        with:
+          status: ${{ job.status }}
+          notify_when: "failure"
+          notification_title: "Failed to run CP resource wastage job"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
