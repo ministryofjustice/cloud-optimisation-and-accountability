@@ -1,6 +1,9 @@
 name: 📈 Get Tagging Coverage Report
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       billing_period:
@@ -46,7 +49,9 @@ jobs:
           aws-region: eu-west-2
       - name: Run Python script 
         run: |
-            pipenv run python3 -m bin.tagging_coverage_report
+          pipenv run python3 -m bin.tagging_coverage_report \
+            --business_unit "${{ github.event.inputs.business_unit || 'HMPPS' }}" \
+            --billing_period "${{ github.event.inputs.billing_period || '2025-08' }}"
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
