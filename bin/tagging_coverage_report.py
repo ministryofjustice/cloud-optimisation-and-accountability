@@ -314,13 +314,18 @@ def generate_excel_report(
     return output_path
 
 
-def get_tagging_coverage_report(business_unit: str,billing_period: str,
+def get_tagging_coverage_report(business_unit: str, billing_period: str,
                                 tag_keys: list[str] = ["user_business_unit", "user_application",
                                                        "user_service_area", "user_owner", "user_is_production"]) -> None:
 
-    df_total_tagging_coverage, df_tagging_coverage_aws_accounts = generate_tagging_coverage_metrics(business_unit, billing_period, tag_keys)
-    output_report_path = generate_excel_report(df_total_tagging_coverage, df_tagging_coverage_aws_accounts, business_unit)
-    logger.info("Tagging coverage report generated successfully for business unit: %s", business_unit)
+    df_total_tagging_coverage, df_tagging_coverage_aws_accounts = generate_tagging_coverage_metrics(
+      business_unit, billing_period, tag_keys)
+    output_report_path = generate_excel_report(
+      df_total_tagging_coverage,
+      df_tagging_coverage_aws_accounts,
+      business_unit)
+    logger.info(
+      "Tagging coverage report generated for business unit: %s", business_unit)
 
     SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
       file_path=output_report_path,
