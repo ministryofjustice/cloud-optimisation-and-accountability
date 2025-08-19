@@ -334,7 +334,7 @@ def get_tagging_coverage_report(business_unit: str,
 
     SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
       file_path=output_report_path,
-      message="Tagging coverage report for {business_unit}\n" 
+      message="Tagging coverage report for {business_unit}\n"
       "for billing period {billing_period} has been generated.\n",
       filename=f"tagging_coverage_report_{business_unit}.xlsx"
         )
