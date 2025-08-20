@@ -314,7 +314,7 @@ def generate_excel_report(
     return output_path
 
 
-def get_tagging_coverage_report(business_unit: str,
+def generate_tagging_coverage_report(business_unit: str,
                                 billing_period: str,
                                 tag_keys: list[str] = [
                                   "user_business_unit", "user_application",
@@ -351,4 +351,4 @@ if __name__ == "__main__":
         "--billing_period", required=True, help="Billing period for the report."
     )
     args = parser.parse_args()
-    get_tagging_coverage_report(args.business_unit, args.billing_period)
+    generate_tagging_coverage_report(args.business_unit, args.billing_period)
