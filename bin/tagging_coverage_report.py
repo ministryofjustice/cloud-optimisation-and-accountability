@@ -1,9 +1,11 @@
 import boto3
 import logging
+import os
 import time
 import pandas as pd
 from typing import Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from services.slack_service import SlackService
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -254,8 +256,7 @@ def generate_tagging_coverage_metrics(
     df_total_tagging_coverage = pd.DataFrame(
       total_tag_coverage.items(), columns=["Tag", "Coverage (%)"])
     df_tagging_coverage_aws_accounts = df_tagging_coverage_aws_accounts.sort_values(
-      by="AWS_account_name",
-      ascending=False).reset_index(drop=True)
+      by="AWS_account_name").reset_index(drop=True)
 
     return df_total_tagging_coverage, df_tagging_coverage_aws_accounts
 
@@ -293,6 +294,7 @@ def generate_excel_report(
         chart.set_title({'name': 'Total Tagging Coverage'})
         chart.set_y_axis({'name': 'Coverage (%)'})
         chart.set_x_axis({'name': 'Tag'})
+        chart.set_legend({'position': 'none'})
 
         chart.add_series({
             'name': 'Coverage (%)',
@@ -308,3 +310,45 @@ def generate_excel_report(
         summary_ws.insert_chart('D2', chart, {'x_scale': 1.5, 'y_scale': 1.5})
 
     logger.info("Excel report generated at: %s", output_path)
+
+    return output_path
+
+
+def get_tagging_coverage_report(business_unit: str,
+                                billing_period: str,
+                                tag_keys: list[str] = [
+                                  "user_business_unit", "user_application",
+                                  "user_service_area", "user_owner",
+                                  "user_is_production"]) -> None:
+
+    df_total_tagging_coverage, df_tagging_coverage_aws_accounts = (
+      generate_tagging_coverage_metrics(
+        business_unit, billing_period, tag_keys)
+    )
+    output_report_path = generate_excel_report(
+      df_total_tagging_coverage,
+      df_tagging_coverage_aws_accounts,
+      business_unit)
+    logger.info(
+      "Tagging coverage report generated for business unit: %s", business_unit)
+
+    SlackService(os.getenv("ADMIN_SLACK_TOKEN")).send_report_with_message(
+      file_path=output_report_path,
+      message="Tagging coverage report for {business_unit}\n"
+      "for billing period {billing_period} has been generated.\n",
+      filename=f"tagging_coverage_report_{business_unit}.xlsx"
+        )
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate tagging coverage report.")
+    parser.add_argument(
+        "--business_unit", required=True, help="Business unit for the report."
+    )
+    parser.add_argument(
+        "--billing_period", required=True, help="Billing period for the report."
+    )
+    args = parser.parse_args()
+    get_tagging_coverage_report(args.business_unit, args.billing_period)
