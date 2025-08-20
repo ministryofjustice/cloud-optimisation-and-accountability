@@ -44,7 +44,7 @@ jobs:
         with:
           role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_ROLE_ARN}}
           aws-region: eu-west-2
-      - name: Run Python script 
+      - name: Run Python script
         run: |
             pipenv run python3 -m bin.tagging_coverage_report \
             --billing-period "${{ github.event.inputs.billing_period }}" \
