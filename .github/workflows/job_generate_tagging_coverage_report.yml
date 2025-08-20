@@ -1,4 +1,4 @@
-name: 📈 Get Tagging Coverage Report
+name: 📈 Generate Tagging Coverage Report
 
 on:
   workflow_dispatch:
