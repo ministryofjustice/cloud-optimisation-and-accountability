@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       billing_period:
-        description: "Billing period in format YYYY-MM (e.g., 202501)"
+        description: "Billing period in format YYYY-MM (e.g., 2025-01)"
         required: true
         type: string
       business_unit:
@@ -27,7 +27,7 @@ permissions:
   contents: write
 
 jobs:
-  detect-cp-nonprod-resource-wastage:
+  generate-tagging-coverage-report:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -44,9 +44,11 @@ jobs:
         with:
           role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_ROLE_ARN}}
           aws-region: eu-west-2
-      - name: Run Python script 
+      - name: Run Python script
         run: |
-            pipenv run python3 -m bin.tagging_coverage_report
+            pipenv run python3 -m bin.tagging_coverage_report \
+            --billing_period "${{ github.event.inputs.billing_period }}" \
+            --business_unit "${{ github.event.inputs.business_unit }}"
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
