@@ -47,8 +47,8 @@ jobs:
       - name: Run Python script
         run: |
             pipenv run python3 -m bin.tagging_coverage_report \
-            --billing-period "${{ github.event.inputs.billing_period }}" \
-            --business-unit "${{ github.event.inputs.business_unit }}"
+            --billing_period "${{ github.event.inputs.billing_period }}" \
+            --business_unit "${{ github.event.inputs.business_unit }}"
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
