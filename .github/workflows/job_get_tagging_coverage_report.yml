@@ -46,7 +46,9 @@ jobs:
           aws-region: eu-west-2
       - name: Run Python script 
         run: |
-            pipenv run python3 -m bin.tagging_coverage_report
+            pipenv run python3 -m bin.tagging_coverage_report \
+            --billing-period "${{ github.event.inputs.billing_period }}" \
+            --business-unit "${{ github.event.inputs.business_unit }}"
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
