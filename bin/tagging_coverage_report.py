@@ -315,11 +315,11 @@ def generate_excel_report(
 
 
 def generate_tagging_coverage_report(business_unit: str,
-                                billing_period: str,
-                                tag_keys: list[str] = [
-                                  "user_business_unit", "user_application",
-                                  "user_service_area", "user_owner",
-                                  "user_is_production"]) -> None:
+                                     billing_period: str,
+                                     tag_keys: list[str] = [
+                                       "user_business_unit", "user_application",
+                                       "user_service_area", "user_owner",
+                                       "user_is_production"]) -> None:
 
     df_total_tagging_coverage, df_tagging_coverage_aws_accounts = (
       generate_tagging_coverage_metrics(
