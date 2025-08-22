@@ -86,10 +86,6 @@ We are experimenting with adopting PipEnv as our Python package manager, moving 
 
 To enhance our security posture and streamline the management of vulnerabilities within our dependencies, we are experimenting with replacing Dependabot with Trivy. This shift aims to leverage Trivy's comprehensive vulnerability detection across multiple languages and package managers and ease of integration into our CI/CD pipelines. During this experimental phase, we will evaluate Trivy's effectiveness in identifying and mitigating known vulnerabilities, comparing it to Dependabot's performance and utility.
 
-### **✅ Implement CodeQL for Python Code Security Review**
-
-To uphold the highest security standards in our Python codebase, we have decided to integrate CodeQL into our development workflow. CodeQL will serve as a critical tool in identifying security weaknesses within our Python code at pull request (PR) stages and on a regular basis through automated scans. Including CodeQL aims to enhance our proactive security measures, allowing us to address vulnerabilities effectively and maintain the integrity of our applications.
-
 ### **✅ Pin GitHub Actions to a Commit Hash**
 
 Using a fixed version (via commit hash) ensures that you're using exactly the version of an action you reviewed or tested. If you reference actions by a mutable tag like main or v1, the underlying code can change without warning, potentially introducing vulnerabilities, malicious code or breaking changes. Dependencies can evolve, sometimes breaking compatibility. If a new version of an action is released under the same tag, it might contain breaking changes that disrupt your workflow. Commit hashes lock in known-good versions.
