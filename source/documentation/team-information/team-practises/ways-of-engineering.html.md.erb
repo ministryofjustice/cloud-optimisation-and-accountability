@@ -77,6 +77,20 @@ The MoJ Digital Services AWS Account is a legacy account that is currently owned
 
 Existing services owned by our team hosted in the MoJ Digital Services AWS Account  should be migrated to the Cloud Platform or Modernisation Platform.
 
+### ✅ Terraform as IaC
+
+We use Terraform as our Infrastructure as Code (IaC) tool to define, provision, and manage our infrastructure in an automated and consistent way. Instead of manually creating resources through cloud consoles, Terraform allows us to write infrastructure definitions in code, making the process repeatable, scalable, and version-controlled.
+
+#### By using Terraform:
+
+-  We declare infrastructure in configuration files (HCL – HashiCorp Configuration Language).
+-  Terraform automatically provisions resources across cloud and on-premises providers.
+-  Execution plans show proposed changes before applying them, reducing risks.
+-  State management ensures our environments remain consistent and in sync.
+-  Version-controlled code enables collaboration, auditability, and rollback of changes.
+-  Modules allow us to reuse and standardize infrastructure components.
+
+
 ## **Package Management and Environment**
 
 ### ✅ Python as the Primary Programming Language
@@ -109,16 +123,44 @@ To maintain the relevance and effectiveness of our Ways of Engineering, we encou
 
 We're committed to innovation in our projects and how we work together as an engineering team. Experimenting with new practices allows us to improve and adapt to the changing tech landscape continuously. Participation and feedback from all team members are essential for these experiments to yield valuable insights and guide our evolution.
 
-### **✅ Terraform as IaC**
+## Principles and Values
 
-We use Terraform as our Infrastructure as Code (IaC) tool to define, provision, and manage our infrastructure in an automated and consistent way. Instead of manually creating resources through cloud consoles, Terraform allows us to write infrastructure definitions in code, making the process repeatable, scalable, and version-controlled.
+#### Start Simple
 
-## By using Terraform:
+We begin with a single Terraform configuration in a monorepo to keep things straightforward.
 
--  We declare infrastructure in configuration files (HCL – HashiCorp Configuration Language).
--  Terraform automatically provisions resources across cloud and on-premises providers.
--  Execution plans show proposed changes before applying them, reducing risks.
--  State management ensures our environments remain consistent and in sync.
--  Version-controlled code enables collaboration, auditability, and rollback of changes.
--  Modules allow us to reuse and standardize infrastructure components.
+- A single root module is used for initial infrastructure (e.g., networking, compute, storage).
+- This allows the team to quickly get started and deliver infrastructure without added complexity.
+- State files are managed centrally (remote backend), ensuring team collaboration.
+
+#### Add Complexity When Needed
+
+As the infrastructure grows, we introduce modularity and structure to maintain scalability and reusability.
+
+- Common infrastructure components (e.g., VPCs, databases, IAM roles, Kubernetes clusters) are abstracted into modules.
+- Modules are version-controlled within the same repository, promoting reuse and standard practices.
+- The monorepo continues to house all Terraform code, simplifying dependency management and visibility.
+
+#### Monorepo Approach
+
+We use a monorepo for Terraform code to ensure consistency and collaboration across teams.
+
+- A single repository contains all environments (dev, staging, production) and their respective configurations.
+- Shared modules are stored in a dedicated modules/ directory and referenced by environment-specific configurations.
+- This enables a single source of truth for infrastructure, while also supporting CI/CD pipelines for automated validation and deployment.
+
+#### Modules for Reusability and Standardization
+
+- Modules encapsulate reusable patterns (e.g., network, eks, rds, iam).
+- This reduces duplication, enforces organizational standards, and accelerates provisioning.
+- Teams consume modules via versioned references, ensuring stability while allowing controlled updates.
+
+
+#### Benefits of this Approach
+
+- Simplicity First → Teams can start small without over-engineering.
+- Scalability → As requirements grow, modular design supports complex infrastructure.
+- Consistency → All environments follow the same structure and use shared modules.
+- Collaboration → A monorepo ensures visibility, easier reviews, and central governance.
+- Reusability → Modules allow faster delivery and standardization across projects.
 
