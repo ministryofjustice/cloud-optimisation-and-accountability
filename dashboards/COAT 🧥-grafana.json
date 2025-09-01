@@ -1243,10 +1243,10 @@
         "current": {
           "selected": true,
           "text": [
-            "2025-05"
+            "2025-08"
           ],
           "value": [
-            "2025-05"
+            "2025-08"
           ]
         },
         "datasource": {
@@ -1366,6 +1366,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 75,
+  "version": 77,
   "weekStart": ""
 }
