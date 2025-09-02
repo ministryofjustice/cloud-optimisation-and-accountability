@@ -119,7 +119,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0 \n  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS business_unit\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_business_unit'] != ''\n  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_business_unit'] IS NOT NULL\n  AND resource_tags['user_business_unit'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS business_unit;",
           "refId": "A",
           "table": "data"
         },
@@ -137,7 +137,7 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS application\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_application'] != ''\n  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_application'] IS NOT NULL\n  AND resource_tags['user_application'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS application;",
           "refId": "B",
           "table": "data"
         },
@@ -155,7 +155,7 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS namespace\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_namespace'] != ''\n  and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_namespace'] IS NOT NULL\n  AND resource_tags['user_namespace'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS namespace;",
           "refId": "C",
           "table": "data"
         },
@@ -173,7 +173,7 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS environment\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_namespace'] != ''\nand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_environment_name'] IS NOT NULL\n  AND resource_tags['user_environment_name'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS environment;",
           "refId": "D",
           "table": "data"
         },
@@ -191,7 +191,7 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS service_area\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_service_area'] != ''\nand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_service_area'] IS NOT NULL\n  AND resource_tags['user_service_area'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS service_area;",
           "refId": "E",
           "table": "data"
         },
@@ -209,7 +209,7 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS Owner\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_owner'] != ''\nand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n\tand (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_owner'] IS NOT NULL\n  AND resource_tags['user_owner'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS owner;",
           "refId": "F",
           "table": "data"
         },
@@ -227,12 +227,12 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT (sum(line_item_unblended_cost) * 100.0) / (\n\t\tSELECT sum(line_item_unblended_cost)\n\t\tFROM $__table where line_item_unblended_cost > 0\n\t\t and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n  and (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)\n\t) AS is_production\nFROM $__table\nwhere line_item_unblended_cost > 0\n\tand resource_tags['user_owner'] != ''\nand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n  and (resource_tags['user_owner'] in ($owner) OR concat($owner ,'') = '_ALL_')\n  and (resource_tags['user_is_production'] in ($isProducation) OR concat($isProducation ,'') = '_ALL_')\n\tand billing_period  in ($period)",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_is_production'] IS NOT NULL\n  AND resource_tags['user_is_production'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_'\n  AND line_item_unblended_cost > 0) AS is_production;",
           "refId": "G",
           "table": "data"
         }
       ],
-      "title": "Tag coverage",
+      "title": "Business unit tagging coverage",
       "transparent": true,
       "type": "gauge"
     },
@@ -301,7 +301,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 0,
-          "rawSQL": "select \n  line_item_usage_start_date,\n  round(sum(line_item_unblended_cost), 2) as cost from $__table \nWHERE (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\nand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\nand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\nand (resource_tags['user_namespace']  in ($namespace) OR concat($namespace ,'') = '_ALL_')\nand (resource_tags['user_service_area']  in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\nand (line_item_line_item_type not in ('Tax'))\nand billing_period  in ($period)\ngroup by 1\norder by 1\n\n",
+          "rawSQL": "select \n  line_item_usage_start_date,\n  round(sum(line_item_unblended_cost), 2) as cost from $__table \nWHERE (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\nand (cost_category['business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\nand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\nand (resource_tags['user_namespace']  in ($namespace) OR concat($namespace ,'') = '_ALL_')\nand (resource_tags['user_service_area']  in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\nand (line_item_line_item_type not in ('Tax'))\nand billing_period  in ($period)\ngroup by 1\norder by 1\n\n",
           "refId": "A",
           "table": "data"
         }
@@ -401,7 +401,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 0,
-          "rawSQL": "select product_region_code,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere product_region_code != ''\n\tand line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax'))\n\tand billing_period  in ($period)\ngroup by product_region_code\norder by cost desc",
+          "rawSQL": "select product_region_code,\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere product_region_code != ''\n\tand line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (cost_category['business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax'))\n\tand billing_period  in ($period)\ngroup by product_region_code\norder by cost desc",
           "refId": "A",
           "table": "data"
         }
@@ -475,7 +475,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags['user_environment_name'] as env, sum(line_item_unblended_cost) as cost \nfrom $__table() \nwhere  line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name in ($account)  OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax'))\n\tand billing_period  in ($period)\n\tgroup by resource_tags['user_environment_name']\n\torder by cost desc",
+          "rawSQL": "select resource_tags['user_environment_name'] as env, sum(line_item_unblended_cost + discount_total_discount) as cost \nfrom $__table() \nwhere  line_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (cost_category['business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name in ($account)  OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount'))\n\tand billing_period  in ($period)\n\tgroup by resource_tags['user_environment_name']\n\torder by cost desc",
           "refId": "A",
           "table": "data"
         }
@@ -639,7 +639,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags['user_business_unit'],\n\tround(sum(line_item_unblended_cost)) as cost\nfrom $__table() \nwhere \n\tline_item_unblended_cost > 0\n\tand (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax'))\n\tand billing_period  in ($period)\ngroup by resource_tags['user_business_unit']\norder by cost desc",
+          "rawSQL": "select coalesce (cost_category['business_unit'], 'Uncategorised BU') AS business_unit, round(sum(line_item_unblended_cost + discount_total_discount)) as cost\nfrom $__table() \nwhere \n\t(resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n\tand (cost_category['business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n\tand (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_')\n\tand (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n\tand (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n\tand (line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount'))\n\tand billing_period  in ($period)\ngroup by 1\norder by 2 desc",
           "refId": "A",
           "table": "data"
         }
@@ -737,7 +737,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select product['product_name'],\n  round(sum(line_item_unblended_cost),2) as cost \nFROM $__table\nWHERE line_item_unblended_cost > 0 \n and (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n and (resource_tags['user_business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n and (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_') \n and (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n and (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n and (line_item_line_item_type not in ('Tax'))\n and billing_period  in ($period)\ngroup by product['product_name']\nORDER BY cost DESC \nLIMIT 10;",
+          "rawSQL": "SELECT product['product_name'], round(sum(line_item_unblended_cost + discount_total_discount),2) as cost\nFROM $__table\nWHERE (resource_tags['user_application'] in ($application) OR concat($application,'') = '_ALL_')\n and (cost_category['business_unit'] in ($unit) OR concat($unit,'') = '_ALL_')\n and (line_item_usage_account_name  in ($account) OR concat($account,'') = '_ALL_') \n and (resource_tags['user_namespace'] in ($namespace) OR concat($namespace ,'') = '_ALL_')\n and (resource_tags['user_service_area'] in ($serviceArea) OR concat($serviceArea ,'') = '_ALL_')\n and (line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount'))\n and billing_period  in ($period)\ngroup by product['product_name']\nORDER BY cost DESC \nLIMIT 10;",
           "refId": "A",
           "table": "data"
         }
@@ -781,7 +781,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -842,7 +843,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags['user_namespace'], sum(line_item_unblended_cost) as cost from $__table \nwhere resource_tags['user_namespace'] != '' and  billing_period  in ($period)\ngroup by resource_tags['user_namespace'] order by cost desc limit 10",
+          "rawSQL": "select resource_tags['user_namespace'], sum(line_item_unblended_cost + discount_total_discount) as cost from $__table \nwhere resource_tags['user_namespace'] != ''\nand line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount')\nand  billing_period  in ($period)\ngroup by resource_tags['user_namespace'] order by cost desc limit 10",
           "refId": "A",
           "table": "data"
         }
@@ -873,7 +874,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -934,7 +936,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select resource_tags['user_application'], sum(line_item_unblended_cost) as cost from $__table  \nwhere resource_tags['user_application'] != '' \tand billing_period  in ($period)\ngroup by resource_tags['user_application'] order by cost desc limit 10\n",
+          "rawSQL": "select resource_tags['user_application'], sum(line_item_unblended_cost + discount_total_discount) as cost from $__table  \nwhere resource_tags['user_application'] != ''\nand line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount')\nand billing_period  in ($period)\ngroup by resource_tags['user_application'] order by cost desc limit 10\n",
           "refId": "A",
           "table": "data"
         }
@@ -965,7 +967,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1026,7 +1029,7 @@
             "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select line_item_usage_account_name, sum(line_item_unblended_cost) as cost from $__table \nwhere line_item_usage_account_name != '' \tand billing_period  in ($period)\ngroup by line_item_usage_account_name order by cost desc limit 10\n",
+          "rawSQL": "select line_item_usage_account_name, sum(line_item_unblended_cost + discount_total_discount) as cost from $__table \nwhere line_item_usage_account_name != ''\nand line_item_line_item_type not in ('Tax', 'EdpDiscount', 'PrivateRateDiscount', 'BundledDiscount')\nand billing_period  in ($period)\ngroup by line_item_usage_account_name order by cost desc limit 10\n",
           "refId": "A",
           "table": "data"
         }
@@ -1074,7 +1077,7 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "select distinct resource_tags['user_business_unit'] from $__table where billing_period  in ($period)",
+          "rawSQL": "select distinct coalesce (cost_category['business_unit'], 'Uncategorised BU') AS business_unit from $__table where billing_period  in ($period)",
           "table": "data"
         },
         "refresh": 1,
@@ -1086,9 +1089,13 @@
       {
         "allValue": "'_ALL_'",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "grafana-athena-datasource",
@@ -1243,10 +1250,10 @@
         "current": {
           "selected": true,
           "text": [
-            "2025-05"
+            "2025-08"
           ],
           "value": [
-            "2025-05"
+            "2025-08"
           ]
         },
         "datasource": {
@@ -1321,9 +1328,13 @@
       {
         "allValue": "'_ALL_'",
         "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "grafana-athena-datasource",
@@ -1366,6 +1377,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 75,
+  "version": 78,
   "weekStart": ""
 }
