@@ -781,8 +781,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -874,8 +873,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -967,8 +965,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1077,7 +1074,7 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "select distinct coalesce (cost_category['business_unit'], 'Uncategorised BU') AS business_unit from $__table where billing_period  in ($period)",
+          "rawSQL": "select distinct cost_category['business_unit'] AS business_unit from $__table where billing_period in ($period) and nullif(cost_category['business_unit'], '') is not null;",
           "table": "data"
         },
         "refresh": 1,
@@ -1250,10 +1247,10 @@
         "current": {
           "selected": true,
           "text": [
-            "2025-07"
+            "2025-08"
           ],
           "value": [
-            "2025-07"
+            "2025-08"
           ]
         },
         "datasource": {
@@ -1377,6 +1374,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 83,
+  "version": 87,
   "weekStart": ""
 }
