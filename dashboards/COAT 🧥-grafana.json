@@ -227,12 +227,12 @@
           },
           "format": 1,
           "hide": false,
-          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_is_production'] IS NOT NULL\n  AND resource_tags['user_is_production'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_'\n  AND line_item_unblended_cost > 0) AS is_production;",
+          "rawSQL": "SELECT 100.0 *\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0\n  AND resource_tags['user_is_production'] IS NOT NULL\n  AND resource_tags['user_is_production'] <> '')\n/\n(\n  SELECT SUM(line_item_unblended_cost)\n  FROM data\n  WHERE billing_period = $period\n  AND (cost_category['business_unit'] IN ($unit)\n  OR concat($unit,'') = '_ALL_')\n  AND line_item_unblended_cost > 0) AS is_production;",
           "refId": "G",
           "table": "data"
         }
       ],
-      "title": "Business unit tagging coverage",
+      "title": "Tagging coverage",
       "transparent": true,
       "type": "gauge"
     },
@@ -1377,6 +1377,6 @@
   "timezone": "browser",
   "title": "FinOps",
   "uid": "eefmlx7flj4sgc",
-  "version": 78,
+  "version": 80,
   "weekStart": ""
 }
