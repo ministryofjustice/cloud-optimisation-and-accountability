@@ -39,7 +39,8 @@ class TestSlackService:
     def test_send_alert_to_operations_engineering_error(self, mocker):
 
         mock_response = MagicMock()
-        mock_response.__getitem__.side_effect = lambda key: {"error": "invalid_auth"}[key]
+        error_dict = {"error": "invalid_auth"}
+        mock_response.__getitem__.side_effect = lambda key: error_dict[key]
         slack_error = SlackApiError("Auth error", response=mock_response)
         mock_slack_client = mocker.Mock()
         mock_slack_client.chat_postMessage.side_effect = slack_error
@@ -71,7 +72,7 @@ class TestSlackService:
         service = SlackService("dummy-token")
 
         db_wastage_ns = ["namespace1, namespace2"]
-        pod_wastage_ns= ["namespace3, namespace4"]
+        pod_wastage_ns = ["namespace3, namespace4"]
 
         service.send_nonprod_resource_wastage_alerts(db_wastage_ns, pod_wastage_ns)
 

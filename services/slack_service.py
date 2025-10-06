@@ -60,7 +60,8 @@ class SlackService:
 
         self._send_alert_to_coat_notifications(blocks)
 
-    def send_report_with_message(self, file_path: str, message: str, filename: str | None = None):
+    def send_report_with_message(self, file_path: str, message: str,
+                                 filename: str | None = None):
         try:
             with open(file_path, "rb") as file_content:
                 self.slack_client.files_upload(
