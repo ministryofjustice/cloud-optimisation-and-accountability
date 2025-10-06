@@ -7,7 +7,7 @@ from slack_sdk.errors import SlackApiError
 
 
 class SlackService:
-    OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID = "C033QBE511V"
+    COAT_NOTIFICATIONS_CHANNEL_ID = "C09DXU35H9P"  # coat-notifications
     DATE_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
     # Added to stop TypeError on instantiation. See https://github.com/python/cpython/blob/d2340ef25721b6a72d45d4508c672c4be38c67d3/Objects/typeobject.c#L4444
@@ -17,10 +17,10 @@ class SlackService:
     def __init__(self, slack_token: str) -> None:
         self.slack_client = WebClient(slack_token)
 
-    def _send_alert_to_operations_engineering(self, blocks: list[dict]):
+    def _send_alert_to_coat_notifications(self, blocks: list[dict]):
         try:
             self.slack_client.chat_postMessage(
-                channel=self.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
+                channel=self.COAT_NOTIFICATIONS_CHANNEL_ID,
                 mrkdown=True,
                 blocks=blocks
             )
@@ -51,13 +51,13 @@ class SlackService:
         blocks += self._create_block_with_message(message=db_section)
         blocks += self._create_block_with_message(message=pod_section)
 
-        self._send_alert_to_operations_engineering(blocks)
+        self._send_alert_to_coat_notifications(blocks)
     
     def send_report_with_message(self, file_path: str, message: str, filename: str | None = None):
         try:
             with open(file_path, "rb") as file_content:
                 self.slack_client.files_upload(
-                    channels=self.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
+                    channels=self.COAT_NOTIFICATIONS_CHANNEL_ID,
                     initial_comment=message,
                     file=file_content,
                     filename=filename or file_path
