@@ -39,9 +39,7 @@ class TestSlackService:
     def test_send_alert_to_operations_engineering_error(self, mocker):
 
         mock_response = MagicMock()
-        mock_response.__getitem__.side_effect = (
-            lambda key: {"error": "invalid_auth"}[key]
-        )
+        mock_response.__getitem__.side_effect = lambda key: {"error": "invalid_auth"}[key]
         slack_error = SlackApiError("Auth error", response=mock_response)
         mock_slack_client = mocker.Mock()
         mock_slack_client.chat_postMessage.side_effect = slack_error
@@ -97,16 +95,17 @@ class TestSlackService:
                     )
                     }
                 },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
                     "text": (
                         f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime "
                         "when the database is turned off at night in the following namespaces:*\n"
                         f"{pod_wastage_ns}"
                     )
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime when the database is turned off at night in the following namespaces:*\n{pod_wastage_ns}"
                     }
+                }
             ]
         mock_slack_client.chat_postMessage.assert_called_once_with(
         channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
