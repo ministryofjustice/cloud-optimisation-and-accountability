@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import MagicMock
+import pytest
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import WebClient
 from services.slack_service import SlackService
@@ -31,9 +31,9 @@ class TestSlackService:
         service._send_alert_to_coat_notifications(blocks)
 
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
-        mrkdown=True,
-        blocks=blocks
+            channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
+            mrkdown=True,
+            blocks=blocks
         )
 
     def test_send_alert_to_operations_engineering_error(self, mocker):
@@ -89,8 +89,8 @@ class TestSlackService:
                 "text": {
                     "type": "mrkdwn",
                     "text": (
-                        f"📌*{len(db_wastage_ns)} RDS instances not configured to shut down "
-                        "outside of work hours in the following namespaces:*\n"
+                        f"📌*{len(db_wastage_ns)} RDS instances not configured to shut "
+                        "down outside of work hours in the following namespaces:*\n"
                         f"{db_wastage_ns}"
                     )
                     }
@@ -100,15 +100,16 @@ class TestSlackService:
                 "text": {
                     "type": "mrkdwn",
                     "text": (
-                        f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime "
-                        "when the database is turned off at night in the following namespaces:*\n"
+                        f"📌*{len(pod_wastage_ns)} POD instances without scheduled "
+                        "downtime when the database is turned off at night in "
+                        "the following namespaces:*\n"
                         f"{pod_wastage_ns}"
                     )
                     }
                 }
             ]
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
-        mrkdown=True,
-        blocks=expected_blocks
+            channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
+            mrkdown=True,
+            blocks=expected_blocks
         )
