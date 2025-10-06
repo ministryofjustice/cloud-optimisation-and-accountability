@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import MagicMock
+import pytest
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import WebClient
 from services.slack_service import SlackService
@@ -19,19 +19,28 @@ class TestSlackService:
 
         service = SlackService("test-token")
 
-        blocks = [{"type": "section", "text": {"type": "mrkdwn", "text": "test message"}}]
-        service._send_alert_to_operations_engineering(blocks)
+        blocks = [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "test message"
+                }
+            }
+        ]
+        service._send_alert_to_coat_notifications(blocks)
 
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
-        mrkdown=True,
-        blocks=blocks
+            channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
+            mrkdown=True,
+            blocks=blocks
         )
 
     def test_send_alert_to_operations_engineering_error(self, mocker):
 
         mock_response = MagicMock()
-        mock_response.__getitem__.side_effect = lambda key: {"error": "invalid_auth"}[key]
+        error_dict = {"error": "invalid_auth"}
+        mock_response.__getitem__.side_effect = lambda key: error_dict[key]
         slack_error = SlackApiError("Auth error", response=mock_response)
         mock_slack_client = mocker.Mock()
         mock_slack_client.chat_postMessage.side_effect = slack_error
@@ -39,7 +48,7 @@ class TestSlackService:
 
         service = SlackService("fake-token")
         with pytest.raises(SlackApiError) as err:
-            service._send_alert_to_operations_engineering([
+            service._send_alert_to_coat_notifications([
                {"type": "section",
                 "text": {"type": "mrkdwn", "text": "Test message"}}])
 
@@ -63,7 +72,7 @@ class TestSlackService:
         service = SlackService("dummy-token")
 
         db_wastage_ns = ["namespace1, namespace2"]
-        pod_wastage_ns= ["namespace3, namespace4"]
+        pod_wastage_ns = ["namespace3, namespace4"]
 
         service.send_nonprod_resource_wastage_alerts(db_wastage_ns, pod_wastage_ns)
 
@@ -80,19 +89,28 @@ class TestSlackService:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"📌*{len(db_wastage_ns)} RDS instances not configured to shut down outside of work hours in the following namespaces:*\n{db_wastage_ns}"
+                    "text": (
+                        f"📌*{len(db_wastage_ns)} RDS instances not configured to shut "
+                        "down outside of work hours in the following namespaces:*\n"
+                        f"{db_wastage_ns}"
+                    )
                     }
                 },
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"📌*{len(pod_wastage_ns)} POD instances without scheduled downtime when the database is turned off at night in the following namespaces:*\n{pod_wastage_ns}"
+                    "text": (
+                        f"📌*{len(pod_wastage_ns)} POD instances without scheduled "
+                        "downtime when the database is turned off at night in "
+                        "the following namespaces:*\n"
+                        f"{pod_wastage_ns}"
+                    )
                     }
                 }
             ]
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
-        mrkdown=True,
-        blocks=expected_blocks
+            channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
+            mrkdown=True,
+            blocks=expected_blocks
         )
