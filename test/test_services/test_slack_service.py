@@ -20,10 +20,10 @@ class TestSlackService:
         service = SlackService("test-token")
 
         blocks = [{"type": "section", "text": {"type": "mrkdwn", "text": "test message"}}]
-        service._send_alert_to_operations_engineering(blocks)
+        service._send_alert_to_coat_notifications(blocks)
 
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
+        channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
         mrkdown=True,
         blocks=blocks
         )
@@ -39,7 +39,7 @@ class TestSlackService:
 
         service = SlackService("fake-token")
         with pytest.raises(SlackApiError) as err:
-            service._send_alert_to_operations_engineering([
+            service._send_alert_to_coat_notifications([
                {"type": "section",
                 "text": {"type": "mrkdwn", "text": "Test message"}}])
 
@@ -92,7 +92,7 @@ class TestSlackService:
                 }
             ]
         mock_slack_client.chat_postMessage.assert_called_once_with(
-        channel=SlackService.OPERATIONS_ENGINEERING_ALERTS_CHANNEL_ID,
+        channel=SlackService.COAT_NOTIFICATIONS_CHANNEL_ID,
         mrkdown=True,
         blocks=expected_blocks
         )
