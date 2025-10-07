@@ -58,6 +58,6 @@ jobs:
         with:
           status: ${{ job.status }}
           notify_when: "failure"
-          notification_title: "Failed to run CP resource wastage job"
+          notification_title: "Failed to run Generate Tagging Coverage Report job"
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
