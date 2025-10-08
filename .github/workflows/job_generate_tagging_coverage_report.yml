@@ -40,7 +40,7 @@ jobs:
           pip install pipenv
           pipenv install
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@3d8cba388a057b13744d61818a337e40a119b1a7 # v4.0.2
+        uses: aws-actions/configure-aws-credentials@7b61d013d994ba51ed423694c0730067407e65e5 # v4.0.2
         with:
           role-to-assume: ${{secrets.AWS_COAT_GITHUB_ACTIONS_ROLE_ARN}}
           aws-region: eu-west-2
