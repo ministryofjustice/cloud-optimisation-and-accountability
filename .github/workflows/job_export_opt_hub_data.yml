@@ -1,8 +1,7 @@
-name: 📈 Generate Tagging Coverage Report
+name: Export cost optimisation hub data
 
 on:
   workflow_dispatch:
-    inputs:
   pull_request:
     branches: [main]
 
