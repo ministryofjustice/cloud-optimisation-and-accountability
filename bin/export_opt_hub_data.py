@@ -1,12 +1,13 @@
-import boto3
 import csv
+import boto3
 
 client = boto3.client('cost-optimization-hub', region_name='us-east-1')
+
 
 def fetch_recommendations():
     recommendations = []
     paginator = client.get_paginator('list_recommendations')
-    
+
     for page in paginator.paginate():
         for item in page['items']:
             print(item)
@@ -22,15 +23,16 @@ def fetch_recommendations():
                 'estimatedSavingsPercentage': item['estimatedSavingsPercentage'],
                 'recommendationType': item['recommendationType']
             })
-    
+
     return recommendations
+
 
 def save_to_csv(data, filename='cost_optimization_recommendations.csv'):
     if not data:
         print("No data to write.")
         return
 
-    with open(filename, mode='w', newline='') as file:
+    with open(filename, mode='w', newline='', encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=data[0].keys())
         writer.writeheader()
         writer.writerows(data)
@@ -39,5 +41,4 @@ def save_to_csv(data, filename='cost_optimization_recommendations.csv'):
 
 
 if __name__ == "__main__":
-    recommendations = fetch_recommendations()
-    save_to_csv(recommendations)
+    save_to_csv(fetch_recommendations())
