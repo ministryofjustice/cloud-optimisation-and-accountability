@@ -1,8 +1,7 @@
 import boto3
 import csv
-from datetime import datetime
 
-client = boto3.client('cost-optimization-hub', region_name='us-east-1')
+client = boto3.client('cost-optimization-hub', region_name='eu-west-2')
 
 def fetch_recommendations():
     recommendations = []
