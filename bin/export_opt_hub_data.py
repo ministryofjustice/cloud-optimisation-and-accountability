@@ -10,19 +10,7 @@ def fetch_recommendations():
 
     for page in paginator.paginate():
         for item in page['items']:
-            print(item)
-
-            recommendations.append({
-                'recommendationId': item['recommendationId'],
-                'accountId': item['accountId'],
-                'region': item['region'],
-                'resourceId': item['resourceId'],
-                'currentResourceType': item['currentResourceType'],
-                'recommendedResourceType': item['recommendedResourceType'],
-                'estimatedMonthlySavings': item['estimatedMonthlySavings'],
-                'estimatedSavingsPercentage': item['estimatedSavingsPercentage'],
-                'recommendationType': item['recommendationType']
-            })
+            recommendations.append(item)
 
     return recommendations
 
