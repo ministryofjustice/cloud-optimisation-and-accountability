@@ -47,7 +47,7 @@ def fetch_recommendations():
                     item.get('recommendedResourceSummary', ""),
                 'lastRefreshTimestamp':
                     item.get('lastRefreshTimestamp', ""),
-                'recommendationLookbackPeriodInDays': 
+                'recommendationLookbackPeriodInDays':
                     item.get('recommendationLookbackPeriodInDays', ""),
                 'source':
                     item.get('source', ""),
