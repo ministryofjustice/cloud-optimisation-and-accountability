@@ -10,7 +10,50 @@ def fetch_recommendations():
 
     for page in paginator.paginate():
         for item in page['items']:
-            recommendations.append(item)
+            recommendations.append({
+                'recommendationId':
+                    item.get('recommendationId', ""),
+                'accountId':
+                    item.get('accountId', ""),
+                'region':
+                    item.get('region', ""),
+                'resourceId':
+                    item.get('resourceId', ""),
+                'resourceArn':
+                    item.get('resourceArn', ""),
+                'currentResourceType':
+                    item.get('currentResourceType', ""),
+                'recommendedResourceType':
+                    item.get('recommendedResourceType', ""),
+                'estimatedMonthlySavings':
+                    item.get('estimatedMonthlySavings', ""),
+                'estimatedSavingsPercentage':
+                    item.get('estimatedSavingsPercentage', ""),
+                'estimatedMonthlyCost':
+                    item.get('estimatedMonthlyCost', ""),
+                'currencyCode':
+                    item.get('currencyCode', ""),
+                'implementationEffort':
+                    item.get('implementationEffort', ""),
+                'restartNeeded':
+                    item.get('restartNeeded', ""),
+                'actionType':
+                    item.get('actionType', ""),
+                'rollbackPossible':
+                    item.get('rollbackPossible', ""),
+                'currentResourceSummary':
+                    item.get('currentResourceSummary', ""),
+                'recommendedResourceSummary':
+                    item.get('recommendedResourceSummary', ""),
+                'lastRefreshTimestamp':
+                    item.get('lastRefreshTimestamp', ""),
+                'recommendationLookbackPeriodInDays':
+                    item.get('recommendationLookbackPeriodInDays', ""),
+                'source':
+                    item.get('source', ""),
+                'tags':
+                    item.get('tags', "")
+            })
 
     return recommendations
 
