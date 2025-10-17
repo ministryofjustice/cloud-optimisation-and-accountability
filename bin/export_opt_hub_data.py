@@ -11,47 +11,47 @@ def fetch_recommendations():
     for page in paginator.paginate():
         for item in page['items']:
             recommendations.append({
-                'recommendationId': 
+                'recommendationId':
                     item.get('recommendationId', ""),
-                'accountId': 
+                'accountId':
                     item.get('accountId', ""),
-                'region': 
+                'region':
                     item.get('region', ""),
-                'resourceId': 
+                'resourceId':
                     item.get('resourceId', ""),
-                'resourceArn': 
+                'resourceArn':
                     item.get('resourceArn', ""),
-                'currentResourceType': 
+                'currentResourceType':
                     item.get('currentResourceType', ""),
-                'recommendedResourceType': 
+                'recommendedResourceType':
                     item.get('recommendedResourceType', ""),
-                'estimatedMonthlySavings': 
+                'estimatedMonthlySavings':
                     item.get('estimatedMonthlySavings', ""),
-                'estimatedSavingsPercentage': 
+                'estimatedSavingsPercentage':
                     item.get('estimatedSavingsPercentage', ""),
-                'estimatedMonthlyCost': 
+                'estimatedMonthlyCost':
                     item.get('estimatedMonthlyCost', ""),
-                'currencyCode': 
+                'currencyCode':
                     item.get('currencyCode', ""),
-                'implementationEffort': 
+                'implementationEffort':
                     item.get('implementationEffort', ""),
-                'restartNeeded': 
+                'restartNeeded':
                     item.get('restartNeeded', ""),
-                'actionType': 
+                'actionType':
                     item.get('actionType', ""),
-                'rollbackPossible': 
+                'rollbackPossible':
                     item.get('rollbackPossible', ""),
-                'currentResourceSummary': 
+                'currentResourceSummary':
                     item.get('currentResourceSummary', ""),
-                'recommendedResourceSummary': 
+                'recommendedResourceSummary':
                     item.get('recommendedResourceSummary', ""),
-                'lastRefreshTimestamp': 
+                'lastRefreshTimestamp':
                     item.get('lastRefreshTimestamp', ""),
                 'recommendationLookbackPeriodInDays': 
                     item.get('recommendationLookbackPeriodInDays', ""),
-                'source': 
+                'source':
                     item.get('source', ""),
-                'tags': 
+                'tags':
                     item.get('tags', "")
             })
 
