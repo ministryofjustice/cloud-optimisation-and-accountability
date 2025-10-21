@@ -15,11 +15,10 @@
       }
     ]
   },
-  "description": "Data from the PoC with GPX.",
   "editable": true,
-  "fiscalYearStartMonth": 3,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 90,
+  "id": 164,
   "links": [],
   "panels": [
     {
@@ -38,7 +37,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -98,10 +97,10 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT * FROM \n(SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    round(sum(t.total_combined_emissions_tonnes_co2e),2) as tco2\nFROM gpx t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit)\nGROUP BY 1\nORDER BY 1 DESC\nLIMIT 2)\nORDER BY time ASC\n;",
+          "rawSQL": "SELECT * FROM \n(SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    round(sum(t.total_combined_emissions_tonnes_co2e),2) as tco2\nFROM coat_production_cur_v2_hourly_enriched t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY 1\nORDER BY 1 DESC\nLIMIT 2)\nORDER BY time ASC\n;",
           "refId": "A"
         }
       ],
@@ -111,7 +110,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "Equivalent total emissions in miles driven in an average family car for the previous month.",
       "fieldConfig": {
@@ -171,10 +170,10 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    (round(sum(t.total_combined_emissions_tonnes_co2e),2) * 1000) / 0.2112 as miles\nFROM gpx t\nJOIN\n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit)\nGROUP BY 1\nORDER BY 1 DESC\nLIMIT 1\n;",
+          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    (round(sum(t.total_combined_emissions_tonnes_co2e),2) * 1000) / 0.2112 as miles\nFROM coat_production_cur_v2_hourly_enriched t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY 1\nORDER BY 1 DESC\nLIMIT 1\n;",
           "refId": "A"
         }
       ],
@@ -184,7 +183,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "",
       "fieldConfig": {
@@ -321,12 +320,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    round(sum(t.usage_emissions_tonnes_co2e),2) as usage_emissions, \n    round(sum(t.manufacturing_emissions_tonnes_co2e),2) as embedded_emissions \nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY 1\nORDER BY 1;",
+          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    round(sum(t.usage_emissions_tonnes_co2e),2) as usage_emissions, \n    round(sum(t.manufacturing_emissions_tonnes_co2e),2) as embedded_emissions \nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY 1\nORDER BY 1;",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Total Emissions Over Time",
@@ -335,7 +334,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "",
       "fieldConfig": {
@@ -491,12 +490,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    ROUND(SUM(t.total_combined_emissions_tonnes_co2e), 2) AS t_co2,\n    SUM(t.line_item_unblended_cost) AS cost\nFROM $__table() t\nJOIN accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\n    AND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY 1\nORDER BY 1;\n\n",
+          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    ROUND(SUM(t.total_combined_emissions_tonnes_co2e), 2) AS t_co2,\n    SUM(t.line_item_unblended_cost) AS cost\nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY 1\nORDER BY 1;\n\n",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Total Emissions v Cost",
@@ -505,7 +504,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "",
       "fieldConfig": {
@@ -521,7 +520,7 @@
             }
           },
           "mappings": [],
-          "unit": "short"
+          "unit": "none"
         },
         "overrides": [
           {
@@ -579,12 +578,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    m.name AS account_name, \n    ROUND(SUM(t.total_combined_emissions_tonnes_co2e), 2) AS t_co2\nFROM \n    gpx t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY \n    m.name\nORDER BY \n    t_co2 DESC\nLIMIT 10;",
+          "rawSQL": "SELECT\nline_item_usage_account_name,\nROUND(SUM(total_combined_emissions_tonnes_co2e), 2) AS t_co2\nFROM $__table\nWHERE (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY line_item_usage_account_name\nORDER BY t_co2 DESC\nLIMIT 10;",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Total Emissions by Account",
@@ -593,7 +592,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "",
       "fieldConfig": {
@@ -735,12 +734,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT COALESCE(NULLIF(region, ''), 'no region') AS region, co2 FROM\n(SELECT \n    t.product_region_code AS region,\n    ROUND(SUM(t.usage_emissions_tonnes_co2e), 2) AS co2\nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\n    AND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY 1\nORDER BY 1)\nWHERE ROUND(co2, 2) > 0;",
+          "rawSQL": "SELECT COALESCE(NULLIF(region, ''), 'no region') AS region, co2 FROM\n(SELECT \n    t.product_region_code AS region,\n    ROUND(SUM(t.usage_emissions_tonnes_co2e), 2) AS co2\nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY 1\nORDER BY 1)\nWHERE ROUND(co2, 2) > 0;",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Usage Emissions by Region",
@@ -749,7 +748,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -874,7 +873,7 @@
           "mode": "single",
           "sort": "none"
         },
-        "xField": "product_servicename",
+        "xField": "product_servicecode",
         "xTickLabelMaxLength": 0,
         "xTickLabelRotation": 90,
         "xTickLabelSpacing": 0
@@ -890,12 +889,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "select t.product_servicename,\n  round(sum(t.total_combined_emissions_tonnes_co2e),2) as tco2, \n  round(sum(t.usage_emissions_tonnes_co2e),2) as usage_emissions, \n  round(sum(t.manufacturing_emissions_tonnes_co2e),2) as embedded_emissions \nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit) \ngroup by t.product_servicename \nORDER BY tco2 DESC \nLIMIT 10;",
+          "rawSQL": "select t.product_servicecode,\n  round(sum(t.total_combined_emissions_tonnes_co2e),2) as tco2, \n  round(sum(t.usage_emissions_tonnes_co2e),2) as usage_emissions, \n  round(sum(t.manufacturing_emissions_tonnes_co2e),2) as embedded_emissions \nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\ngroup by t.product_servicecode \nORDER BY tco2 DESC \nLIMIT 10;",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Total Emissions by Service",
@@ -917,7 +916,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -1018,12 +1017,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    SUM(t.usage_electricity_consumption_kwh) as kwh\nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY year, month\nORDER BY time;\n",
+          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    SUM(usage_electricity_consumption_kwh) as kwh\nFROM $__table()\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY billing_period\nORDER BY billing_period\n;\n",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Electricity Consumption",
@@ -1032,7 +1031,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "description": "",
       "fieldConfig": {
@@ -1147,12 +1146,12 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT COALESCE(NULLIF(region, ''), 'no region') AS region, kwh FROM\n(SELECT \n    SUM(t.usage_electricity_consumption_kwh) as kwh, \n    t.product_region_code AS region\nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY t.product_region_code)\nWHERE ROUND(kwh) > 0;",
+          "rawSQL": "SELECT COALESCE(NULLIF(region, ''), 'no region') AS region, kwh FROM\n(SELECT \n    SUM(t.usage_electricity_consumption_kwh) as kwh, \n    t.product_region_code AS region\nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY t.product_region_code)\nWHERE ROUND(kwh) > 0;",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Electricity Consumption by Region",
@@ -1174,7 +1173,7 @@
     {
       "datasource": {
         "type": "grafana-athena-datasource",
-        "uid": "eee8gt4tyjmrke"
+        "uid": "femjm2hiylji8a"
       },
       "fieldConfig": {
         "defaults": {
@@ -1276,36 +1275,81 @@
           },
           "datasource": {
             "type": "grafana-athena-datasource",
-            "uid": "eee8gt4tyjmrke"
+            "uid": "femjm2hiylji8a"
           },
           "format": 1,
-          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(year, '-', LPAD(CAST(month AS VARCHAR), 2, '0'), '-01'), '%Y-%m-%d') AS time,\n    SUM(t.water_consumption_electricity_production_litres) + SUM(t.water_consumption_cooling_litres) AS total_water\nFROM $__table() t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE m.name IN ($account_name)\nAND t.resource_tags_user_business_unit IN ($business_unit) \nGROUP BY year, month\nORDER BY time;\n",
+          "rawSQL": "SELECT \n    DATE_PARSE(CONCAT(billing_period, '-01'), '%Y-%m-%d') AS time,\n    SUM(t.water_consumption_electricity_production_litres) + SUM(t.water_consumption_cooling_litres) AS total_water\nFROM $__table() t\nWHERE line_item_usage_account_name IN ($account_name)\nAND (\n    'all' IN ($business_unit)\n    OR element_at(\n        map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n        'user_business_unit'\n      ) IN ($business_unit)\n  )\nGROUP BY billing_period\nORDER BY billing_period;\n",
           "refId": "A",
-          "table": "gpx"
+          "table": "coat_production_cur_v2_hourly_enriched"
         }
       ],
       "title": "Total Water Consumption",
       "type": "timeseries"
     }
   ],
+  "refresh": "",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "",
-          "value": ""
+          "selected": true,
+          "text": [
+            "CICA Development"
+          ],
+          "value": [
+            "CICA Development"
+          ]
         },
         "datasource": {
           "type": "grafana-athena-datasource",
-          "uid": "eee8gt4tyjmrke"
+          "uid": "femjm2hiylji8a"
         },
         "definition": "",
         "hide": 0,
         "includeAll": true,
-        "label": "",
+        "label": "AWS Account Name",
+        "multi": true,
+        "name": "account_name",
+        "options": [],
+        "query": {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "__default",
+            "region": "__default",
+            "resultReuseEnabled": false,
+            "resultReuseMaxAgeInMinutes": 60
+          },
+          "format": 1,
+          "rawSQL": "select distinct line_item_usage_account_name from $__table();",
+          "table": "coat_production_cur_v2_hourly_enriched"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": "('all')",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "femjm2hiylji8a"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Business Unit",
         "multi": true,
         "name": "business_unit",
         "options": [],
@@ -1318,41 +1362,8 @@
             "resultReuseMaxAgeInMinutes": 60
           },
           "format": 1,
-          "rawSQL": "SELECT DISTINCT resource_tags_user_business_unit FROM $__table();",
-          "table": "gpx"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "ccms-ebs-upgrade-test",
-          "value": "ccms-ebs-upgrade-test"
-        },
-        "datasource": {
-          "type": "grafana-athena-datasource",
-          "uid": "eee8gt4tyjmrke"
-        },
-        "definition": "",
-        "hide": 0,
-        "includeAll": true,
-        "multi": true,
-        "name": "account_name",
-        "options": [],
-        "query": {
-          "connectionArgs": {
-            "catalog": "__default",
-            "database": "greenops_cur_poc",
-            "region": "__default",
-            "resultReuseEnabled": false,
-            "resultReuseMaxAgeInMinutes": 60
-          },
-          "format": 1,
-          "rawSQL": "SELECT DISTINCT m.name\nFROM \n    gpx t\nJOIN \n    accountid2name m \n    ON t.line_item_usage_account_id = m.id\nWHERE t.resource_tags_user_business_unit IN ($business_unit)\n;\n"
+          "rawSQL": "select distinct element_at(\n    map_from_entries(transform(resource_tags, x -> (x.key, x.value))),\n    'user_business_unit'\n) AS business_unit\nfrom coat_production_cur_v2_hourly_enriched;",
+          "table": "coat_production_cur_v2_hourly_enriched"
         },
         "refresh": 1,
         "regex": "",
@@ -1363,15 +1374,13 @@
     ]
   },
   "time": {
-    "from": "2024-11-01T00:00:00.000Z",
-    "to": "2025-01-01T00:00:00.000Z"
+    "from": "now-5M/M",
+    "to": "now"
   },
-  "timepicker": {
-    "hidden": true
-  },
+  "timepicker": {},
   "timezone": "browser",
-  "title": "GPX PoC",
-  "uid": "feeqdi6iivwg0c",
-  "version": 54,
+  "title": "GreenOps PoC",
+  "uid": "cf0wtl7equjggb",
+  "version": 19,
   "weekStart": ""
 }
