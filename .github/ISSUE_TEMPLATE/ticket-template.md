@@ -13,12 +13,12 @@ about: 🤝 Team agreed standard template for creating tickets
 ## 💡 Value
 <!-- Describe the business or user value of delivering this story -->
 
-- [ ] 
+- 
 
 ## 🛠️ Description
 <!-- What should the system do? And how do I acheive it? -->
 
-- [ ] 
+- 
 
 ## 🧪 Testing steps
 <!-- What steps do you need to take to verify this works correctly? -->
