@@ -13,24 +13,25 @@ about: 🤝 Team agreed standard template for creating tickets
 ## 💡 Value
 <!-- Describe the business or user value of delivering this story -->
 
-- 
+- [ ] 
 
-## 🛠️ Functional Requirements (What)
-<!-- What should the system do? List clear, testable functions or behaviours -->
+## 🛠️ Description
+<!-- What should the system do? And how do I acheive it? -->
 
 - [ ] 
 
-## ⚙️ Non-Functional Requirements (How)
-<!-- How should the system behave? Think performance, reliability, scalability, security, etc. -->
+## 🧪 Testing steps
+<!-- What steps do you need to take to verify this works correctly? -->
 
 - [ ] 
 
 ## ✅ Definition of Done
 <!-- What conditions must be met before this story is considered complete -->
 
+- [ ] This story will follow [COAT standards](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/team-information/team-information.html)
 - [ ] 
 
-## ❓ Assumptions and Constraints
+## ❓ Assumptions and Constraints (Optional)
 <!-- Note any assumptions being made or constraints that might limit implementation -->
 
 -   
