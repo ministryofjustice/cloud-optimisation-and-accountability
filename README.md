@@ -1,10 +1,12 @@
 # Cloud Optimisation and Accountability
 
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/cloud-optimisation-and-accountability/badge)](https://github-community.service.justice.gov.uk/repository-standards/cloud-optimisation-and-accountability)
+
 Welcome to the Cloud Optimisation and Accountability Team (🧥COAT) mono-repo. This repository contains all code relating to COAT activities.
 
-## Cloud Optimistaion and Accountability Website 
+## Cloud Optimisation and Accountability Website
 
-The [Cloud Optimistaion and Accountability website](https://cloud-optimisation-and-accountability.justice.gov.uk/) contains user guides and runbooks for services and tools provided by the Cloud Optimisation and Accountability Team.
+The [Cloud Optimisation and Accountability website](https://cloud-optimisation-and-accountability.justice.gov.uk/) contains user guides and runbooks for services and tools provided by the Cloud Optimisation and Accountability Team.
 
 The website is based on the Ministry of Justice's [template-documentation-site](https://github.com/ministryofjustice/template-documentation-site).
 
