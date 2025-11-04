@@ -1,0 +1,32 @@
+name: PR Approval Check
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened, review_requested, review_request_removed]
+
+jobs:
+  approval-check:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+      members: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run approval check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python check_pr_approvals.py
