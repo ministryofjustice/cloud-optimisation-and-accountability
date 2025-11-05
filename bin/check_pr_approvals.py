@@ -118,7 +118,9 @@ def main():
         print("❌ PR must have at least 2 approvals.")
         sys.exit(1)
 
-    required_teams = get_required_teams_from_changes(repo, pull)
+    required_teams = get_required_teams_from_changes(repo, pull) 
+
+    required_teams.append("test-team-lev")
 
     if not required_teams:
         print("✅ No team-specific approvals required.")
