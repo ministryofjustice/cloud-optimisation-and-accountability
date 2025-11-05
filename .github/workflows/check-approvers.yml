@@ -1,43 +1,31 @@
-name: PR Approval Check
+name: PR Approval Workflow
 
 on:
   pull_request:
-    types: [synchronize, opened, reopened, review_requested, review_request_removed]
+    branches:
+      - main
   pull_request_review:
-    types:
-      - submitted
-
-concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+    types: [submitted]
 
 jobs:
-  approval-check:
+  check-approvals:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read
+      id-token: write
       contents: read
-
+      pull-requests: read
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+      - name: Check for required approvals
+        id: check-approvals
+        uses: skymoore/required-approvals@v4.2.6
         with:
-          python-version: "3.12"
-          cache: "pipenv"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          read_org_scoped_token: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
+          org_name: ministryofjustice
+          min_approvals: 1
+          limit_org_teams_to_codeowners_file: true
 
-      - name: Install Pipenv
+      - name: Run action if all required approvals are met
+        if: ${{ steps.check-approvals.outputs.approved == 'true' }}
         run: |
-          pip install pipenv
-          pipenv install
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Run approval check
-        env:
-          GITHUB_TOKEN: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: pipenv run python3 -m bin.check_pr_approvals
+          echo "All required approvals are met. Running the action."
