@@ -60,6 +60,8 @@ def main():
 
     print(reviews)
 
+    print(reviews[0].state)
+
     latest_reviews = {}
     for review in reviews:
         latest_reviews[review.user.login] = review.state
