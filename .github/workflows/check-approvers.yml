@@ -7,6 +7,10 @@ on:
     types:
       - submitted
 
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   approval-check:
     runs-on: ubuntu-latest
