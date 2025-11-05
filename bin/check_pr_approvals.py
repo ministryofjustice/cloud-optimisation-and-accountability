@@ -1,93 +1,84 @@
-#!/usr/bin/env python3
 import os
 import sys
-import requests
+from github import Github
+from github.GithubException import GithubException
 
-def get_reviews(owner, repo, pr_number, token):
-    """Fetch all reviews for a given PR."""
-    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/reviews"
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
-    reviews = []
-    page = 1
-
-    while True:
-        resp = requests.get(url, headers=headers, params={"per_page": 100, "page": page})
-        if resp.status_code != 200:
-            print(f"❌ Failed to fetch reviews: {resp.status_code} {resp.text}")
-            sys.exit(1)
-        data = resp.json()
-        if not data:
-            break
-        reviews.extend(data)
-        page += 1
-
-    return reviews
+def get_reviews(pull):
+    """Fetch all reviews for a given pull request using PyGithub."""
+    try:
+        return list(pull.get_reviews())
+    except GithubException as e:
+        print(f"❌ Failed to fetch reviews: {e.data}")
+        sys.exit(1)
 
 
-def get_team_members(owner, team_slug, token):
-    """Fetch members of a GitHub team."""
-    url = f"https://api.github.com/orgs/{owner}/teams/{team_slug}/members"
-    headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
-    members = []
-    page = 1
-
-    while True:
-        resp = requests.get(url, headers=headers, params={"per_page": 100, "page": page})
-        if resp.status_code == 404:
+def get_team_members(org, team_slug):
+    """Fetch members of a GitHub team using PyGithub."""
+    try:
+        team = org.get_team_by_slug(team_slug)
+    except GithubException as e:
+        if e.status == 404:
             print(f"⚠️ Team {team_slug} not found or token lacks permission.")
             return []
-        elif resp.status_code != 200:
-            print(f"❌ Failed to fetch team members for {team_slug}: {resp.status_code} {resp.text}")
-            sys.exit(1)
+        print(f"❌ Failed to access team {team_slug}: {e.data}")
+        sys.exit(1)
 
-        data = resp.json()
-        if not data:
-            break
-        members.extend([m["login"] for m in data])
-        page += 1
-
-    return members
+    try:
+        return [member.login for member in team.get_members()]
+    except GithubException as e:
+        print(f"❌ Failed to fetch members for team {team_slug}: {e.data}")
+        sys.exit(1)
 
 
 def main():
-    # Read required environment variables
     token = os.getenv("GITHUB_TOKEN")
-    repo = os.getenv("GITHUB_REPOSITORY")  # e.g., org/repo
+    repo = os.getenv("GITHUB_REPOSITORY")
     pr_number = os.getenv("PR_NUMBER")
 
     if not all([token, repo, pr_number]):
-        print("❌ Missing one or more required environment variables: GITHUB_TOKEN, GITHUB_REPOSITORY, PR_NUMBER")
+        print("❌ Missing required env vars: GITHUB_TOKEN, GITHUB_REPOSITORY, PR_NUMBER")
         sys.exit(1)
 
-    owner, repo_name = repo.split("/")
+    github_client = Github(token)
 
-    # Fetch PR reviews
-    reviews = get_reviews(owner, repo_name, pr_number, token)
+    try:
+        repo = github_client.get_repo(repo)
+    except GithubException as e:
+        print(f"❌ Failed to access repository {repo}: {e.data}")
+        sys.exit(1)
 
-    # Get latest review state per user
+    try:
+        pull = repo.get_pull(int(pr_number))
+    except GithubException as e:
+        print(f"❌ Failed to fetch PR #{pr_number}: {e.data}")
+        sys.exit(1)
+
+    owner = repo.split("/")[0]
+    org = github_client.get_organization(owner)
+
+    reviews = get_reviews(pull)
+
     latest_reviews = {}
-    for r in reviews:
-        user = r["user"]["login"]
-        latest_reviews[user] = r["state"]
+    for review in reviews:
+        latest_reviews[review.user.login] = review.state
 
-    # Filter approved users
-    approved_users = [u for u, s in latest_reviews.items() if s == "APPROVED"]
+    approved_users = [user for user, state in latest_reviews.items() if state == "APPROVED"]
     print(f"✅ Approved users: {approved_users}")
 
     if len(approved_users) < 2:
         print("❌ PR must have at least 2 approvals.")
         sys.exit(1)
 
-    # Fetch team members
-    datamodelling_team = get_team_members(owner, "datamodelling", token)
-    coat_team = get_team_members(owner, "COAT", token)
+    # datamodelling_team = get_team_members(org, "data-modelling")
+    # coat_team = get_team_members(org, "cloud-optimisation-and-accountability")
+    datamodelling_team = get_team_members(org, "operations-engineering")
+    coat_team = get_team_members(org, "cloud-optimisation-and-accountability")
 
-    # Check team approvals
-    has_datamodelling = any(u in datamodelling_team for u in approved_users)
-    has_coat = any(u in coat_team for u in approved_users)
+    has_datamodelling = any(user in datamodelling_team for user in approved_users)
+    has_coat = any(user in coat_team for user in approved_users)
 
     if not has_datamodelling or not has_coat:
-        print(f"❌ Missing required team approvals:")
+        print("❌ Missing required team approvals:")
         print(f"  datamodelling approval: {'✅' if has_datamodelling else '❌'}")
         print(f"  COAT approval: {'✅' if has_coat else '❌'}")
         sys.exit(1)

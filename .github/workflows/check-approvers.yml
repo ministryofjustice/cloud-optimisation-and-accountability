@@ -16,17 +16,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
-          python-version: '3.11'
+          python-version: "3.12"
+          cache: "pipenv"
+
+      - name: Install Pipenv
+        run: |
+          pip install pipenv
+          pipenv install
 
       - name: Install dependencies
         run: pip install requests
 
       - name: Run approval check
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python check_pr_approvals.py
+        run: pipenv run python3 -m bin.detect_cp_resource_wastage
