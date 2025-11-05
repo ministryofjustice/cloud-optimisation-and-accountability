@@ -53,7 +53,7 @@ def main():
         print(f"❌ Failed to fetch PR #{pr_number}: {e.data}")
         sys.exit(1)
 
-    owner = repo.split("/")[0]
+    owner = repo.full_name.split("/")[0]
     org = github_client.get_organization(owner)
 
     reviews = get_reviews(pull)
