@@ -3,6 +3,9 @@ name: PR Approval Check
 on:
   pull_request:
     types: [synchronize, opened, reopened, review_requested, review_request_removed]
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
   approval-check:
