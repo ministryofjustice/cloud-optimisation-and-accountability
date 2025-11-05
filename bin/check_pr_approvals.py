@@ -58,6 +58,8 @@ def main():
 
     reviews = get_reviews(pull)
 
+    print(reviews)
+
     latest_reviews = {}
     for review in reviews:
         latest_reviews[review.user.login] = review.state
