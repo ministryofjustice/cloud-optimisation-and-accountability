@@ -33,4 +33,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: pipenv run python3 -m bin.detect_cp_resource_wastage
+        run: pipenv run python3 -m bin.check_pr_approvals
