@@ -128,6 +128,9 @@ def main():
     print(f"📌 Required teams: {list(required_teams)}")
 
     changed_files = [f.filename for f in pull.get_files()]
+
+    print(f"📄 Changed files: {changed_files}")
+
     is_strict_mode = any(
         fnmatch.fnmatch(f, pattern) or fnmatch.fnmatch("/" + f, pattern)
         for f in changed_files
