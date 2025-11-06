@@ -119,7 +119,6 @@ def main():
     STRICT_PATTERNS = ["*"]
 
     required_teams = get_required_teams_from_changes(repo, pull)
-    required_teams.add("test-team-lev")
 
     if not required_teams:
         print("✅ No team-specific approvals required.")
