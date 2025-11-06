@@ -1,6 +1,7 @@
 import os
 import sys
 import fnmatch
+import json
 from github import Github
 from github.GithubException import GithubException
 
@@ -82,7 +83,16 @@ def main():
         sys.exit(1)
 
     changed_files_arg = sys.argv[1]
-    changed_files = [f.strip() for f in changed_files_arg.split(",") if f.strip()]
+
+    if changed_files_arg:
+        try:
+            changed_files = json.loads(changed_files_arg)
+        except json.JSONDecodeError:
+            print(f"❌ Failed to parse changed files: {changed_files_arg}")
+            sys.exit(1)
+    else:
+        changed_files = []
+
     print(f"📄 Changed files: {changed_files}")
 
     token = os.getenv("GITHUB_TOKEN")
