@@ -35,8 +35,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - run: echo modified files '${{ needs.detect-changes.outputs.modified_files }}'
-
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: "3.12"
@@ -55,4 +53,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: pipenv run python3 -m bin.check_pr_approvals
+        run: pipenv run python3 -m bin.check_pr_approvals '${{ needs.detect-changes.outputs.modified_files }}'

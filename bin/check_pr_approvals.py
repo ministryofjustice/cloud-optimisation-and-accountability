@@ -1,6 +1,7 @@
 import os
 import sys
 import fnmatch
+import json
 from github import Github
 from github.GithubException import GithubException
 
@@ -59,9 +60,8 @@ def match_codeowners_for_file(filepath, rules):
     return matched_owners
 
 
-def get_required_teams_from_changes(repo, pull):
+def get_required_teams_from_changes(repo, changed_files):
     rules = load_codeowners(repo)
-    changed_files = [f.filename for f in pull.get_files()]
     required_teams = set()
 
     for fpath in changed_files:
@@ -69,7 +69,7 @@ def get_required_teams_from_changes(repo, pull):
         for owner in owners:
             if not owner.startswith("@"):
                 continue
-            owner = owner[1:]  # strip "@"
+            owner = owner[1:]
             if "/" in owner:
                 _, team_slug = owner.split("/", 1)
                 required_teams.add(team_slug)
@@ -85,6 +85,20 @@ def main():
     if not all([token, repo_name, pr_number]):
         print("❌ Missing required env vars: GITHUB_TOKEN, GITHUB_REPOSITORY, PR_NUMBER")
         sys.exit(1)
+
+    if len(sys.argv) < 2:
+        print("❌ Missing modified_files argument")
+        sys.exit(1)
+
+    try:
+        modified_files = json.loads(sys.argv[1])
+        if not isinstance(modified_files, list):
+            raise ValueError
+    except Exception:
+        print(f"❌ Invalid modified_files argument, must be JSON list: {sys.argv[1]}")
+        sys.exit(1)
+
+    print(f"📄 Changed files: {modified_files}")
 
     github_client = Github(token)
 
@@ -118,7 +132,7 @@ def main():
 
     STRICT_PATTERNS = ["*"]
 
-    required_teams = get_required_teams_from_changes(repo, pull)
+    required_teams = get_required_teams_from_changes(repo, modified_files)
 
     if not required_teams:
         print("✅ No team-specific approvals required.")
@@ -127,13 +141,9 @@ def main():
 
     print(f"📌 Required teams: {list(required_teams)}")
 
-    changed_files = [f.filename for f in pull.get_files()]
-
-    print(f"📄 Changed files: {changed_files}")
-
     is_strict_mode = any(
         fnmatch.fnmatch(f, pattern) or fnmatch.fnmatch("/" + f, pattern)
-        for f in changed_files
+        for f in modified_files
         for pattern in STRICT_PATTERNS
     )
 
