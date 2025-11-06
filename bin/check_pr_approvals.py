@@ -18,7 +18,7 @@ def get_team_members(org, team_slug):
     try:
         team = org.get_team_by_slug(team_slug)
     except GithubException as e:
-        if e.status == 404:
+        if getattr(e, "status", None) == 404:
             print(f"⚠️ Team {team_slug} not found or token lacks permission.")
             return []
         print(f"❌ Failed to access team {team_slug}: {e.data}")
@@ -55,7 +55,10 @@ def load_codeowners(repo):
 def match_codeowners_for_file(filepath, rules):
     matched_owners = []
     for pattern, owners in rules:
-        if fnmatch.fnmatch(filepath, pattern) or fnmatch.fnmatch("/" + filepath, pattern):
+        if ( 
+            fnmatch.fnmatch(filepath, pattern) 
+            or fnmatch.fnmatch("/" + filepath, pattern) 
+        ):
             matched_owners = owners
     return matched_owners
 
@@ -77,7 +80,7 @@ def get_required_teams_from_changes(repo, changed_files):
     return required_teams
 
 
-def main():
+def parse_env():
     token = os.getenv("GITHUB_TOKEN")
     repo_name = os.getenv("GITHUB_REPOSITORY")
     pr_number = os.getenv("PR_NUMBER")
@@ -86,24 +89,29 @@ def main():
         print("❌ Missing required env vars: GITHUB_TOKEN, GITHUB_REPOSITORY, PR_NUMBER")
         sys.exit(1)
 
-    if len(sys.argv) < 2:
+    return token, repo_name, pr_number
+
+
+def parse_modified_files(argv):
+    if len(argv) < 2:
         print("❌ Missing modified_files argument")
         sys.exit(1)
 
     try:
-        modified_files = json.loads(sys.argv[1])
+        modified_files = json.loads(argv[1])
         if not isinstance(modified_files, list):
             raise ValueError
     except Exception:
-        print(f"❌ Invalid modified_files argument, must be JSON list: {sys.argv[1]}")
+        print(f"❌ Invalid modified_files argument, must be JSON list: {argv[1]}")
         sys.exit(1)
 
     print(f"📄 Changed files: {modified_files}")
+    return modified_files
 
-    github_client = Github(token)
 
+def get_repo_and_pr(client, repo_name, pr_number):
     try:
-        repo = github_client.get_repo(repo_name)
+        repo = client.get_repo(repo_name)
     except GithubException as e:
         print(f"❌ Failed to access repository {repo_name}: {e.data}")
         sys.exit(1)
@@ -114,24 +122,64 @@ def main():
         print(f"❌ Failed to fetch PR #{pr_number}: {e.data}")
         sys.exit(1)
 
-    owner = repo.full_name.split("/")[0]
-    org = github_client.get_organization(owner)
+    return repo, pull
 
+
+def get_approved_users(pull):
     reviews = get_reviews(pull)
+    latest_reviews = {review.user.login: review.state for review in reviews}
+    approved = [u for u, state in latest_reviews.items() if state == "APPROVED"]
+    print(f"✅ Approved users: {approved}")
 
-    latest_reviews = {}
-    for review in reviews:
-        latest_reviews[review.user.login] = review.state
-
-    approved_users = [user for user, state in latest_reviews.items() if state == "APPROVED"]
-    print(f"✅ Approved users: {approved_users}")
-
-    if len(approved_users) < 1:
+    if len(approved) < 1:
         print("❌ PR must have at least 1 approval.")
         sys.exit(1)
 
-    STRICT_PATTERNS = ["*"]
+    return approved
 
+
+def check_team_approvals(org, required_teams, approved_users, modified_files):
+    STRICT_PATTERNS = [
+        "mojap_derived_tables/models/staging/stg_cloud_optimisation/*",
+        "mojap_derived_tables/models/coat/*"
+    ]
+
+    is_strict = any(
+        fnmatch.fnmatch(f, p) or fnmatch.fnmatch("/" + f, p)
+        for f in modified_files
+        for p in STRICT_PATTERNS
+    )
+
+    print("Strict approval mode enabled" if is_strict else "✅ Standard approval mode")
+
+    if is_strict:
+        for team_slug in required_teams:
+            members = get_team_members(org, team_slug)
+            if not any(u in members for u in approved_users):
+                print(f"❌ Missing approval from team: {team_slug}")
+                sys.exit(1)
+        print("🎉 All required teams have approved!")
+        return
+
+    if not any(
+        any(u in get_team_members(org, team_slug) for u in approved_users)
+        for team_slug in required_teams
+    ):
+        print("❌ At least one required team must approve.")
+        sys.exit(1)
+
+    print("🎉 At least one required team has approved!")
+
+
+def main():
+    token, repo_name, pr_number = parse_env()
+    modified_files = parse_modified_files(sys.argv)
+
+    client = Github(token)
+    repo, pull = get_repo_and_pr(client, repo_name, pr_number)
+    org = client.get_organization(repo.full_name.split("/")[0])
+
+    approved_users = get_approved_users(pull)
     required_teams = get_required_teams_from_changes(repo, modified_files)
 
     if not required_teams:
@@ -140,36 +188,7 @@ def main():
         return
 
     print(f"📌 Required teams: {list(required_teams)}")
-
-    is_strict_mode = any(
-        fnmatch.fnmatch(f, pattern) or fnmatch.fnmatch("/" + f, pattern)
-        for f in modified_files
-        for pattern in STRICT_PATTERNS
-    )
-
-    if is_strict_mode:
-        print("Strict approval mode enabled")
-        for team_slug in required_teams:
-            team_members = get_team_members(org, team_slug)
-            if not any(user in team_members for user in approved_users):
-                print(f"❌ Missing approval from team: {team_slug}")
-                sys.exit(1)
-        print("🎉 All required teams have approved!")
-    else:
-        print("✅ Standard approval mode")
-        has_any_team_approval = False
-
-        for team_slug in required_teams:
-            team_members = get_team_members(org, team_slug)
-            if any(user in team_members for user in approved_users):
-                has_any_team_approval = True
-                break
-
-        if not has_any_team_approval:
-            print("❌ At least one required team must approve.")
-            sys.exit(1)
-
-        print("🎉 At least one required team has approved!")
+    check_team_approvals(org, required_teams, approved_users, modified_files)
 
 
 if __name__ == "__main__":
