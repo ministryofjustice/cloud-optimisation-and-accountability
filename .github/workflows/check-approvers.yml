@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       needs_check: ${{ steps.filter.outputs.needs_check }}
+      modified_files: ${{ steps.filter.outputs.needs_check_files }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -51,4 +52,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TEST_LEV_ADMIN_GITHUB_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: pipenv run python3 -m bin.check_pr_approvals
+        run: pipenv run python3 -m bin.check_pr_approvals needs.detect-changes.outputs.needs_check_files

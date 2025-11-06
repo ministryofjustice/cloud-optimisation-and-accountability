@@ -59,9 +59,8 @@ def match_codeowners_for_file(filepath, rules):
     return matched_owners
 
 
-def get_required_teams_from_changes(repo, pull):
+def get_required_teams_from_changes(repo, changed_files):
     rules = load_codeowners(repo)
-    changed_files = [f.filename for f in pull.get_files()]
     required_teams = set()
 
     for fpath in changed_files:
@@ -78,6 +77,14 @@ def get_required_teams_from_changes(repo, pull):
 
 
 def main():
+    if len(sys.argv) < 2:
+        print("❌ Please provide a comma-separated list of changed files as the first argument")
+        sys.exit(1)
+
+    changed_files_arg = sys.argv[1]
+    changed_files = [f.strip() for f in changed_files_arg.split(",") if f.strip()]
+    print(f"📄 Changed files: {changed_files}")
+
     token = os.getenv("GITHUB_TOKEN")
     repo_name = os.getenv("GITHUB_REPOSITORY")
     pr_number = os.getenv("PR_NUMBER")
@@ -118,7 +125,7 @@ def main():
 
     STRICT_PATTERNS = ["*"]
 
-    required_teams = get_required_teams_from_changes(repo, pull)
+    required_teams = get_required_teams_from_changes(repo, changed_files)
 
     if not required_teams:
         print("✅ No team-specific approvals required.")
@@ -127,7 +134,6 @@ def main():
 
     print(f"📌 Required teams: {list(required_teams)}")
 
-    changed_files = [f.filename for f in pull.get_files()]
     is_strict_mode = any(
         fnmatch.fnmatch(f, pattern) or fnmatch.fnmatch("/" + f, pattern)
         for f in changed_files
@@ -145,7 +151,6 @@ def main():
     else:
         print("✅ Standard approval mode")
         has_any_team_approval = False
-
         for team_slug in required_teams:
             team_members = get_team_members(org, team_slug)
             if any(user in team_members for user in approved_users):
