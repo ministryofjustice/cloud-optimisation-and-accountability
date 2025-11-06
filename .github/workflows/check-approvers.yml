@@ -5,13 +5,26 @@ on:
     types:
       - submitted
 
-concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      needs_check: ${{ steps.filter.outputs.needs_check }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if approval check is needed
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            needs_check:
+              - "bin/**"
   approval-check:
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.needs_check == 'true'
     permissions:
       pull-requests: read
       contents: read
