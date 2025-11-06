@@ -69,11 +69,9 @@ def get_required_teams_from_changes(repo, pull):
         for owner in owners:
             if not owner.startswith("@"):
                 continue
-
-            owner = owner[1:]  # remove @
-
+            owner = owner[1:]  # strip "@"
             if "/" in owner:
-                org, team_slug = owner.split("/", 1)
+                _, team_slug = owner.split("/", 1)
                 required_teams.add(team_slug)
 
     return required_teams
@@ -115,12 +113,12 @@ def main():
     print(f"✅ Approved users: {approved_users}")
 
     if len(approved_users) < 1:
-        print("❌ PR must have at least 2 approvals.")
+        print("❌ PR must have at least 1 approval.")
         sys.exit(1)
 
-    required_teams = get_required_teams_from_changes(repo, pull) 
+    STRICT_PATTERNS = ["*"]
 
-    required_teams.add("test-team-lev")
+    required_teams = get_required_teams_from_changes(repo, pull)
 
     if not required_teams:
         print("✅ No team-specific approvals required.")
@@ -129,15 +127,36 @@ def main():
 
     print(f"📌 Required teams: {list(required_teams)}")
 
-    for team_slug in required_teams:
-        team_members = get_team_members(org, team_slug)
-        has_team_approval = any(user in team_members for user in approved_users)
+    changed_files = [f.filename for f in pull.get_files()]
+    is_strict_mode = any(
+        fnmatch.fnmatch(f, pattern) or fnmatch.fnmatch("/" + f, pattern)
+        for f in changed_files
+        for pattern in STRICT_PATTERNS
+    )
 
-        if not has_team_approval:
-            print(f"❌ Missing approval from team: {team_slug}")
+    if is_strict_mode:
+        print("Strict approval mode enabled")
+        for team_slug in required_teams:
+            team_members = get_team_members(org, team_slug)
+            if not any(user in team_members for user in approved_users):
+                print(f"❌ Missing approval from team: {team_slug}")
+                sys.exit(1)
+        print("🎉 All required teams have approved!")
+    else:
+        print("✅ Standard approval mode")
+        has_any_team_approval = False
+
+        for team_slug in required_teams:
+            team_members = get_team_members(org, team_slug)
+            if any(user in team_members for user in approved_users):
+                has_any_team_approval = True
+                break
+
+        if not has_any_team_approval:
+            print("❌ At least one required team must approve.")
             sys.exit(1)
 
-    print("🎉 All approval requirements met!")
+        print("🎉 At least one required team has approved!")
 
 
 if __name__ == "__main__":
