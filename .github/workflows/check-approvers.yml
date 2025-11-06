@@ -25,7 +25,7 @@ jobs:
   approval-check:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: detect-changes.outputs.needs_check == 'true'
+    if: needs.detect-changes.outputs.needs_check == 'true'
     permissions:
       pull-requests: read
       contents: read
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - run: echo modified files '${{ detect-changes.outputs.needs_check }}'
+      - run: echo modified files '${{ needs.detect-changes.outputs.needs_check }}'
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
