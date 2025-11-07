@@ -14,10 +14,6 @@ on:
         required: false
         default: "false"
 
-concurrency:
-  group: test-group
-  cancel-in-progress: false
-
 jobs:
   megalinter:
     name: MegaLinter
