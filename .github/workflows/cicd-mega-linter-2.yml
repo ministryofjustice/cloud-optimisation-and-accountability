@@ -4,7 +4,7 @@ name: ♻️ MegaLinter 2
 
 on:
   # Trigger mega-linter at every push. Action will also be visible from Pull Requests to main
-  # push: # Comment this line to trigger action only on pull-requests
+  # push: # Comment this line to trigger action only on pull-requests test
   pull_request:
     branches: [main]
   workflow_dispatch:
