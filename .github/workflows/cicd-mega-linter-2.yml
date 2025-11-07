@@ -15,8 +15,8 @@ on:
         default: "false"
 
 concurrency:
-  group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
+  group: test-group
+  cancel-in-progress: false
 
 jobs:
   megalinter-2:
