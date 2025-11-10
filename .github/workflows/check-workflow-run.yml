@@ -2,8 +2,7 @@ name: Check COAT dev deployment
 
 on:
   pull_request:
-
-name: Verify Dev Deployment
+    branches: [main]
 
 jobs:
   verify-dev-deploy:
