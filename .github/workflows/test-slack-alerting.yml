@@ -1,0 +1,27 @@
+name: Test Slack Alerting
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-slack-alerting:
+    name: Test Slack Alerting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Force failure
+        run: |
+          echo "This step is intentionally failing the workflow"
+          exit 1
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.ADMIN_SLACK_TOKEN }}
+          payload: |
+            channel: C09DXU35H9P
+            text: ":alert: Workflow *${{ github.workflow }}* failed in repository *${{ github.repository }}*
+            Run details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
