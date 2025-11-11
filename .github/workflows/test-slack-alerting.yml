@@ -22,6 +22,7 @@ jobs:
           token: ${{ secrets.ADMIN_SLACK_TOKEN }}
           payload: |
             channel: C09DXU35H9P
-            text: ":alert: Workflow *${{ github.workflow }}* failed in repository *${{ github.repository }}*
-            Run details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            text: |
+              :alert: Workflow *${{ github.workflow }}* failed in repository *${{ github.repository }}*
+              Run details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
