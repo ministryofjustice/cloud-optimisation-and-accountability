@@ -1,0 +1,21 @@
+---
+name: Slack Notify on new issue
+
+on:
+    issues:
+        types: [opened]
+jobs:
+    notify:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Post to Slack
+              uses: slackapi/slack-github-action@v2.1.1
+              with:
+                method: chat.postMessage
+                token: ${{ secrets.SLACK_BOT_TOKEN }}
+                payload: |
+                    channel: C09DXU35H9P
+                    text: |
+                    :tada: *New issue:* *${{ github.event.issue.title }}*
+                    *URL:*: *${{ github.event.issue.html_url }}*
+                    *Author:* *${{ github.actor }}*
