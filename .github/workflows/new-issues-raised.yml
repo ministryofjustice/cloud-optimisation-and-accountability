@@ -14,7 +14,7 @@ jobs:
                 method: chat.postMessage
                 token: ${{ secrets.SLACK_BOT_TOKEN }}
                 payload: |
-                    channel: CPVD6398C
+                    channel: C09DXU35H9P
                     text: |
                     :tada: *New issue:* *${{ github.event.issue.title }}*
                     *URL:*: *${{ github.event.issue.html_url }}*
