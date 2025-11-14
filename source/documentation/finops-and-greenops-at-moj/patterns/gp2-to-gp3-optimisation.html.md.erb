@@ -1,0 +1,80 @@
+---
+owner_slack: "#coat-notifications"
+title: Upgrade EBS Storage Type from gp2 to gp3
+last_reviewed_on: 2025-11-14
+review_in: 6 months
+---
+
+# Upgrade EBS General Purpose (GP) Storage Type from gp2 to gp3
+
+## Summary
+
+Upgrading Amazon EBS volumes from gp2 to gp3 is one of the quickest and safest ways to reduce AWS storage costs.
+
+The gp3 volume type offers ~20% lower price per GB, predictable baseline performance, and the ability to provision IOPS and throughput independently of volume size.
+
+Most workloads can migrate with no downtime, and the change can be completed directly in the AWS Console or via Cli.
+
+This guide explains what GP storage is, why upgrading is beneficial, and how users can perform the upgrade safely.
+
+## What is General Purpose (GP) Storage?
+
+General Purpose (GP) storage is the default SSD-based storage class for Amazon Elastic Block Store (EBS). It is designed for a wide range of workloads such as application servers, development environments, boot volumes, and medium-sized databases.
+
+AWS provides two GP variants:
+
+**gp2**
+- Legacy general-purpose SSD
+- Performance scales with volume size (3 IOPS per GB)
+- Smaller volumes may experience burst-credit limits
+
+**gp3**
+- Next-generation general-purpose SSD
+- 20% cheaper per GB than gp2
+- Baseline performance included: 3,000 IOPS and 125 MB/s throughput
+- IOPS and throughput can be increased independently of volume size
+- More predictable performance than gp2
+
+## Why Upgrade from gp2 to gp3?
+
+**Cost Savings**
+- gp3 costs approximately 20% less per GB than gp2
+- Large fleets of volumes can achieve meaningful monthly savings immediately
+
+**Improved sustainability**
+- Less underlying SSD capacity needed for equivalent performance
+- More efficient use of AWS infrastructure
+- Lower embodied carbon associated with hardware
+- Lower storage = reduced energy consumption and reduced storage hardware demand
+- More energy efficient
+- Shorter workload runtime and idle time
+
+**Better Performance Model**
+
+gp3 provides fixed baseline performance, regardless of size:
+- 3,000 IOPS
+- 125 MB/s throughput
+- This removes the gp2 limitation where performance is tied to volume size.
+
+**Performance Flexibility**
+- Users can add IOPS or throughput only if needed
+- Avoids the need to over-provision storage for performance
+
+**No Downtime Migration**
+- Upgrading from gp2 to gp3 is an in-place modification
+- Your EC2 instance continues running without interruption
+- Most upgrades complete within minutes
+
+**Future-Proofing**
+- gp3 is the AWS-recommended general-purpose volume type
+- gp2 is considered a legacy option and may not receive improvements
+
+## How to Upgrade Storage Type?
+
+AWS guiance for [Modifying an EBS Volume](https://aws.amazon.com/blogs/storage/migrate-your-amazon-ebs-volumes-from-gp2-to-gp3-and-save-up-to-20-on-costs/)
+
+## Reference
+
+- [MoJ's Cloud Platform uses gp3 Storage by default](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/storage-classes.html#storage-class-options)
+- [AWS EBS Volume Types Overview](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html)
+- [AWS EBS gp3 Performance and Pricing](https://docs.aws.amazon.com/prescriptive-guidance/latest/optimize-costs-microsoft-workloads/ebs-migrate-gp2-gp3.html?utm_source=chatgpt.com)
