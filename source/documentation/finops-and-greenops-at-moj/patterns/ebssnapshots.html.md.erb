@@ -1,0 +1,146 @@
+---
+owner_slack: "#coat-notifications"
+title: EBS Snapshot Optimisation
+last_reviewed_on: 2025-11-19
+review_in: 6 months
+---
+
+# EBS Snapshot Optimisation
+
+## Summary
+
+Amazon EBS Snapshots are point-in-time backups of Amazon Elastic Block Store (EBS) volumes. They capture only the data that has changed since the last snapshot, making them efficient and incremental.
+
+You might snapshot as part of backup and restore strategy, disaster recovery, or compliance and audit purposes.
+
+Costs associated with snapshots relate to storage consumed, cross-region or cross-account data replication, and Fast Snapshot Restore (FSR), if enabled.
+
+It's very easy to create snapshots, however also just as easy to forget to clean up snapshots (especially if there is no automation to keep things tidy). You may also end up retaining  snapshots for longer than required.
+
+This guide sets out some good practices to help manage the build up of snapshot waste that can easily impact the value of your application or service.
+
+## Implementation Complexity
+
+**Low**
+
+## When to snapshot?
+
+A fundamental question to answer first is **"do I need a snapshot?"**.
+
+Before taking or scheduling EBS snapshots, Service Teams should evaluate the business requirements for data retention, recovery time, and recovery point. These factors determine whether snapshots are needed, how often they should be taken, and how long they should be kept.
+
+Only snapshot data with **business value**, **compliance value**, or **operational value**.
+
+✅ Take a snapshot when you need to:
+
+- Protect important data before making significant system or application changes (patching, upgrades, migrations).
+- Create a restore point for production or critical workloads as part of a regular backup policy
+- Enable disaster recovery through cross-account or cross-region backups
+- Clone environments (e.g. creating dev/test volumes from a known state)
+- Meet compliance or audit retention requirements (e.g. long-term or monthly snapshots)
+
+❌ Avoid taking snapshots when:
+- You already have an automated snapshot lifecycle policy — don’t duplicate it with manual snapshots
+- The volume contains temporary or non-persistent data (scratch space, cache, ephemeral workloads)
+- Snapshots are being used instead of a proper backup strategy for databases or applications that require application-consistent backups
+- You're taking snapshots excessively frequently beyond what the RPO/RTO requires e.g. every few minutes
+- The volume is about to be deleted and the data isn’t needed for recovery or compliance
+
+## Tag your snapshots
+
+Snapshots, as with all AWS resources created, must be tagged in line with the [MoJ Tagging Standard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/standards/tagging.html). This will ensure that cost associated with your snapshots is allocated correctly, and makes it easier to keep tabs on your snapshots.
+
+You might also want to add custom tags to help you manage your snapshots e.g. `retention-period`, `delete-after`, `life-cycle-policy`. This provides additional useful information you can use to understand if a snapshot is needed, and enable automation.
+
+## Optimise Cross-Region and Cross-Account Backups
+
+When you snapshot you can opt to replicate that snapshot across regions or accounts. This might form part of a Disaster Recovery solution. However, this incurs additional data transfer associated costs. 
+
+Consider whether this level of resilience is required, especially for non-critical, or non-production services. It is more cost effective to use [AWS Backup](https://docs.aws.amazon.com/aws-backup/) for backup purposes.
+
+## Regularly review and remove ununsed snapshots
+
+Easiest way to improve cost efficiency of your snapshots is to delete anything that isn't adding value.
+
+Regularly identify and remove:
+- orphaned snapshots (no associated EBS volume)
+- manual snapshots not tied to lifecycle policies
+- snapshots for terminated EC2 instances
+- old snapshots beyond retention requirements
+
+If you can automate this process, even better!
+
+## Use Snapshot Archive for Long-Term Storage
+
+If you need to retain snapshots for long periods of time (e.g. compliance and audit) consider using [Snapshot Archive](https://docs.aws.amazon.com/ebs/latest/userguide/snapshot-archive.html). Archived snapshots are up to **75% cheaper** than standard snapshot storage.
+
+This should be used where access to those snapshots is infrequent as recovery time may take hours rather than minutes.
+
+## Automated Data Lifecycle Manager (DLM)
+
+Implement [Data Lifecycle Manager](https://docs.aws.amazon.com/ebs/latest/userguide/snapshot-lifecycle.html) (DLM) to enforce automated creation and deletion of snapshots. This will ensure that your snapshots align to your data retetion strategy and reduce the risk of unnecessary waste.
+
+## Set alerts for cost increases and spikes
+
+Monitor and alert on growth in EBS snapshot spend by using a Budget Alarm (for predictable usage) or Cost Anomaly Detection (for spikes in usage). This can alert you a potential build up in snapshot waste or unusual usage patterns to help you stay within budget.
+
+**Example steps for Budget Alarm**
+
+1. Go to AWS Console → Billing → Budgets.
+
+2. Click Create budget → Cost budget.
+
+3. Under Budget Scope, choose:
+
+Service filter → select Amazon Elastic Block Store.
+
+4. Add a Usage Type filter (optional but recommended):
+
+`EBS:SnapshotUsage`
+`EBS:FastSnapshotRestore`
+`EBS:SnapshotArchive`
+
+5. Set your monthly budget limit (example: £200 or $250).
+
+6. Configure Alerts:
+
+`Actual cost > 80% of budget`
+`Forecasted cost > 100% of budget`
+
+7. Add email recipients or SNS topics.
+
+8 Save the budget.
+
+**Result**
+
+You’ll get email/SNS alerts whenever EBS snapshot spend exceeds or is forecasted to exceed your threshold.
+
+**Example steps for Cost Anomoly Detection**
+
+1. Go to Billing → Cost Anomaly Detection.
+
+2. Create a Custom monitor.
+
+3. Under Monitor Scope, choose:
+
+Service = Amazon Elastic Block Store
+
+4. Add filter for Usage Type = Snapshot
+
+5. Create a Subscription with:
+
+Alert channel (email / SNS)
+
+6. Sensitivity level
+
+Minimum anomaly threshold (usually $5–$10 for snapshots)
+
+**Result**
+
+You get alerts only when EBS snapshot spend behaves abnormally (e.g., someone bulk-created snapshots or lifecycle automation changed).
+
+## Reference
+
+- [MoJ Tagging Standard]( https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/standards/tagging.html)
+- [AWS EBS Snapshots Guidance](https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html)
+- [AWS Backup](https://docs.aws.amazon.com/aws-backup/)
