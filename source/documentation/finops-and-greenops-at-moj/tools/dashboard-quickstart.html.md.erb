@@ -15,10 +15,62 @@ The pupose of this quick start guide is to help Teams familiarise themselves wit
 
 ## Controls
 
+These controls allow you to filter the data in to Dashboard via a number of mandatory tags and important data types. You can use as many filters as required to identify your data.
+
+Control definitions:
+
+- **Business Unit** - Should be one of `HMPPS`, `OPG`, `LAA`, `Central Digital`, `Technology Services`, `HMCTS`, `CICA`, or `Platforms`. 
+
+> Note: `OCTO` does not yet appear in the list, pending agreement of changes to the tagging standard.
+
+- **Service Area** - Service Area that usage is related to e.g. `Hosting`
+
+- **Application** - Application that usage is related to e.g. `CCMS`
+
+- **Account** - AWS Account Name e.g. `Cloud Platform`
+
+- **Namespace** - Cloud Platform Namespace (Environment) name e.g. `laa-amend-a-claim-dev`
+
+- **Billing Period** - The time window AWS uses to calculate usage
+
+- **Owner** - This is the team responsible for the overall service
+
+- **Environment** - Identifies whether usage relates to `Production`, `Non-Production`, or `No is-production tag` i.e. missing tags
+
+> Note: Many of these values are free text and case sensitive so you many find many combinations of similar tags depending on how they have been entered e.g. `NOMIS` and `nomis`. Recommended you correct tags for consistency.
+
+If you wish to reset a control to remove it or change it used the **"Show selected"** radio button to show values that can be removed.
+
+If you expect to see a particular value in the list of values but it is not there please check your AWS resource tags in the first instance. Otherwise, [contact COAT](https://cloud-optimisation-and-accountability.justice.gov.uk/#contacts)
+
+For more information on mandatory resource tags please refer to the [Tagging Standard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/standards/tagging.html)
+
 ## Tagging Coverage for Business Unit
+
+This section shows compliance with the [MoJ Tagging Standard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/standards/tagging.html#tagging-standard). You can use this to improve you taggaing and usage allocation i.e. to make sure you have a full picture of your costs
+
+This section has it's own controls that are independant of the main dashboard controls. At present you can only filter on **Business Unit** and **Billing Period**. We indent to add more filters in due course.
 
 ## Cost by Category
 
+This section helps you understand you cost in different ways:
+
+- **Cost in USD** - Total cost
+
+- **Cost per Region** - Cost split by AWS Region
+
+- **Cost over Time** - Timeseries for cost over the seleceted billing period
+
+- **Cost per enviornment** - Cost split by user defined enviornment
+
+- **Cost per Business Area** - Cost split by Business Unit
+
 ## Kubernetes (EKS) Cost
 
+This section only relates to service that are running on a Kubernetes cluster e.g. Cloud Platform. This section has it's own independant controls for **Namespace** and **Billing Period**.
+
+For users running on these types of platform it is difficult to understand compute cost, as containers are running on large shared EC2 Instances. This view allows you to see **Used** and **Unused** cost. The **Used** cost tells you how much you compute resources actually cost. **Unused** indicates over provisioning and opportunities for right-sizing. 
+
 ## Top 10s
+
+This sections shows curated views of the top 10 of cost and usage sorted a number of different ways to help idenitify opportunities for optimisation. This includes **Application**, **AWS Services** (e.g. RDS, S3, EC2), **Namespaces** (relates to Cloud Platform hosted apps only) and **AWS Account**.
