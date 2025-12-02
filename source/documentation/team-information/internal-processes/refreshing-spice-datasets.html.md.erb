@@ -1,0 +1,34 @@
+---
+owner_slack: "#coat-notifications"
+title: Refreshing SPICE Datasets in QuickSight
+last_reviewed_on: 2025-12-02
+review_in: 3 months
+---
+
+# Refreshing SPICE Datasets in QuickSight
+
+Our SPICE datasets are set to refresh daily at 6am on a schedule.
+
+During development, If a change has been made to the structure of a derived table, 
+or new data has been added to the table, you must manually refresh the SPICE dataset to pull the latest data changes
+into QuickSight, if you want to use it in your analysis:
+
+1) Navigate to the "Datasets" section in the QuickSight area of the Control Panel and 
+select the relevant SPICE dataset that has been modified
+
+![select spice dataset](../../images/select-spice-dataset.png)
+
+3) Navigate to the "Refresh" tab of the dataset and click on "Refresh Now"
+
+![refresh spice dataset](../../images/refresh-spice-dataset.png)
+
+4) Select "Full refresh" and click "Continue". Click "Refresh".
+
+![confirm spice refresh](../../images/confirm-spice-refresh.png)
+
+The latest version of the data will be pulled into the QuickSight SPICE memory cache from the Athena data source
+in AP Compute. You will now be able to use the latest data from the analysis.
+
+## Other resources
+
+Refreshing SPICE data - https://docs.aws.amazon.com/quicksuite/latest/userguide/refreshing-imported-data.html
