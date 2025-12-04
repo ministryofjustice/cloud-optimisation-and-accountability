@@ -1,7 +1,7 @@
 ---
 owner_slack: "#coat-notifications"
 title: AWS Cost & Usage Dashboard Quick Start Guide
-last_reviewed_on: 2025-11-24
+last_reviewed_on: 2025-12-04
 review_in: 6 months
 ---
 
@@ -16,8 +16,6 @@ The purpose of this quick start guide is to help Teams familiarise themselves wi
 ## Controls
 
 These controls allow you to filter the data in the Dashboard via a number of mandatory tags and important data types. You can use as many filters as required to identify your data.
-
-The dashboard includes both Global and Local controls. Local controls operate independently and apply only to specific sections, which are noted in this guide. Global controls affect the rest of the dashboard, and a future update will extend Global controls to the sections currently using Local controls.
 
 Control definitions:
 
@@ -51,8 +49,6 @@ For more information on mandatory resource tags please refer to the [Tagging Sta
 
 This section shows compliance with the [MoJ Tagging Standard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/standards/tagging.html#tagging-standard). You can use this to improve your taggaing and usage allocation i.e. to make sure you have a full picture of your costs
 
-This section has it's own controls that are independant of the main dashboard controls. At present you can only filter on **Business Unit** and **Billing Period**. We intend to add more filters in due course.
-
 ## Cost by Category
 
 This section helps you understand your cost in different ways:
@@ -69,7 +65,7 @@ This section helps you understand your cost in different ways:
 
 ## Kubernetes (EKS) Cost
 
-This section only relates to services that are running on a Kubernetes cluster e.g. Cloud Platform. This section has it's own independant controls for **Namespace** and **Billing Period**.
+This section only relates to services that are running on a Kubernetes cluster e.g. Cloud Platform.
 
 For users running on these types of platform it is difficult to understand compute cost, as containers are running on large shared EC2 Instances. This view allows you to see **Used** and **Unused** cost. The **Used** cost tells you how much your compute resources actually cost. **Unused** indicates over provisioning and opportunities for right-sizing. 
 
