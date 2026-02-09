@@ -1,7 +1,7 @@
 ---
 owner_slack: "#coat-notifications"
 title: AWS Cost & Usage Dashboard Quick Start Guide
-last_reviewed_on: 2025-12-04
+last_reviewed_on: 2026-02-05
 review_in: 6 months
 ---
 
@@ -9,7 +9,7 @@ review_in: 6 months
 
 ## Introduction
 
-This Dashboard has been created to help Teams understand the cost and usage associated to their AWS resources.
+This Dashboard has been created to help Teams understand the cost, usage, and environmental impact associated to their AWS resources.
 
 The purpose of this quick start guide is to help Teams familiarise themselves with how the Dashboard works and the types of data available.
 
@@ -19,9 +19,7 @@ These controls allow you to filter the data in the Dashboard via a number of man
 
 Control definitions:
 
-- **Business Unit** - Should be one of `HMPPS`, `OPG`, `LAA`, `Central Digital`, `Technology Services`, `HMCTS`, `CICA`, or `Platforms`. 
-
-> Note: `OCTO` does not yet appear in the list, pending agreement of changes to the tagging standard.
+- **Business Unit** - Should be one of `HMPPS`, `OPG`, `LAA`, `Central Digital`, `Technology Services`, `HMCTS`, `CICA`, or `OCTO`. 
 
 - **Service Area** - Service Area that usage is related to e.g. `Hosting`
 
@@ -72,3 +70,23 @@ For users running on these types of platform it is difficult to understand compu
 ## Top 10s
 
 This section shows curated views of the top 10 of cost and usage sorted a number of different ways to help identify opportunities for optimisation. This includes **Application**, **AWS Services** (e.g. RDS, S3, EC2), **Namespaces** (relates to Cloud Platform hosted apps only) and **AWS Account**.
+
+## Total Emissions Change - Last 2 complete months
+
+This panel will only show the percentage difference in emission for the last two complete months of usage. Changing the `Billing Period` in the controls may result in a `No Data` message if the data range doesn't include data from the previous two months.
+
+## Miles Driven in Average Family Car Last Full Month
+
+Equivalent total emissions in miles driven in an average family car for the previous month. Changing the `Billing Period` in the controls may result in a `No Data` message if the data range doesn't include data from the previous month.
+
+## Note on Emissions
+
+All Emissions data is expressed in `tCO2e`. This is **tonnes of carbon dioxide equivalent**, a standard unit used to measure and compare the climate impact of different greenhouse gases (GHGs) by converting them to the amount of carbon dioxide that would cause the same warming effect. It's crucial in carbon accounting for calculating total greenhouse gas footprints, as gases like methane and nitrous oxide have much higher global warming potentials (GWPs).
+
+## Usage Emissions
+
+Usage Emissions (or Operational Carbon) are greenhouse gases generated from the electricity consumed to power and cool servers, networking equipment, and storage devices during day-to-day operations.
+
+## Embedded Emissions
+
+Embedded Emissions (or Embodied Carbon) is the carbon emitted during the manufacturing, transportation, installation, and disposal of physical hardware devices. 
