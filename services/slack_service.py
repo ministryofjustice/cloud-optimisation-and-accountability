@@ -64,7 +64,7 @@ class SlackService:
                                  filename: str | None = None):
         try:
             with open(file_path, "rb") as file_content:
-                self.slack_client.files_upload(
+                self.slack_client.files_upload_v2(
                     channels=self.COAT_NOTIFICATIONS_CHANNEL_ID,
                     initial_comment=message,
                     file=file_content,
