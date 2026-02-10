@@ -1,0 +1,83 @@
+---
+owner_slack: "#coat-notifications"
+title: Migrate to Graviton-based instance types
+last_reviewed_on: 2026-02-10
+review_in: 6 months
+---
+
+# Migrate to Graviton-based instance types
+
+## Summary
+
+[AWS Graviton processors](https://aws.amazon.com/ec2/graviton/) are AWS-designed Arm-based CPUs that deliver price-performance and energy efficiency for a broad range of cloud workloads. By migrating compatible workloads to Graviton-based instances and leveraging Graviton in managed services (e.g. RDS, OpenSearch, ElastiCache), teams can reduce costs and improve sustainability through lower emissions without degrading performance.
+
+## Implementation complexity
+
+**Medium**
+
+Graviton optimisation usually involves:
+
+- Selecting appropriate Graviton instance families (e.g. T-series, M/C/R-series)
+- Rebuilding or validating application binaries for Arm64 where necessary
+- Testing performance and compatibility
+
+Workloads written in platform-independent languages (e.g. Java, Python, Node.js, Go) typically require minimal code changes beyond recompilation.
+
+## When to use Graviton?
+
+Consider migrating to Graviton when:
+
+- Running general-purpose, compute or memory-intensive workloads that are consistently consuming CPU resources
+- You need to reduce infrastructure cost while sustaining or improving performance
+- Your applications can run on Arm64, or your build pipelines support multi-architecture images
+- Sustainability targets (carbon reduction, energy efficiency) are part of engineering goals
+
+## Key benefits
+
+**Cost Optimisation**
+
+- Up to **~20–40%** better price-performance compared to equivalent x86 instances, meaning either lower hourly cost for the same work or more throughput per dollar spent
+- Improved performance often lets teams rightsize instances downward, further reducing spend
+- Combining Graviton migration with Savings Plans or Reserved Instances amplifies cost reduction over time
+
+**Sustainability / Energy Efficiency**
+
+- Graviton processors consume significantly less energy (~up to 60% less) than comparable x86 instances for the same performance, reducing data centre power draw and associated carbon emissions
+- Lower power usage also reduces heat output, which in turn lowers cooling requirements in AWS infrastructure
+
+## Risks
+
+Some legacy software, proprietary binaries, or OS dependencies may not support Arm64, requiring code changes or testing.
+
+In rare cases, performance characteristics differ; always conduct performance validation.
+
+Migration planning should consider CI/CD pipeline updates and dependency management for multi-architecture.
+
+## Practical steps
+
+**Inventory & Eligibility Assessment**
+
+- Identify compute resources (EC2, RDS, OpenSearch, ElastiCache, Lambda) that could benefit from Graviton
+- Flag workloads that currently run on x86 and assess compatibility with Arm64
+
+**Proof-of-Concept**
+
+- Rebuild application binaries or create multi-arch container images
+- Test performance and reliability on Graviton instance types in non-production environments
+
+**Benchmark & Validate Costs**
+
+- Compare benchmark results (throughput, latency) to x86 baseline
+- Analyse pricing differences and forecast net savings
+
+**Migrate & Monitor**
+
+- Incrementally migrate workloads to Graviton
+- Use tools (e.g. Graviton Savings Dashboard, [COAT Cost & Usage Dashboard](https://cloud-optimisation-and-accountability.justice.gov.uk/documentation/finops-and-greenops-at-moj/tools/dashboard.html)) to monitor realised and potential savings
+
+**Rightsize & Optimise**
+
+- Adjust instance sizes based on actual performance and utilisation.
+- Review the architecture for additional efficiencies (auto-scaling, spot instances, Savings Plans).
+
+Get additional assistance with [AWS Graviton Technical Guide](https://github.com/aws/aws-graviton-getting-started)
