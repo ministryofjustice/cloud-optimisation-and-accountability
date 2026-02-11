@@ -39,7 +39,7 @@ jobs:
           RUN_MANUALLY: ${{ github.event_name == 'workflow_dispatch' }}
       - name: Upload report artifact if scheduled run
         if: github.event_name == 'schedule'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ebs-report
           path: '*.csv'
