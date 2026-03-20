@@ -28,7 +28,7 @@ jobs:
       - name: Run Python script
         run: pipenv run python3 -m bin.export_opt_hub_data
       - name: Upload CSV artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.0
         with:
           name: cost-optimization-recommendations
           path: cost_optimization_recommendations.csv
