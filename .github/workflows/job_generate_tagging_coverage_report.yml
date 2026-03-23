@@ -54,7 +54,7 @@ jobs:
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
       - name: Report failure to Slack
         if: always()
-        uses: ravsamhq/notify-slack-action@f6eea643ddcd831f1a3c4d518aefd6098ef680e6 # 2.5.0
+        uses: ravsamhq/notify-slack-action@b4a384a589d05f367b0f5d4b271559a7fca866cb # 2.5.0
         with:
           status: ${{ job.status }}
           notify_when: "failure"
