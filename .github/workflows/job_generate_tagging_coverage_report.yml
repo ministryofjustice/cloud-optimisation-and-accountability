@@ -13,7 +13,6 @@ on:
         type: choice
         options:
           - HMPPS
-          - Platforms
           - LAA
           - Central Digital
           - Technology Services
@@ -21,6 +20,7 @@ on:
           - HMCTS
           - YJB
           - CICA
+          - OCTO
 
 permissions:
   id-token: write
