@@ -14,3 +14,6 @@ updates:
       time: "09:00" # UTC
     cooldown:
       default-days: 7
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
