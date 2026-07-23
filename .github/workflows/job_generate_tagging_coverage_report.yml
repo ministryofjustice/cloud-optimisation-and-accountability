@@ -12,6 +12,7 @@ on:
         required: true
         type: choice
         options:
+          - All
           - HMPPS
           - LAA
           - Central Digital
@@ -46,9 +47,34 @@ jobs:
           aws-region: eu-west-2
       - name: Run Python script
         run: |
+          BILLING_PERIOD="${{ github.event.inputs.billing_period }}"
+          SELECTED_BU="${{ github.event.inputs.business_unit }}"
+
+          BUSINESS_UNITS=(
+            "HMPPS"
+            "LAA"
+            "Central Digital"
+            "Technology Services"
+            "OPG"
+            "HMCTS"
+            "YJB"
+            "CICA"
+            "OCTO"
+          )
+
+          if [ "$SELECTED_BU" = "All" ]; then
+            for BU in "${BUSINESS_UNITS[@]}"; do
+              echo "Running report for $BU"
+              pipenv run python3 -m bin.tagging_coverage_report \
+                --billing_period "$BILLING_PERIOD" \
+                --business_unit "$BU"
+            done
+          else
+            echo "Running report for $SELECTED_BU"
             pipenv run python3 -m bin.tagging_coverage_report \
-            --billing_period "${{ github.event.inputs.billing_period }}" \
-            --business_unit "${{ github.event.inputs.business_unit }}"
+              --billing_period "$BILLING_PERIOD" \
+              --business_unit "$SELECTED_BU"
+          fi
         env:
           GH_TOKEN: ${{ secrets.ENTERPRISE_BILLING_TOKEN_FROM_TONY }}
           ADMIN_SLACK_TOKEN: ${{ secrets.ADMIN_SLACK_TOKEN }}
