@@ -1,7 +1,7 @@
 ---
 owner_slack: "#coat-notifications"
 title: Ways of Engineering
-last_reviewed_on: 2025-08-11
+last_reviewed_on: 2026-07-23
 review_in: 3 months
 ---
 
@@ -38,23 +38,6 @@ We should host new applications and infrastructure on the Cloud Platform, unless
 
 The Modernisation Platform is made for hosting applications that are not yet containerised or where a project has complex infrastructure requirements.
 
-We have chosen to only have one environment* in the Modernisation Platform. This environment is called [operations-engineering](https://github.com/ministryofjustice/modernisation-platform/blob/main/environments/operations-engineering.json). AWS Accounts in this environment should be used for all infrastructure deemed suitable to host in the Modernisation Platform.
-
-Any production level services should be deployed into the `operations-engineering-production` AWS Account. This account can only be deployed to via code changes in [modernisation-platform-environments](https://github.com/ministryofjustice/modernisation-platform-environments)
-
-> ***An environment in the Modernisation Platform can mean one of two things:**
->
-> - **A namespace which encapsulates several AWS accounts i.e. `operations-engineering`**
-> - **A traditional environment for deployment such as `development`, `production` etc. combined with the Namespace definition above, these create the names for the AWS Accounts created i.e `operations-engineering-development`, `operations-engineering-production` etc.**
->
-> In the descriptions in this section, I have opted to use `environment` to describe the `namespace` and `AWS Account` to describe the `traditional environment` to avoid confusion.
-
-#### Why Are We Only Using One Environment?
-
-While the team gets more familiar with the Modernisation Platform, we have decided to only use one environment. This will help us to keep things simple and avoid confusion.
-
-We will review this decision in the future when there is a need to add more environments.
-
 #### Cloud Platform vs Modernisation Platform
 
 |Cloud Platform|Modernisation Platform|
@@ -63,19 +46,12 @@ We will review this decision in the future when there is a need to add more envi
 |Intended for microservices|Intended for services requiring more complex infrastructure|
 |Access to some AWS resources restricted (eg no AWS Lambda)|Full control and full access to AWS tools|
 |Provides access to CPs Kubernetes cluster|Provides Security baselines, Isolated networking, CI/CD for infrastructure|
-|Example: Join GitHub app (🪦); containerised app hosting a website, running small supporting infra|Example: NOMIS; mainaining a huge database, restricting access, integrating with microservices (which may be on CP)|
+|Example: Check My Copilot AI Credit Usage; containerised app hosting a website, running small supporting infra|Example: NOMIS; mainaining a huge database, restricting access, integrating with microservices (which may be on CP)|
 
 ### ✅ Use Analytical Platform for Data Pipelines
 
 The [Analytical Platform](https://controlpanel.services.analytical-platform.service.justice.gov.uk/tools/) is the recommended in-house service to support end-to-end data pipelines including raw data ingestion, transformation, data modelling, 
 analysis, visualisation and dissemination as well as managing access permisions. [Analytical Platform User Guidance](https://user-guidance.analytical-platform.service.justice.gov.uk/).
-
-
-### ✅ Do Not Use The MoJ Digital Services (DSD Account) to Host Services
-
-The MoJ Digital Services AWS Account is a legacy account that is currently owned by several teams and is not suitable for hosting new services.
-
-Existing services owned by our team hosted in the MoJ Digital Services AWS Account  should be migrated to the Cloud Platform or Modernisation Platform.
 
 ### ✅ Terraform as IaC
 
@@ -110,7 +86,7 @@ We are experimenting with adopting PipEnv as our Python package manager, moving 
 
 ### **✅ Use Dependabot**
 
-To enhance our security posture and streamline the management of vulnerabilities within our dependencies, we are experimenting with replacing Dependabot with Trivy. This shift aims to leverage Trivy's comprehensive vulnerability detection across multiple languages and package managers and ease of integration into our CI/CD pipelines. During this experimental phase, we will evaluate Trivy's effectiveness in identifying and mitigating known vulnerabilities, comparing it to Dependabot's performance and utility.
+To enhance our security posture and streamline the management of vulnerabilities within our dependencies. We use Dependabot.
 
 ### **✅ Pin GitHub Actions to a Commit Hash**
 
@@ -160,7 +136,6 @@ We use a monorepo for Terraform code to ensure consistency and collaboration acr
 - This reduces duplication, enforces organizational standards, and accelerates provisioning.
 - Teams consume modules via versioned references, ensuring stability while allowing controlled updates.
 
-
 #### Benefits of this Approach
 
 - Simplicity First → Teams can start small without over-engineering.
@@ -168,4 +143,3 @@ We use a monorepo for Terraform code to ensure consistency and collaboration acr
 - Consistency → All environments follow the same structure and use shared modules.
 - Collaboration → A monorepo ensures visibility, easier reviews, and central governance.
 - Reusability → Modules allow faster delivery and standardization across projects.
-
