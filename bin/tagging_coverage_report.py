@@ -1,10 +1,12 @@
-import boto3
 import logging
 import os
 import time
-import pandas as pd
-from typing import Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Tuple
+
+import boto3
+import pandas as pd
+
 from services.slack_service import SlackService
 
 logging.basicConfig(
