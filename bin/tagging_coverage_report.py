@@ -217,7 +217,11 @@ def fetch_total_tag_coverage(tag_key, billing_period, business_unit):
     )
     total_tagging_cov_prc = (
         round(
-            float(results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]["VarCharValue"]),
+            float(
+                results_total_coverage["ResultSet"]["Rows"][1]["Data"][0][
+                    "VarCharValue"
+                ]
+            ),
             2,
         )
         if "VarCharValue" in results_total_coverage["ResultSet"]["Rows"][1]["Data"][0]
