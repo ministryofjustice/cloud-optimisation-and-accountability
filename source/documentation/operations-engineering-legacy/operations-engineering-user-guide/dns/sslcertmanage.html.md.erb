@@ -1,58 +1,64 @@
 ---
 owner_slack: "#operations-engineering-alerts"
 title: SSL Certificate Management
-last_reviewed_on: 2025-06-26
+last_reviewed_on: 2026-07-28
 review_in: 6 months
 ---
 
 # SSL Certificate Management
 
-# Gandi.net SSL Certificates
-
 ## Overview
 
-This process is for any Ministry of Justice users (or suppliers) requiring a Gandi.net SSL Certificate.
+This process is for any Ministry of Justice users (or suppliers) requiring an SSL Certificate, where certificate management isn't already included in the service offering.
 
 There are 2 categories of certificate we use at Ministry of Justice:
 
-* AWS Certificate Manager (ACM) / Let’s Encrypt - automated certificate management for modern cloud native software and infrastructure
-* Gandi.net - where automated certificate management is not possible
+* Automated certificate management for modern cloud native software and infrastructure e.g. AWS ACM or Let's Encrypt.
+* Manual management i.e. which involves human tracking, hand-crafted requests, and physical installation.
 
-## Automated Certificate Management
-Where at all practicable we should utilise [automated certificate management](https://ministryofjustice.github.io/security-guidance/automated-certificate-renewal/#automated-certificate-renewal).
+Where at all practicable we should utilise [automated certificate management](https://justiceuk.sharepoint.com/sites/SecurityPolicyandGuidance/SitePages/Policy%20and%20Guidance/Cryptography/Automated-Certificate-Renewal.aspx) in line with MOJ Security Standards.
 
-The MoJ Hosting Service is looking at strategy to move consumers to modern certificate management solutions.
+Where that is not technically possible, or commercially feasable, and a manually created certficate is required, the preferred method for SSL/TLS certificate management is AWS Certificate Manager (ACM). Wherever possible, services requiring SSL certificates should use certificates issued and managed through ACM.
 
-## Requesting a new certificate via Gandi.net
+In some cases, vendors or third-party platforms cannot support ACM-issued certificates or the certificate export process. In these situations, Gandi.net remains available as a fallback option for certificate procurement and management.
 
-Complete the [MoJ Hosting Service SSL Certificate Request Form](https://docs.google.com/document/d/14XbWoudZd-t4-J3mDBcrAeafAbqxwvdkV-u3Zf8eLOs/edit?usp=sharing) and return it with the [Certificate Signing Request (CSR)](https://docs.gandi.net/en/ssl/common_operations/csr.html#generate-csr) (and an authority email approval if not an MoJ employee e.g. 3rd party supplier) to [certificates@digital.justice.gov.uk](mailto:certificates@digital.justice.gov.uk).
+## Preferred Option: AWS Certificate Manager (ACM)
 
-**The Operations-Engineering team do not handle any pass-phrases or keys regarding the CSR or SSL certificates. Please do not send any private keys with your request.**
+AWS ACM should be used as the default solution for all new SSL/TLS certificate requests where technically feasible.
 
-The Operations Engineering Team will create the new certificate and issue it, along with details of the expiry date (which will be in 12 months from date created), to the named contact provided in the request form.
+For systems hosted outside AWS or managed by third-party suppliers, ACM certificates can be exported and provided to the vendor for installation. Before proceeding, the vendor must confirm that they can:
 
-When the certficate is created there is a validation step required. In most cases the Team manages the DNS so will complete this step. In instances where we do not manage a domain we will contact the requestor to assist in completing validation before the certificate can be issued.
+- support the use of exported AWS ACM certificates.
+- Install the complete certificate chain supplied by the Ministry of Justice.
+- securely install and manage the associated private key provided with the certificate.
+- perform certificate replacement and renewal activities within the required timescales.
 
-Should you require intermediate or root certificates please contact [certificates@digital.justice.gov.uk](mailto:certificates@digital.justice.gov.uk).
+If a vendor cannot support exported ACM certificates, an alternative certificate management approach should be agreed with the Hosting Networks team.
 
-## Renewal Process for Gandi.net SSL Certificates
+If all of the pre-requisites for ACM can be met your request for a certficate must be submitted to [certificates-gg@justice.gov.uk](mailto:certificates-gg@justice.gov.uk). Include details of where the service is hosted, Fully Qualified Domain Name (FQDM) to be covered, plus any additional Subject Alternative Names (SAN) to be includes in the certificate.
 
-Email reminders requesting new CSRs for Gandi.net certificates are automatically sent out via the [Operations Engineering Certificate Renewal](https://github.com/ministryofjustice/operations-engineering-certificate-renewal) repository to the appropriate recipients 30 days before expiry.
+## Fallback Option: Gandi.net
 
-The frequency of these reminders can be configured via the `cert_expiry_thresholds` value in the `configs/production.yml` configuration file.
+Where ACM cannot be used, please email your request to [certificates-gg@justice.gov.uk](mailto:certificates-gg@justice.gov.uk). In addition to hosting location, FQDN, and SAN, also include justification of why ACM cannot be supported, and include the [Certificate Signing Request (CSR)](https://docs.gandi.net/en/ssl/common_operations/csr.html#generate-csr). 
 
-A list of the domains we managed and their respective owners can be found in the `mappings.json` file located in [this S3 bucket](https://s3.console.aws.amazon.com/s3/buckets/operations-engineering-certificate-email?region=eu-west-2&tab=objects).
+**The Hosting Networks team do not handle any pass-phrases or keys regarding the CSR or SSL certificates. Please do not send any private keys with your request.**
 
-Once a reply is recieved, the Operations Engineering team can continue with the standard process to intiate the renewal.
+## Certificate Validity
 
-## Revoking Gandi.net certificates
+All SSL/TLS certificates issued through the organisation's approved processes are limited to a maximum validity period of six months.
 
-If an SSL certificate is no longer required e.g. a service has been decommissioned please contact [certificates@digital.justice.gov.uk](mailto:certificates@digital.justice.gov.uk), so that the team can revoke the certificate.
+**Service owners are responsible for ensuring renewals are planned and implemented before certificate expiry.** Vendors managing externally hosted services must ensure they have appropriate processes in place to support the six-month renewal cycle.
+
+## Renewal Process
+
+At least one month prior to renewal contact [certificates-gg@justice.gov.uk](mailto:certificates-gg@justice.gov.uk) to request a renewal.
+
+## Revoking Certificates
+
+If an SSL certificate is no longer required e.g. a service has been decommissioned please contact [certificates-gg@justice.gov.uk](mailto:certificates-gg@justice.gov.uk), so that the team can revoke the certificate.
 
 **Note that once a certificate has expired or been revoked it cannot be reinstated. If a certificate is required the process to request a new certificate should be followed.**
 
 ## Costs/Funding information
 
-The costs for Gandi.net certificates are met centrally by Platforms & Architecture. There is no cross charge for using this service.
-
-[gandi.net]: https://gandi.net
+The costs for certificates are met centrally by Hosting. There is no cross charge for using this service.
