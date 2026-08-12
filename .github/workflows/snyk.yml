@@ -33,10 +33,15 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high --fail-on=upgradable --file=Pipfile.lock --sarif-file-output=snyk-python.sarif
+          args: --severity-threshold=high --fail-on=upgradable --file=Pipfile --sarif-file-output=snyk-python.sarif
+
+      - name: Check for SARIF file
+        id: sarif
+        if: always() && steps.scan.outcome != 'skipped'
+        run: echo "exists=$([ -f snyk-python.sarif ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
       - name: Upload SARIF
-        if: always() && steps.scan.outcome != 'skipped'
+        if: always() && steps.sarif.outputs.exists == 'true'
         uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
         with:
           sarif_file: snyk-python.sarif
@@ -67,8 +72,13 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Upload SARIF
+      - name: Check for SARIF file
+        id: sarif
         if: always() && steps.scan.outcome != 'skipped'
+        run: echo "exists=$([ -f snyk-code.sarif ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload SARIF
+        if: always() && steps.sarif.outputs.exists == 'true'
         uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4.37.3
         with:
           sarif_file: snyk-code.sarif
