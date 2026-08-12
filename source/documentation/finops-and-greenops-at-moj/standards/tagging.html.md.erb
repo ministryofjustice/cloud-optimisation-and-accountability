@@ -1,7 +1,7 @@
 ---
 owner_slack: "#coat-notifications"
 title: Tagging Standard
-last_reviewed_on: 2026-05-14
+last_reviewed_on: 2026-08-12
 review_in: 6 months
 ---
 
@@ -27,7 +27,7 @@ To ensure we can consistently search for, and report on, the tags we use, you sh
 
 ### Mandatory
 
-- `business-unit`: Should be one of `HMPPS`, `OPG`, `LAA`, `Central Digital`, `Technology Services`, `HMCTS`, `CICA`, `OCTO`, or `YJB`. If none of these are appropriate, please contact us via `#ask-operations-engineering` Slack channel or submit a pull-request against the [policy managed in code](https://github.com/ministryofjustice/aws-root-account/blob/main/management-account/terraform/organizations-policy-tags.tf).
+- `business-unit`: Should be one of `HMPPS`, `OPG`, `LAA`, `Central Digital`, `Technology Services`, `HMCTS`, `CICA`, `OCTO`, `YJB`, of `Justice Data`. If none of these are appropriate, please contact us via `#cloud-optimisation-and-accountability-team` Slack channel or submit a pull-request against the [policy managed in code](https://github.com/ministryofjustice/aws-root-account/blob/main/management-account/terraform/organizations-policy-tags.tf).
 - `service-area` : Should be the full name of the Service Area in which your team is based e.g. `Education Skills & Work`, `Manage a Workforce`, `Hosting`.
 - `application`: Should be the full name of the application or service (and acronym version, if commonly used), e.g. `Prison Visits Booking`, `Claim for Crown Court Defence/CCCD`.
 - `is-production`: `true` or `false`, to indicate if the infrastructure is part of, or supports, live production services
@@ -40,6 +40,8 @@ To ensure we can consistently search for, and report on, the tags we use, you sh
 - `infrastructure-support`: The team responsible for managing the infrastructure. Should be of the form `<team-name>: <team-email>`.
 - `runbook`: The URL of [the service's runbook](https://technical-guidance.service.justice.gov.uk/documentation/standards/documenting-how-your-service-is-supported.html).
 - `source-code`: The URL(s) for any source code repositories related to this infrastructure, comma separated.
+
+This optional list is only an illistartive list of tags that you might want in addition to the mandatory tags. You can add up to 50 user-created tags.
 
 ### Platform specific guidance for applying mandatory tags
 
