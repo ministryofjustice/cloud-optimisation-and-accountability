@@ -1,0 +1,167 @@
+---
+owner_slack: "#coat-notifications"
+title: Rightsizing
+last_reviewed_on: 2026-09-04
+review_in: 6 months
+---
+
+# Rightsizing
+
+## Summary
+
+Rightsizing is the practice of aligning cloud resource capacity with actual workload requirements.
+
+Applications are often deployed with additional capacity to reduce delivery risk, accommodate uncertainty, or simplify initial implementation decisions. As workloads mature, usage patterns become better understood and previously appropriate sizing decisions can become inefficient.
+
+Regular rightsizing helps ensure that resources continue to meet performance, reliability, and business requirements while avoiding unnecessary cost and environmental impact.
+
+Rightsizing is a core FinOps capability and should form part of continuous optimisation activities rather than being treated as a one-off exercise.
+
+This guide covers the benefits of rightsizing and consideration for rightsizing. It doesn't include details process for rightsizing, as this will be dependant on the the platform where your workloads are hosted. Contact your Platform Team for specific guiance and support.
+
+## Implementation Complexity
+
+**Medium**
+
+## Benefits
+
+### Reduced Cloud Spend
+
+Overprovisioned resources are one of the most common sources of cloud waste.
+
+Regular rightsizing can help teams:
+- reduce unnecessary expenditure
+- improve cost efficiency
+- increase the value delivered from cloud investment
+- create budget capacity for innovation and service improvement
+
+### Improved Sustainability
+
+Cloud resources consume energy regardless of whether their full capacity is being utilised.
+
+By reducing excess capacity, rightsizing can:
+- lower overall infrastructure consumption
+- reduce associated carbon emissions
+- support GreenOps and sustainability objectives
+- improve the environmental efficiency of services
+
+### Better Visibility of Workloads
+
+The rightsizing process requires teams to understand how services actually behave.
+
+This can provide valuable insights into:
+- usage trends
+- demand patterns
+- application performance characteristics
+- architectural improvement opportunities
+
+## Considerations
+
+### Understand Utilisation Patterns
+
+Rightsizing decisions should be based on representative operational data rather than short-term observations.
+
+Consider:
+- average utilisation
+- peak demand periods
+- seasonal variations
+- planned business activity
+- future growth expectations
+
+A resource that appears underutilised today may still be appropriately sized if it supports predictable growth or known demand spikes.
+
+### Balance Cost, Performance and Reliability
+
+The objective of rightsizing is optimisation rather than simply minimising resource allocation.
+
+Teams should ensure changes do not adversely affect:
+- service availability
+- user experience
+- performance requirements
+- resilience objectives
+- recovery capabilities
+- consider Autoscaling and Elastic Services
+
+Where supported by the platforms that offer autoscalling, services that automatically scale can help reduce the need for manual sizing decisions.
+
+Rightsizing activities should consider whether existing scaling mechanisms are configured appropriately and whether they continue to reflect workload requirements.
+
+### Monitor Outcomes
+
+Changes should be accompanied by monitoring and validation to ensure expected outcomes are achieved. 
+
+Consider tracking:
+- resource utilisation.
+- application performance.
+- service reliability metrics
+- cost
+
+## Sources of data to support rightsizing
+
+Rightsizing decisions should be based on operational evidence rather than assumptions. AWS provides several native services that can help teams understand utilisation patterns, identify optimisation opportunities, and assess potential cost savings.
+
+### AWS Compute Optimizer
+
+AWS Compute Optimizer is the primary AWS service for identifying rightsizing opportunities. It analyses resource configuration and historical utilisation metrics to generate recommendations for EC2 instances, EBS volumes, Auto Scaling Groups, ECS services, RDS databases, Lambda functions and other supported services. Recommendations are designed to improve cost efficiency while maintaining workload performance.
+
+Compute Optimizer can be particularly valuable because it considers multiple performance characteristics rather than relying solely on CPU utilisation. It also identifies under-provisioned, over-provisioned and idle resources.
+
+### Amazon CloudWatch
+
+Amazon CloudWatch provides the utilisation and performance data that often underpins rightsizing decisions. Key metrics may include:
+- CPU utilisation
+- Memory utilisation (where CloudWatch Agent is enabled)
+- Network throughput
+- Disk I/O
+- Storage consumption
+- Database performance metrics
+
+Historical utilisation data helps teams understand normal operating patterns, peak demand periods and seasonal variations before making sizing decisions.
+
+### AWS Cost Explorer
+
+AWS Cost Explorer provides rightsizing recommendations focused on identifying underutilised EC2 instances and estimating potential cost savings. It can help teams understand the financial impact of proposed changes and prioritise optimisation efforts based on potential benefit.
+
+Cost Explorer is particularly useful when reviewing optimisation opportunities across accounts, business units or tagged workloads.
+
+### AWS Cost Optimization Hub
+
+Cost Optimization Hub provides a central location for viewing cost optimisation opportunities across AWS accounts and services. AWS recommends using Cost Optimization Hub as the consolidated view for identifying optimisation opportunities, including rightsizing recommendations generated by other AWS services.
+
+### AWS Trusted Advisor
+
+AWS Trusted Advisor evaluates AWS environments against established best practices and can identify idle and underutilised resources that may represent rightsizing or decommissioning opportunities. It can provide an additional source of optimisation recommendations alongside Compute Optimizer and Cost Explorer.
+
+### Application and Business Metrics
+
+Infrastructure utilisation should not be considered in isolation. Rightsizing decisions should also take account of:
+- User demand patterns
+- Seasonal business events
+- Growth forecasts
+- Performance requirements
+- Service Level Objectives (SLOs)
+- Service Level Agreements (SLAs)
+
+No single data source should be used in isolation. Rightsizing decisions are most effective when technical utilisation data from CloudWatch and Compute Optimizer is considered alongside Cost Explorer savings estimates, Trusted Advisor findings, and business context provided by Service Teams. This helps ensure optimisation opportunities deliver cost and sustainability benefits without adversely affecting performance or reliability.
+
+## Common Anti-Patterns
+
+**Setting and forgetting** - Resource requirements change over time. A workload that was appropriately sized six months ago may no longer reflect current business needs.
+
+**Optimising without sufficient data** - Rightsizing decisions based on assumptions rather than utilisation evidence increase the risk of performance issues and missed optimisation opportunities.
+
+**Focusing exclusively on cost** - Cost reduction should not come at the expense of reliability, security, resilience or user experience.
+
+**Ignoring Non-Production environments** - Development, test and staging environments are frequently overprovisioned and can represent significant optimisation opportunities.
+
+## Recommendations
+
+Service and Platform Teams should:
+- Establish visibility of resource utilisation across services
+- Review resource sizing as part of regular FinOps activities.
+- Use historical utilisation data to inform decisions.
+- Consider performance, resilience and growth requirements before making changes.
+- Validate outcomes following any rightsizing activity.
+- Repeat the process regularly as workloads evolve.
+
+Rightsizing should be viewed as a continuous optimisation practice that supports both FinOps and GreenOps objectives by ensuring cloud resources are delivering value proportional to their cost and environmental impact.
