@@ -1,0 +1,41 @@
+---
+owner_slack: "#coat-notifications"
+title: ADR 01 - Integration of web applications with data in AP
+last_reviewed_on: 2026-09-17
+review_in: 3 months
+---
+
+# ADR 01 - Integration of web applications with data in AP
+
+SPIKE investigation ticket: https://github.com/ministryofjustice/cloud-optimisation-and-accountability/issues/646
+
+## Decision
+
+[Register webapps](https://user-guidance.analytical-platform.service.justice.gov.uk/apps/static-app.html#deploying-a-webapp) 
+with AP and use the vended IAM role to integrate webapps with data in AP. Database permissions are configured through a 
+[separate configuration file](https://github.com/moj-analytical-services/data-engineering-database-access/blob/12297b87a452de2bea08b9a6250473415ddef190/scripts/db_app_policies.py) 
+maintained by Data Engineering.
+
+## Architecture
+
+![AP-webapp integration architecture](../../images/ap-webapp-integration-architecture.png)
+
+## Rationale
+
+Advantages:
+- No data duplication
+- Data kept in AP
+- Low maintenance cost
+
+Neutral:
+- Medium implementation effort
+
+Disadvantages:
+- Potential reliance on support from AP
+- Less flexibility, including no support for serverless, as the trust policy for the cross-account IAM role is for kubernetes service accounts and EC2
+
+## Risks
+
+Risk: AP are busy building out the AI Gateway product, therefore their ability to provide support may be limited.
+Mitigation: The integration should be relatively simple, relying on one primary component, the cross-account IAM role, therefore any issues with 
+the integration should be easier to troubleshoot.
