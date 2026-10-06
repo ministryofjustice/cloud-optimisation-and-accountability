@@ -12,6 +12,8 @@ slack-sdk = "==3.35.0"
 boto3 = "==1.38.37"
 pandas = "==2.3.1"
 xlsxwriter = "==3.2.5"
+pyjwt = "==2.15.1"
+urllib3 = "==2.8.0"
 
 [dev-packages]
 pytest = "==9.0.3"
