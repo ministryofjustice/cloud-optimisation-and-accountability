@@ -1,0 +1,22 @@
+---
+owner_slack: "#coat-notifications"
+title: ADR 02 - How we build webapps
+last_reviewed_on: 2026-10-14
+review_in: 3 months
+---
+
+# ADR 02 - How we build webapps
+
+## Decision
+
+- We use [Streamlit](https://streamlit.io/) to quickly develop dashboard MVPs. 
+New dashboards can be deployed from our [Streamlit dashboard platform](https://github.com/ministryofjustice/coat-coh-dashboard/tree/main/dashboards).
+- We use Python, with the [Flask](https://flask.palletsprojects.com/en/stable/) framework, follwing a backend-for-frontend architecture,
+serving HTML/JS/CSS for production dashboards e.g. [CoPilot AI Credits Dashboard](https://github.com/ministryofjustice/moj-copilot-ai-credits-dashboard).
+
+## Rationale
+
+- Streamlit's pre-built React.js wrapper, allows for fast MVP development.
+However, the wrapper presents limitations in terms of flexibility of frontend development, and potentially creates accessibility issues.
+- Creating an entirely bespoke dashboard frontend, although potentially incurring a time cost,
+offers superior flexibility when it comes to production dashboards.
