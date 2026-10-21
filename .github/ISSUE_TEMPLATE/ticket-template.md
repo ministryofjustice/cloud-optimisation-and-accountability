@@ -16,7 +16,7 @@ about: 🤝 Team agreed standard template for creating tickets
 - 
 
 ## 🛠️ Description
-<!-- What should the system do? And how do I acheive it? -->
+<!-- What should the system do? And how do I achieve it? -->
 
 - 
 
