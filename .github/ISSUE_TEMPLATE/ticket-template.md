@@ -3,6 +3,8 @@ name: 🎫 Ticket Template
 about: 🤝 Team agreed standard template for creating tickets
 ---
 
+# 🎫 Ticket Template
+
 ## 🧑‍💼 User Need
 <!-- Describe the user need using the standard user story format -->
 
@@ -16,7 +18,7 @@ about: 🤝 Team agreed standard template for creating tickets
 - 
 
 ## 🛠️ Description
-<!-- What should the system do? And how do I acheive it? -->
+<!-- What should the system do? And how do I achieve it? -->
 
 - 
 
