@@ -1,7 +1,7 @@
 ---
 owner_slack: "#coat-notifications"
 title: Tagging Standard
-last_reviewed_on: 2026-10-05
+last_reviewed_on: 2026-11-06
 review_in: 6 months
 ---
 
@@ -45,3 +45,134 @@ To ensure we can consistently search for, and report on, the tags we use, you sh
 
 - Cloud Platform - [Updating Mandatory Tags for AWS provider in Cloud Platform namespace resources](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/mandatory-aws-tags-update.html)
 - Modernisation Platform - [How to Add Default Tags](https://user-guide.modernisation-platform.service.justice.gov.uk/user-guide/how-to-add-default-tags.html#how-to-add-default-tags)
+
+### Platform specific tagging configuration examples
+
+Examples for illistrative purposes. Replace with your values.
+
+**Cloud Platform**
+
+Tag values found in the `variables.tf` file in the `resources` directory:
+
+```
+variable "vpc_name" {
+  description = "VPC name to create security groups in for the ElastiCache and RDS modules"
+  type        = string
+}
+
+variable "kubernetes_cluster" {
+  description = "Kubernetes cluster name for references to secrets for service accounts"
+  type        = string
+}
+
+variable "application" {
+  description = "Name of the application you are deploying"
+  type        = string
+  default     = "COAT Cost API"
+}
+
+variable "namespace" {
+  description = "Name of the namespace these resources are part of"
+  type        = string
+  default     = "coat-cost-api-prod"
+}
+
+variable "service_area" {
+  description = "Service area responsible for this service"
+  type        = string
+  default     = "Hosting"
+}
+
+variable "business_unit" {
+  description = "Area of the MOJ responsible for this service"
+  type        = string
+  default     = "OCTO"
+}
+
+variable "team_name" {
+  description = "Name of the development team responsible for this service"
+  type        = string
+  default     = "cloud-optimisation-and-accountability"
+}
+
+variable "environment" {
+  description = "Name of the environment type for this service"
+  type        = string
+  default     = "production"
+}
+
+variable "infrastructure_support" {
+  description = "Email address of the team responsible this service"
+  type        = string
+  default     = "cloudoptimisationandaccountabilityteam@justice.gov.uk"
+}
+
+variable "is_production" {
+  description = "Whether this environment type is production or not"
+  type        = string
+  default     = "true"
+}
+
+variable "slack_channel" {
+  description = "Slack channel name for your team, if we need to contact you about this service"
+  type        = string
+  default     = "cloud-optimisation-and-accountability-team"
+}
+
+variable "github_owner" {
+  description = "The GitHub organization or individual user account containing the app's code repo. Used by the Github Terraform provider. See: https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/ecr-setup.html#accessing-the-credentials"
+  type        = string
+  default     = "ministryofjustice"
+}
+
+variable "github_token" {
+  type        = string
+  description = "Required by the GitHub Terraform provider"
+  default     = ""
+}
+```
+
+**Modernisation Platform**
+
+Tag values found in the relevant `json` file in your directory in the Modernisation Platform environments repository:
+
+```
+{
+  "account-type": "member",
+  "environments": [
+    {
+      "name": "development",
+      "access": [
+        {
+          "sso_group_name": "cloud-optimisation-and-accountability",
+          "level": "developer"
+        }
+      ],
+      "nuke": "rebuild"
+    },
+    {
+      "name": "production",
+      "access": [
+        {
+          "sso_group_name": "cloud-optimisation-and-accountability",
+          "level": "developer"
+        },
+        {
+          "sso_group_name": "modernisation-platform-audit",
+          "level": "security-audit"
+        }
+      ]
+    }
+  ],
+  "tags": {
+    "application": "coat",
+    "business-unit": "Platforms",
+    "infrastructure-support": "CloudOptimisationandAccountabilityTeam@justice.gov.uk",
+    "owner": "CloudOptimisationandAccountabilityTeam@justice.gov.uk",
+    "critical-national-infrastructure": false,
+    "service-area": "Hosting"
+  },
+  "github-oidc-team-repositories": [],
+  "go-live-date": ""
+}
+```
