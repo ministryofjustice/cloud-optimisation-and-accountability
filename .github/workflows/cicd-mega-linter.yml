@@ -44,7 +44,7 @@ jobs:
         # DISABLE: COPYPASTE,SPELL # Uncomment to disable copy-paste and spell checks
         # You can override MegaLinter flavor used to have faster performances
         # More info at https://megalinter.io/latest/flavors/
-        uses: oxsecurity/megalinter/flavors/python@6891eb7c88735653923a518ad85cde2ff7c2c6ff # v7.12.0
+        uses: oxsecurity/megalinter/flavors/python@0cb88596118dccddf1ecbff67fd0f268be31e04f # v7.12.0
         env:
           # All available variables are described in documentation
           # https://megalinter.io/latest/configuration/
